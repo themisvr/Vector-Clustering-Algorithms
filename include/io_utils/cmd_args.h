@@ -8,13 +8,13 @@ using namespace std;
 class Prog_args
 {
     private:
-        string input_file_path;
-        string query_file_path;
-        string output_file_path;
-        uint16_t hash_functions_num;
-        uint16_t hash_tables_num;
-        uint16_t nearest_neighbors_num;
-        float radius;
+        const string input_file_path;
+        const string query_file_path;
+        const string output_file_path;
+        const uint16_t hash_functions_num;
+        const uint16_t hash_tables_num;
+        const uint16_t nearest_neighbors_num;
+        const float radius;
 
     public:
         Prog_args(const string &, const string &, const string &, uint16_t, uint16_t, uint16_t, float);
