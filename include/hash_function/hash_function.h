@@ -60,12 +60,13 @@ namespace hash {
 
             uint64_t amplified_function_construction(std::vector<uint32_t> hash_values) {
                 std::string res = "";
+                char *p_end = nullptr;
                 
                 for (size_t i; i != k; ++i) {
                     res += std::to_string(hash_values[i]);
                 }
 
-                return (std::stoll(res) % M);
+                return std::strtoull(res.c_str(), &p_end, 10);
             };
 
     };
