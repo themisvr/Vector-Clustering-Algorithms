@@ -9,6 +9,17 @@
 using namespace std;
 
 
+string user_prompt_file(const string &message)
+{
+    string file_path;
+
+    cout << message ;
+    cin >> file_path; 
+
+    return file_path;
+}
+
+
 inline bool file_exists(const char *filepath)
 {
     struct stat buf;
@@ -18,14 +29,13 @@ inline bool file_exists(const char *filepath)
 }
 
 
-void parse_args_lsh(int argc, char * const argv[], Prog_args **args)
+void parse_args_lsh(int argc, char * const argv[], Lsh_args **args)
 {
     int opt, hfunc_num, htabl_num, nn_num;
     string dataset_file, query_file, output_file;
     float rad;
 
-    while( (opt = getopt(argc, argv, "d:q:k:L:o:N:R:")) != -1 )
-    {
+    while( (opt = getopt(argc, argv, "d:q:k:L:o:N:R:")) != -1 ) {
         switch(opt) 
         {
             case 'd':
@@ -87,7 +97,7 @@ void parse_args_lsh(int argc, char * const argv[], Prog_args **args)
         nn_num = 1;    // N = 1
         rad = 1.0;    // R = 1.0
     }
-    *args = new Prog_args(dataset_file, query_file, output_file, hfunc_num, htabl_num, nn_num, rad); // allocate a pointer to a Prog_args object
+    *args = new Lsh_args(dataset_file, query_file, output_file, nn_num, rad, hfunc_num, htabl_num); 
 }
 
 
@@ -110,7 +120,7 @@ uint32_t bigend_to_littlend(uint32_t big_endian)
 }
 
 
-vector<vector<unsigned char>> read_dataset(const string &datapath)
+vector<vector<uint8_t>> read_dataset(const string &datapath)
 {
 
     ifstream data;
@@ -145,8 +155,9 @@ vector<vector<unsigned char>> read_dataset(const string &datapath)
 
         /* images_number images, and each image is of dimension rows * columns
          * each pixel takes values from [0, 255]
+         * "flatten" and store i-th image to the i-th element of the vector
          */
-        vector< vector<unsigned char> > pixels(images_number, vector<unsigned char>(rows * cols, 0));
+        vector< vector<uint8_t> > pixels(images_number, vector<uint8_t>(rows * cols, 0));
         for(auto i = pixels.begin(); i != pixels.end(); ++i) 
             for(auto j = i->begin(); j != i->end(); ++j) {
                 unsigned char temp;
