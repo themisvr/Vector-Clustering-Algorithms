@@ -2,19 +2,20 @@
 CC = g++
 CFLAGS = -Wall -g
 
-all: test
+lsh: lsh.o io_utils.o 
+	$(CC) -o lsh lsh.o io_utils.o -DLSH $(CFLAGS)
 
-test: test_main.o io_utils.o cmd_args.o
-	$(CC) -o test test_main.o io_utils.o cmd_args.o $(CFLAGS)
+cube: cube.o io_utils.o 
+	$(CC) -o cube cube.o io_utils.o $(CFLAGS)
 
-test_main.o: test_main.cpp 
-	$(CC) -c test_main.cpp $(CFLAGS)
+lsh.o: lsh.cpp 
+	$(CC) -c lsh.cpp $(CFLAGS)
+
+cube.o: cube.cpp
+	$(CC) -c cube.cpp $(CFLAGS)
 
 io_utils.o: io_utils.cpp
 	$(CC) -c io_utils.cpp $(CFLAGS)
 
-cmd_args.o: cmd_args.cpp
-	$(CC) -c cmd_args.cpp $(CFLAGS)
-
 clean: 
-	rm test test_main.o io_utils.o cmd_args.o 
+	rm lsh lsh.o io_utils.o 
