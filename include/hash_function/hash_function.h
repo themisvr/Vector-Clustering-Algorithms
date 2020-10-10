@@ -11,7 +11,6 @@
 #include "../math_utils/math_utils.h"
 
 
-template <typename T>
 class HashFunction {
 
     private:
@@ -25,7 +24,7 @@ class HashFunction {
 
     public:
 
-        HashFunction(   const uint16_t &k, const uint16_t &d, const uint32_t &m, const uint32_t &M, 
+        HashFunction(   const uint16_t &k, const uint16_t &d, const uint32_t &m, const uint32_t &M, \
                         const double &w) : k(k), d(d), m(m), M(M), w(w), s_transformations(d), a(d) {
 
             std::default_random_engine generator;
@@ -42,24 +41,24 @@ class HashFunction {
             uint32_t hash_value = 0;
 
             for (size_t i = 0; i != d; ++i) {
-                a[i] = floor((pixels[i] - s[i]) / w)
+                a[i] = floor((pixels[i] - s_transformations[i]) / w);
             }
 
             std::reverse(a.begin(), a.end());
 
             for (size_t i = 0; i != d; ++i) {
-                hash_value += (math_utils::modulo(a[i], i) * math_utils::exp_modulo(m, i, M)) % M;
+                hash_value += (modulo(a[i], i) * exp_modulo(m, i, M)) % M;
             }
 
             return hash_value % M;
         }
 
-        uint64_t amplified_function_construction(std::vector<uint32_t> hash_values) {
+        uint64_t amplified_function_construction(std::vector<uint8_t> &pixels) {
             std::string res = "";
             char *p_end = nullptr;
             
             for (size_t i; i != k; ++i) {
-                res += std::to_string(hash_values[i]);
+                res += std::to_string(hash_function_construction(pixels));
             }
 
             return std::strtoull(res.c_str(), &p_end, 10);
