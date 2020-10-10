@@ -1,2 +1,0 @@
-
-./test -d ../../datasets/train-images-idx3-ubyte -q ../../datasets/t10k-images-idx3-ubyte -k 4 -L 5 -o xlar -N 3 -R 1.5
