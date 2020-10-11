@@ -62,7 +62,7 @@ class LSH {
 
             for (size_t i = 0; i != L; ++i) {                
                 std::unordered_multimap<int, std::vector<T>> hash_table{};
-                std::cout << i << std::endl;
+
                 for (size_t j = 0; j != n_vectors; ++j) {           
                     amplified_value = hash_functions[i].amplified_function_construction(dataset[j]);
                     hash_table.insert(std::make_pair(amplified_value % ht_size, dataset[j]));
@@ -96,7 +96,7 @@ class LSH {
                         best_dist = dist;
                         closest_vector = item->second;
                     }
-                    if (items_checked > 10 * L) { return closest_vector; }
+                    // if (items_checked > 10 * L) { return closest_vector; }
                 }
             }
 

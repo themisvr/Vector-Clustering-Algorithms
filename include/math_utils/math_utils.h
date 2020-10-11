@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cstdint>
 #include <vector>
+#include <limits>
 
 #include "../../include/metric/metric.h"
 
@@ -25,14 +26,19 @@ inline int modulo(int i, int n) {
 
 
 template <typename T>
-double vectors_mean_distance(const std::vector<std::vector<T>> &dataset) {
+double mean_nearest_distance(const std::vector<std::vector<T>> &dataset) {
     double mean{};
+    uint32_t dist{};
+    
+    uint32_t min_dist = std::numeric_limits<uint32_t>::max();
 
-    for (size_t i = 0; i != 5; ++i) {
-        std::cout << i << std::endl;
+    for (size_t i = 0; i != dataset.size() - 1; ++i) {
         for (size_t j = i+1; j != dataset.size(); ++j) {
-            mean += (double) manhattan_distance_rd<T>(dataset[i], dataset[j]);
+            if ((dist = manhattan_distance_rd<T>(dataset[i], dataset[j])) < min_dist) {
+                min_dist = dist;
+            }
         }
+        mean += min_dist;
     }
 
     return (mean / dataset.size());

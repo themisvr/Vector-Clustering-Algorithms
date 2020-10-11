@@ -7,7 +7,7 @@
 #include "../../include/io_utils/cmd_args.h"
 
 
-void usage(const char *exec) {
+void lsh_usage(const char *exec) {
     fprintf(stderr, "\nUsage: %s \n"
                         "[+] -d [input_file]\n"
                         "[+] -q [query_file]\n"
@@ -42,11 +42,11 @@ inline bool file_exists(const char *filepath) {
 
 void lsh_parse_args(int argc, char * const argv[], Lsh_args **args) {
     
-    int opt;
-    uint32_t hfunc_num;
-    uint16_t htabl_num, nn_num;
+    int opt{};
+    uint32_t hfunc_num{};
+    uint16_t htabl_num{}, nn_num{};
     std::string dataset_file, query_file, output_file;
-    float rad;
+    float rad{};
 
     while ( (opt = getopt(argc, argv, "d:q:k:L:o:N:R:")) != -1 ) {
         switch (opt) {
@@ -106,7 +106,7 @@ void lsh_parse_args(int argc, char * const argv[], Lsh_args **args) {
 
             default: 
                 // one or more of the "-x" options did not appear
-                usage(argv[0]);
+                lsh_usage(argv[0]);
                 break;
         }
     }
@@ -142,56 +142,3 @@ uint32_t bigend_to_littlend(uint32_t big_endian) {
     return little_endian;
 }
 
-
-std::vector<std::vector<uint8_t>> read_dataset(const std::string &datapath) {
-
-    ifstream data;
-    data.open(datapath, ios::in | ios::binary);
-
-    if(data) {
-        uint32_t magic_num, images_number, rows, cols;
-
-        // read magic number
-        data.read( (char *) &magic_num, sizeof(magic_num) );
-        magic_num = bigend_to_littlend(magic_num);
-        std::cout << magic_num << std::endl;
-        if(magic_num != 2051) {
-            std::cerr << "Wrong magic number!" << std::endl;
-            exit(EXIT_FAILURE);
-        }
-
-        // read number of images
-        data.read( (char *) &images_number, sizeof(images_number) );
-        images_number = bigend_to_littlend(images_number);
-        std::cout << images_number << std::endl;
-
-        // read number of rows
-        data.read( (char *) &rows, sizeof(rows) );
-        rows = bigend_to_littlend(rows);
-        std::cout << rows << std::endl;
-
-        // read number of columns
-        data.read( (char *) &cols, sizeof(cols) );
-        cols = bigend_to_littlend(cols);
-        std::cout << cols << std::endl;
-
-        /* images_number images, and each image is of dimension rows * columns
-         * each pixel takes values from [0, 255]
-         * "flatten" and store i-th image to the i-th element of the vector
-         */
-        std::vector<std::vector<uint8_t> > pixels(images_number, std::vector<uint8_t>(rows * cols, 0));
-        for(auto i = pixels.begin(); i != pixels.end(); ++i) 
-            for(auto j = i->begin(); j != i->end(); ++j) {
-                unsigned char temp;
-                data.read( (char *) &temp, sizeof(temp) );
-                *j = temp;
-            }
-
-        return pixels;
-                
-    }
-    else {
-        std::cerr << "Could not open the file containing the dataset!" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-}

@@ -3,7 +3,7 @@ HEADERDIR := ../../include
 OBJDIR := ../../obj
 
 CC := g++
-CFLAGS := -std=c++11 -g3 -Wall -Wextra -I$(HEADERDIR)
+CFLAGS := -std=c++11 -g3 -Ofast -Wall -Wextra -I$(HEADERDIR)
 
 
 BINARY := lsh
@@ -30,4 +30,4 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 .PHONY: clean
 
 clean:
-	rm -rf $(BINARY) $(OBJDIR)/*
+	rm -rf output $(BINARY) $(OBJDIR)/*

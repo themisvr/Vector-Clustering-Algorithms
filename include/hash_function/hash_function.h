@@ -40,7 +40,7 @@ class HashFunction {
         
         ~HashFunction() = default;
 
-        uint32_t hash_function_construction(std::vector<T> &pixels) {
+        uint32_t hash_function_construction(const std::vector<T> &pixels) {
             uint32_t hash_value = 0;
 
             for (size_t i = 0; i != d; ++i) {
@@ -56,7 +56,7 @@ class HashFunction {
             return hash_value % M;
         }
 
-        uint64_t amplified_function_construction(std::vector<T> &pixels) {
+        uint64_t amplified_function_construction(const std::vector<T> &pixels) {
             std::string res = "";
             char *p_end = nullptr;
             
