@@ -9,7 +9,7 @@
 #include "../../hash_function/hash_function.h"
 #include "../../metric/metric.h"
 
-
+#define HT_SIZE(N) ((N / 8))
 #define MULTIPLE 4
 
 template <typename T>
@@ -96,7 +96,7 @@ class LSH {
                         best_dist = dist;
                         closest_vector = item->second;
                     }
-                    //if (items_checked > 10 * L) { return closest_vector; }
+                    if (items_checked > 10 * L) { return closest_vector; }
                 }
             }
 

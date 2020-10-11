@@ -28,22 +28,24 @@ class Prog_args // abstract class
         uint16_t get_nearest_neighbors_num() const;
         float get_radius() const;
         
-        virtual uint16_t get_k() const = 0; // pure virtual function
+        virtual uint32_t get_k() const = 0; // pure virtual function
 };
 
 
 class Lsh_args: public Prog_args
 {
     private:
-        uint16_t hash_functions_num = 0; // k
+        uint32_t hash_functions_num = 0; // k
         uint16_t hash_tables_num = 0;   // L
 
     public:
-        Lsh_args(const string &, string &, string &, uint16_t, float, uint16_t, uint16_t);
+        Lsh_args(const string &, string &, string &, uint16_t, float, uint32_t, uint16_t);
         Lsh_args(const string &);
+        /* Constructor with default values */
+        Lsh_args(const string &, string &, string &);
         void set_hash_functions_num(uint16_t);
         void set_hash_tables_num(uint16_t);
-        uint16_t get_k() const;
+        uint32_t get_k() const;
         uint16_t get_hash_tables_num() const;
 };
 
@@ -61,7 +63,7 @@ class Cube_args: public Prog_args
         void set_projection_dim(uint16_t);
         void set_max_candidates(uint16_t);
         void set_max_probes(uint16_t);
-        uint16_t get_k() const;
+        uint32_t get_k() const;
         uint16_t get_max_candidates() const;
         uint16_t get_max_probes() const;
 };
@@ -121,8 +123,13 @@ inline float Prog_args::get_radius() const
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline Lsh_args::Lsh_args(const string &ipath, string &qpath, string &opath, uint16_t nn_num, float rad, uint16_t hfunc_num, uint16_t htabl_num)
+inline Lsh_args::Lsh_args(const string &ipath, string &qpath, string &opath, uint16_t nn_num, float rad, uint32_t hfunc_num, uint16_t htabl_num)
     : Prog_args(ipath, qpath, opath, nn_num, rad), hash_functions_num(hfunc_num), hash_tables_num(htabl_num)
+{}
+
+inline Lsh_args::Lsh_args(const string &ipath, string &qpath, string &opath)
+    : Prog_args(ipath, qpath, opath, 1, 1.0), hash_functions_num(4), hash_tables_num(5)
+
 {}
 
 inline Lsh_args::Lsh_args(const string &ipath) 
@@ -142,7 +149,7 @@ inline void Lsh_args::set_hash_tables_num(uint16_t htabl_num)
     hash_tables_num = htabl_num;
 }
 
-inline uint16_t Lsh_args::get_k() const
+inline uint32_t Lsh_args::get_k() const
 {
     return hash_functions_num;
 }
@@ -182,7 +189,7 @@ inline void Cube_args::set_max_probes(uint16_t max_prob)
     max_probes = max_prob;
 }
 
-inline uint16_t Cube_args::get_k() const
+inline uint32_t Cube_args::get_k() const
 {
     return projection_dim;
 }
