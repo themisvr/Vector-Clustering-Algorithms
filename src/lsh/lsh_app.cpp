@@ -10,6 +10,7 @@
 
 #define C 0.2
 
+
 int main (int argc, char *argv[]) {
     
     Lsh_args *args = nullptr;
@@ -29,28 +30,18 @@ int main (int argc, char *argv[]) {
     std::vector<std::vector<uint8_t>> dataset = read_file<uint8_t> (args->get_input_file_path());
     std::vector<std::vector<uint8_t>> queries = read_file<uint8_t> (args->get_query_file_path());
 
-    /* Compute the mean distance of all vectors */
-    auto start = std::chrono::high_resolution_clock::now();
-    double r = mean_nearest_distance<uint8_t> (dataset);
-    auto stop = std::chrono::high_resolution_clock::now();
-
-    auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start); 
-    std::cout << "Time taken by calculating Mean Nearest Distance (w parameter): " << duration.count() << " seconds" << std::endl; 
 
     /* Create lsh (search) structure */
     uint16_t L = args->get_hash_tables_num();
     uint16_t N = args->get_nearest_neighbors_num();
     uint32_t K = args->get_k();
-    uint32_t D = dataset[0].size();
     double R = args->get_radius();
-    size_t n_vectors = dataset.size();
-    size_t ht_size = HT_SIZE(n_vectors);
 
-    start = std::chrono::high_resolution_clock::now();
-    LSH<uint8_t> lsh = LSH<uint8_t> (L, N, K, D, R, ht_size, r, n_vectors, dataset);
-    stop = std::chrono::high_resolution_clock::now();
+    auto start = std::chrono::high_resolution_clock::now();
+    LSH<uint8_t> lsh = LSH<uint8_t> (L, N, K, R, dataset);
+    auto stop = std::chrono::high_resolution_clock::now();
 
-    duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start); 
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start); 
     std::cout << "Time taken by inserting dataset into the LSH structure: " << duration.count() << " seconds" << std::endl; 
 
     /* Start executing Approximate Nearest Neighbor */
@@ -75,8 +66,17 @@ int main (int argc, char *argv[]) {
     duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
     std::cout << "Time taken by Approximate-Range-Search: " << duration.count() << " seconds" << std::endl;
 
+    /* Start executing Approximate K Nearest Neighbor */
+    std::vector<std::pair<std::vector<uint8_t>, uint32_t>> k_ann_result;
+    start = std::chrono::high_resolution_clock::now();
+    for (size_t i = 0; i != queries.size(); ++i) {
+        k_ann_result = lsh.Approximate_K_NN(queries[i]);
+    }
+    stop = std::chrono::high_resolution_clock::now();
 
-    
+    duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+    std::cout << "Time taken by Approximate-K-Nearest-Neighbor: " << duration.count() << " seconds" << std::endl;
+
 
     delete args;
 

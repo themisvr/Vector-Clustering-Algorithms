@@ -27,7 +27,13 @@ class HashFunction {
     public:
 
         HashFunction(   const uint16_t &k, const uint16_t &d, const uint32_t &m, const uint32_t &M, \
-                        const double &w) : k(k), d(d), m(m), M(M), w(w), s_transformations(d), a(d) {
+                        const double &w) : k(k), d(d), m(m), M(M), w(w), s_transformations(d), a(d) 
+                        {} 
+        
+        ~HashFunction() = default;
+
+        uint32_t hash_function_construction(const std::vector<T> &pixels) {
+            uint32_t hash_value = 0;
 
             unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
             std::default_random_engine generator(seed);
@@ -36,12 +42,6 @@ class HashFunction {
             for (size_t i = 0; i != d; ++i) {
                 s_transformations[i] = distribution(generator);
             }
-        } 
-        
-        ~HashFunction() = default;
-
-        uint32_t hash_function_construction(const std::vector<T> &pixels) {
-            uint32_t hash_value = 0;
 
             for (size_t i = 0; i != d; ++i) {
                 a[i] = floor((pixels[i] - s_transformations[i]) / w);
@@ -53,7 +53,7 @@ class HashFunction {
                 hash_value += (modulo(a[i], M) * exp_modulo(m, i, M)) % M;
             }
 
-            return hash_value % M;
+            return fast_mod(hash_value, M);
         }
 
         uint64_t amplified_function_construction(const std::vector<T> &pixels) {
