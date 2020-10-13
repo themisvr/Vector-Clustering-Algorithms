@@ -1,7 +1,10 @@
 #ifndef CMD_ARGS_H
 #define CMD_ARGS_H
 
+#include <iostream>
+#include <fstream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -53,16 +56,17 @@ class Lsh_args: public Prog_args
 class Cube_args: public Prog_args
 {
     private:
-        uint16_t projection_dim = 0; // d' is specified as the -k option in the command line
+        uint32_t projection_dim = 0; // d' is specified as the -k option in the command line
         uint16_t max_candidates = 0; // M
         uint16_t max_probes = 0;    // probes
 
     public:
-        Cube_args(const string &, string &, string &, uint16_t, float,uint16_t, uint16_t, uint16_t);
+        Cube_args(const string &, string &, string &, uint16_t, float, uint32_t, uint16_t, uint16_t);
         Cube_args(const string &);
-        void set_projection_dim(uint16_t);
+        void set_projection_dim(uint32_t);
         void set_max_candidates(uint16_t);
         void set_max_probes(uint16_t);
+        void write_ann_output(const vector<pair<uint32_t, size_t>> &, const size_t);
         uint32_t get_k() const;
         uint16_t get_max_candidates() const;
         uint16_t get_max_probes() const;
@@ -136,68 +140,89 @@ inline Lsh_args::Lsh_args(const string &ipath)
     : Prog_args(ipath)
 {}
 
-        void set_hash_functions_num(uint16_t);
-        void set_hash_tables_num(uint16_t);
 
 inline void Lsh_args::set_hash_functions_num(uint16_t hfunc_num)
 {
     hash_functions_num = hfunc_num;
 }
 
+
 inline void Lsh_args::set_hash_tables_num(uint16_t htabl_num)
 {
     hash_tables_num = htabl_num;
 }
+
 
 inline uint32_t Lsh_args::get_k() const
 {
     return hash_functions_num;
 }
 
+
 inline uint16_t Lsh_args::get_hash_tables_num() const
 {
     return hash_tables_num;
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline Cube_args::Cube_args(const string &ipath, string &qpath, string &opath, uint16_t nn_num, float rad, uint16_t proj, uint16_t max_cands, \
+inline Cube_args::Cube_args(const string &ipath, string &qpath, string &opath, uint16_t nn_num, float rad, uint32_t proj, uint16_t max_cands, \
                             uint16_t max_probes) 
     : Prog_args(ipath, qpath, opath, nn_num, rad), projection_dim(proj), max_candidates(max_cands), max_probes(max_probes)  
 {}
+
 
 inline Cube_args::Cube_args(const string &ipath)
     : Prog_args(ipath)
 {}
 
-        void set_projection_dim(uint16_t);
-        void set_max_candidates(uint16_t);
-        void set_max_probes(uint16_t);
 
-inline void Cube_args::set_projection_dim(uint16_t proj)
+inline void Cube_args::set_projection_dim(uint32_t proj)
 {
     projection_dim = proj;
 }
+
 
 inline void Cube_args::set_max_candidates(uint16_t max_cands)
 {
     max_candidates = max_cands;
 }
 
+
 inline void Cube_args::set_max_probes(uint16_t max_prob)
 {
     max_probes = max_prob;
 }
+
+
+inline void Cube_args::write_ann_output(const vector<pair<uint32_t, size_t>> &candidates, const size_t index)
+{
+    ofstream ofile;
+    ofile.open(get_output_file_path(), ios::out | ios::app);
+    ofile << "Query: " << index << endl;
+
+    for (size_t i = 0; i != get_nearest_neighbors_num(); ++i) {
+        ofile << "Nearest neighbor-" << i + 1 << ": " << candidates[i].second << endl;
+        ofile << "distanceHypercube: " << candidates[i].first << endl;
+        ofile << "distanceTrue: " << endl;
+    }
+
+    ofile.close();
+}
+
 
 inline uint32_t Cube_args::get_k() const
 {
     return projection_dim;
 }
 
+
 inline uint16_t Cube_args::get_max_candidates() const
 {
     return max_candidates;
 }
+
 
 inline uint16_t Cube_args::get_max_probes() const
 {

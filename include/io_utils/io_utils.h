@@ -16,7 +16,11 @@ inline bool file_exists(const char *);
 
 void lsh_parse_args(int, char * const [], Lsh_args **);
 
+void cube_parse_args(int, char * const [], Cube_args **);
+
 void lsh_usage(const char *);
+
+void cube_usage(const char *);
 
 void user_interface(Lsh_args **);
 
