@@ -3,6 +3,9 @@
 
 #include <unordered_map>
 #include <vector>
+#include <utility>
+#include <assert.h>
+#include <stdlib.h>
 
 #include "../../hash_function/hash_function.h"
 #include "../../metric/metric.h"
@@ -36,7 +39,7 @@ class Hypercube {
         std::vector<std::unordered_multimap<uint32_t, bool>> uniform_binary_mapppings;
 
         /* hash table representing the hypercube; each vertex is basically a bucket */
-        std::unordered_multimap<uint64_t, std::pair<std::vector<T>, size_t>> hash_table;
+        std::unordered_multimap<std::string, std::pair<std::vector<T>, size_t>> hash_table;
 
         /* for the hypercube method we use d' x LSH hash functions */
         std::vector<HashFunction<T>> hash_functions;
@@ -69,9 +72,9 @@ class Hypercube {
 
         void cube_projection_train(const std::vector<T> &point, const size_t index)
         {
-            uint64_t    key;
+            //uint64_t    key;
             uint32_t    hval;
-            short       bit;// = -1;
+            short       bit;
             std::string bitstring;
 
             for (size_t j = 0; j != projection_dimension; ++j) {
@@ -93,20 +96,20 @@ class Hypercube {
 
                 //std::cout << bit << std::endl;
                 bitstring += std::to_string(bit);
-                //bit = -1;
             }
 
             //std::cout << bitstring << std::endl;
-            key = strtoull(bitstring.c_str(), nullptr, 10);
+            assert(bitstring.size() == projection_dimension);
+            //key = atoll(bitstring.c_str());
 
             /* create object {point, index}; insert the object into the hash table as a pair: { key, {point, index} } */
-            hash_table.insert( std::make_pair(key, std::make_pair(point, index)) );   // we want to avoid creating a copy of point!
+            hash_table.insert( std::make_pair(bitstring, std::make_pair(point, index)) );   // we want to avoid creating a copy of point!
         }
 
 
-        uint64_t cube_projection_test(const std::vector<T> &query)
+        std::string cube_projection_test(const std::vector<T> &query)
         {
-            uint64_t    key;
+            //uint64_t    key;
             uint32_t    hval;
             short       bit;
             std::string bitstring;
@@ -129,9 +132,11 @@ class Hypercube {
                 bitstring += std::to_string(bit);
             }
 
-            key = strtoull(bitstring.c_str(), nullptr, 10);
+            //std::cout << bitstring << std::endl;
+            assert(bitstring.size() == projection_dimension);
+            //key = atoll(bitstring.c_str());
 
-            return key;
+            return bitstring;
         }
 
 
@@ -153,6 +158,7 @@ class Hypercube {
             std::mt19937 rng(dev());
             std::uniform_int_distribution<std::mt19937::result_type> dist(0,1); // uniform distribution in range [0, 1]
             short bit = dist(rng);  // generate 0 or 1
+            assert(bit == 0 || bit == 1);
             map.insert( std::make_pair(hval, bit) ); // insert the pair {hval : f(hval)} into the hash table
 
             return bit;
@@ -167,41 +173,39 @@ class Hypercube {
 
         std::vector<std::pair<uint32_t, size_t>> approximate_nn(const std::vector<T> &query)
         {
-            std::vector<std::pair<uint32_t, size_t>> candidates(max_candidates);
+            /* vector to store query's nearest neighbors - M candidates */
+            std::vector<std::pair<uint32_t, size_t>> candidates;
             uint32_t dist;
+            uint32_t cnt = projection_dimension;
             uint16_t M = max_candidates;
+            uint16_t probes = max_probes;
+            uint8_t  flag = 1;
 
             /* project query to a cube vertex / hash table bucket */
-            uint64_t key   = cube_projection_test(query);
-            auto     range = hash_table.equal_range(key); 
+            const std::string key = cube_projection_test(query);
+            std::string key1 = key;
+            std::pair<std::vector<T>, size_t> value;
 
-            for (auto i = range.first; i != range.second, M > 0; ++i, --M) {
-                auto pair = i->second;
-                //std::cout << i->first << std::endl;
-                std::cout << pair.second << std::endl;
-                dist = manhattan_distance_rd(query, pair.first);
-                std::cout << dist << std::endl;
-                candidates.emplace_back( std::make_pair(dist, pair.second) );
+            while (M > 0) {
+                if (probes > 0) {
+                    //std::cout << "Query's bitstring is: " << key1 << std::endl; // key
+                    auto range = hash_table.equal_range(key1); 
+                    for (auto i = range.first; (i != range.second) && (M > 0); ++i, --M) {
+                        //std::cout << M << std::endl; 
+                        
+                        value = i->second; // SEG FAULT OCCURS HERE
+
+                        //std::cout << value.second << std::endl; // training index
+                        dist = manhattan_distance_rd<T>(query, value.first);
+                        //std::cout << dist << std::endl; // distance
+                        candidates.push_back( std::make_pair(dist, value.second) );
+                        --probes;
+                    }
+                    key1 = gen_similar_vertex(key, cnt, flag);
+                }
+                else
+                    break;
             }
-
-            /* if probes > 1, then explore nearby vertices / buckets in terms of closest (hamming) distance */
-            //if ( (M > 0) && (max_probes > 1) ) {
-            //    uint16_t probes = probes - 1;
-            //    while (probes >= 1) {
-            //        uint64_t similar_key = gen_similar_vertex(key);
-            //        range = hash_table.equal_range(similar_key);
-
-            //        for (auto i = range.first; i != range.second, M > 0; ++i, --M) {
-            //            auto pair = i->second;
-            //            dist = manhattan_distance_rd(query, pair.first);
-            //            candidates.emplace_back( std::make_pair(dist, pair.second) );
-            //        }
-
-            //        if (M == 0) break;
-
-            //        --probes;
-            //    }
-            //}
 
             std::sort(candidates.begin(), candidates.end(), compare);
 
@@ -209,21 +213,19 @@ class Hypercube {
         }
 
 
-        uint64_t gen_similar_vertex(uint64_t key)
+        std::string gen_similar_vertex(const std::string &key, uint32_t &counter, uint8_t &flag)
         {
-            static short bitpos = max_probes; 
-            uint64_t new_key(key);
-
-            key ^= (-1 ^ key) & (1UL << bitpos);
-            if(new_key != key) {
-                --bitpos;
-                return key;
+            std::string bitstring = key;
+            for (size_t i = 0; i < flag && counter != 0; ++i, --counter) {
+                bitstring[counter - 1] == '0' ? bitstring[counter - 1] = '1' : bitstring[counter - 1] = '0';
             }
-            else {
-                key ^= (-0 ^ key) & (1UL << bitpos--);
 
-                return key;
+            if(counter == 0) {
+                counter = projection_dimension; // reset bit counter
+                ++flag;
             }
+
+            return bitstring;
         }
 };
 
