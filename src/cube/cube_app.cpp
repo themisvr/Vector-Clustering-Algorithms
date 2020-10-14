@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <chrono>
 
 #include "../../include/modules/hypercube/hypercube.h"
 #include "../../include/io_utils/cmd_args.h"
@@ -39,7 +40,7 @@ int main(int argc, char *argv[])
 
 
     cout << "\nComputing mean dataset distance..." << endl;
-    double r = mean_nearest_distance<uint8_t> (training_samples);
+    double r = 1077.6875; //mean_nearest_distance<uint8_t> (training_samples);
     cout << "Done!" << endl;
 
 
@@ -67,9 +68,14 @@ int main(int argc, char *argv[])
 
 
     /* ANN */
-    for (size_t i = 0; i != test_samples.size() / 1000; ++i) {
-       vector<std::pair<uint32_t, size_t>> nearest = cube.approximate_nn(test_samples[i]); 
-       args->write_ann_output(nearest, i);
+    for (size_t i = 0; i != test_samples.size(); ++i) {
+        cout << "Query point " << i  << ":" << endl;
+        start = std::chrono::high_resolution_clock::now();
+        vector<std::pair<uint32_t, size_t>> nearest = cube.approximate_nn(test_samples[i]); 
+        stop = std::chrono::high_resolution_clock::now();
+        duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+        cout << "ANN for query executed in " << duration.count() << "secs" << endl;
+        args->write_ann_output(i, nearest, duration);
     }
 
     /* Range Search */

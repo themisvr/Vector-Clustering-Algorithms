@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <chrono>
 
 using namespace std;
 
@@ -66,7 +67,7 @@ class Cube_args: public Prog_args
         void set_projection_dim(uint32_t);
         void set_max_candidates(uint16_t);
         void set_max_probes(uint16_t);
-        void write_ann_output(const vector<pair<uint32_t, size_t>> &, const size_t);
+        void write_ann_output(const size_t, const vector<pair<uint32_t, size_t>> &, const chrono::seconds &);
         uint32_t get_k() const;
         uint16_t get_max_candidates() const;
         uint16_t get_max_probes() const;
@@ -196,7 +197,7 @@ inline void Cube_args::set_max_probes(uint16_t max_prob)
 }
 
 
-inline void Cube_args::write_ann_output(const vector<pair<uint32_t, size_t>> &candidates, const size_t index)
+inline void Cube_args::write_ann_output(const size_t index, const vector<pair<uint32_t, size_t>> &candidates, const chrono::seconds &dur)
 {
     ofstream ofile;
     ofile.open(get_output_file_path(), ios::out | ios::app);
@@ -207,6 +208,8 @@ inline void Cube_args::write_ann_output(const vector<pair<uint32_t, size_t>> &ca
         ofile << "distanceHypercube: " << candidates[i].first << endl;
         ofile << "distanceTrue: " << endl;
     }
+    ofile << "tHypercube: " << dur.count() << endl;
+    ofile << "tTrue: " << endl;
 
     ofile.close();
 }
