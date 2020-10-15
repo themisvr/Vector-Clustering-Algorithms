@@ -24,6 +24,14 @@ void cube_usage(const char *);
 
 void user_interface(Lsh_args **);
 
+void user_interface(Cube_args **);
+
+void user_interface(Cube_args *);
+
+void write_hypercube_output(const string &, const uint16_t, const size_t, const vector<vector<pair<uint32_t, size_t>>> &, \
+                            const vector<chrono::duration<int>> &, const vector<vector<uint32_t>> &, const vector<chrono::duration<int>> &, \
+                            const vector<vector<size_t>> &);
+
 
 template <typename T>
 vector<vector<T>> read_file(const string& datapath) {

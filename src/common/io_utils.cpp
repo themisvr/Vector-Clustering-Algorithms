@@ -2,8 +2,10 @@
 #include <fstream>
 #include <cstdlib>
 #include <vector>
+#include <chrono>
 #include <sys/stat.h>
 #include <unistd.h>
+
 #include "../../include/io_utils/cmd_args.h"
 
 
@@ -45,6 +47,28 @@ string user_prompt_file(const string &message) {
     std::cin >> file_path; 
 
     return file_path;
+}
+
+
+uint16_t user_prompt_search_arg(const string &message)
+{
+    uint16_t search_arg = 0;
+
+    cout << message;
+    cin >> search_arg;
+
+    return search_arg;
+}
+
+
+float user_prompt_rad(const string &message)
+{
+    float radius = 0.0;
+
+    cout << message;
+    cin >> radius;
+
+    return radius;
 }
 
 
@@ -232,6 +256,39 @@ void user_interface(Lsh_args **args) {
 }
 
 
+void user_interface(Cube_args **args) {
+
+    std::string input_file, query_file, output_file; 
+
+    if (*args == nullptr) {
+        input_file = user_prompt_file("Enter path to input file: ");
+        query_file = user_prompt_file("Enter path to query file: ");
+        output_file = user_prompt_file("Enter path to output file: ");
+
+        *args = new Cube_args(input_file, query_file, output_file);
+    }
+}
+
+
+void user_interface(Cube_args *args) {
+    uint32_t projection_dimension;
+    uint16_t nearest_neighbors, max_candidates, max_probes;
+    float radius;
+
+    nearest_neighbors    = user_prompt_search_arg("Enter number of nearest neighbors: ");
+    radius               = user_prompt_rad("Enter search radius: ");
+    projection_dimension = user_prompt_search_arg("Enter hypercube dimension: ");
+    max_candidates       = user_prompt_search_arg("Enter max candidate points to be checked: ");
+    max_probes           = user_prompt_search_arg("Enter max hypercube vertices to be ckecked: ");
+
+    args->set_nearest_neighbors_num(nearest_neighbors);
+    args->set_radius(radius);
+    args->set_projection_dim(projection_dimension);
+    args->set_max_candidates(max_candidates);
+    args->set_max_probes(max_probes);
+}
+
+
 uint32_t bigend_to_littlend(uint32_t big_endian) {
     uint32_t b0, b1, b2, b3;
     uint32_t little_endian;
@@ -246,3 +303,35 @@ uint32_t bigend_to_littlend(uint32_t big_endian) {
     return little_endian;
 }
 
+
+void write_hypercube_output(const string &out, const uint16_t nns, const size_t size, \
+                            const vector<vector<pair<uint32_t, size_t>>> &ann_res, \
+                            const vector<chrono::duration<int>> &ann_query_times, \
+                            const vector<vector<uint32_t>> &enn_dists, const vector<chrono::duration<int>> &enn_query_times, \
+                            const vector<vector<size_t>> &range_res)
+{
+    vector<pair<uint32_t, size_t>> approx_nearest;
+    vector<uint32_t> exact_nearest;
+    ofstream ofile;
+    ofile.open(out, ios::out | ios::app);
+
+    for (size_t i = 0; i != size; ++i) {
+        approx_nearest = ann_res[i];
+        exact_nearest  = enn_dists[i];
+        ofile << "Query: " << i << endl;
+        for (size_t j = 0; j != nns; ++j) {
+            ofile << "Nearest neighbor-" << j + 1 << ": " << approx_nearest[j].second << endl;
+            ofile << "distanceHypercube: " << approx_nearest[j].first << endl;
+            ofile << "distanceTrue: " << exact_nearest[j] << endl;
+        }
+        ofile << "tHypercube: " << ann_query_times[i].count() << endl;
+        ofile << "tTrue: " << enn_query_times[i].count() << endl;
+
+        ofile << "R-near neighbors:" << endl;
+        for (auto &c : range_res[i]) {
+            ofile << c << endl;
+        }
+    }
+
+    ofile.close();
+}
