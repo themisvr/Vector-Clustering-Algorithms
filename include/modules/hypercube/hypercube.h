@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 #include <utility>
+#include <algorithm>
 #include <assert.h>
 #include <stdlib.h>
 
@@ -12,6 +13,7 @@
 
 #define MULTIPLE1 4
 #define MULTIPLE2 10
+#define C         1.1
 
 template <typename T>
 class Hypercube {
@@ -50,7 +52,7 @@ class Hypercube {
         Hypercube (uint32_t projdim, uint16_t cands, uint16_t probes, uint16_t nns, float r, \
                     size_t trn, uint32_t d, double meandist, std::vector<std::vector<T>> &samples) \
                     : projection_dimension(projdim), max_candidates(cands), max_probes(probes), \
-                      N(nns), R(r), train_samples(trn), D(d), win(MULTIPLE1 * meandist)
+                      N(nns), R(r), train_samples(trn), D(d), win(MULTIPLE1 * meandist) //win(MULTIPLE2 * R)
         {
             std:: cout << "Window is: ";
             std::cout << win << std::endl;
@@ -72,7 +74,6 @@ class Hypercube {
 
         void cube_projection_train(const std::vector<T> &point, const size_t index)
         {
-            //uint64_t    key;
             uint32_t    hval;
             short       bit;
             std::string bitstring;
@@ -80,8 +81,6 @@ class Hypercube {
             for (size_t j = 0; j != projection_dimension; ++j) {
                 
                 hval = hash_functions[j].hash_function_construction(point);
-
-                //std::cout << hval << std::endl;
 
                 /* check if f_j(h_j(p)) has already been computed.
                  * positive: retrieve from data store and use that value 
@@ -94,13 +93,10 @@ class Hypercube {
                     bit = uniform_binmap(uniform_binary_mapppings[j], hval);
                 }
 
-                //std::cout << bit << std::endl;
                 bitstring += std::to_string(bit);
             }
 
-            //std::cout << bitstring << std::endl;
             assert(bitstring.size() == projection_dimension);
-            //key = atoll(bitstring.c_str());
 
             /* create object {point, index}; insert the object into the hash table as a pair: { key, {point, index} } */
             hash_table.insert( std::make_pair(bitstring, std::make_pair(point, index)) );   // we want to avoid creating a copy of point!
@@ -109,7 +105,6 @@ class Hypercube {
 
         std::string cube_projection_test(const std::vector<T> &query)
         {
-            //uint64_t    key;
             uint32_t    hval;
             short       bit;
             std::string bitstring;
@@ -132,9 +127,7 @@ class Hypercube {
                 bitstring += std::to_string(bit);
             }
 
-            //std::cout << bitstring << std::endl;
             assert(bitstring.size() == projection_dimension);
-            //key = atoll(bitstring.c_str());
 
             return bitstring;
         }
@@ -158,7 +151,6 @@ class Hypercube {
             std::mt19937 rng(dev());
             std::uniform_int_distribution<std::mt19937::result_type> dist(0,1); // uniform distribution in range [0, 1]
             short bit = dist(rng);  // generate 0 or 1
-            assert(bit == 0 || bit == 1);
             map.insert( std::make_pair(hval, bit) ); // insert the pair {hval : f(hval)} into the hash table
 
             return bit;
@@ -180,6 +172,7 @@ class Hypercube {
             uint16_t M = max_candidates;
             uint16_t probes = max_probes;
             uint8_t  flag = 1;
+            bool     same_keys = false;
 
             /* project query to a cube vertex / hash table bucket */
             const std::string key = cube_projection_test(query);
@@ -188,26 +181,67 @@ class Hypercube {
 
             while (M > 0) {
                 if (probes > 0) {
-                    //std::cout << "Query's bitstring is: " << key1 << std::endl; // key
                     auto range = hash_table.equal_range(key1); 
                     for (auto i = range.first; (i != range.second) && (M > 0); ++i, --M) {
-                        //std::cout << M << std::endl; 
-                        
-                        value = i->second; // SEG FAULT OCCURS HERE
-
-                        //std::cout << value.second << std::endl; // training index
+                        same_keys = true;
+                        value = i->second; // value = (vector<uint8_t>, size_t)
                         dist = manhattan_distance_rd<T>(query, value.first);
-                        //std::cout << dist << std::endl; // distance
-                        candidates.push_back( std::make_pair(dist, value.second) );
-                        --probes;
+                        candidates.emplace_back(dist, value.second);
                     }
+
+                    /* if no points with the same keys were found 
+                     * don't decrement number of probes; otherwise might
+                     * not find nearest neighbors at all
+                     */
+                    if (same_keys) --probes;
                     key1 = gen_similar_vertex(key, cnt, flag);
+                    same_keys = false;
                 }
                 else
                     break;
             }
 
             std::sort(candidates.begin(), candidates.end(), compare);
+            if(candidates.size() > N) candidates.resize(N); // keep only the N best candidates
+
+            return candidates;
+        }
+
+
+        std::vector<size_t> range_search(const std::vector<T> &query)
+        {
+            /* vector to store query's nearest neighbors; only store the training index this time */
+            std::vector<size_t> candidates;
+            uint32_t dist;
+            uint32_t cnt = projection_dimension;
+            uint16_t M = max_candidates;
+            uint16_t probes = max_probes;
+            uint8_t  flag = 1;
+            bool     same_keys = false;
+
+            /* project query to a cube vertex / hash table bucket */
+            const std::string key = cube_projection_test(query);
+            std::string key1 = key;
+            std::pair<std::vector<T>, size_t> value;
+
+            while (M > 0) {
+                if (probes > 0) {
+                    auto range = hash_table.equal_range(key1); 
+                    for (auto i = range.first; (i != range.second) && (M > 0); ++i, --M) {
+                        same_keys = true;
+                        value = i->second;
+                        dist = manhattan_distance_rd<T>(query, value.first);
+                        if (dist < C * R) {     // average distance is 20 000 - 35 000
+                            candidates.emplace_back(value.second);
+                        }
+                    }
+                    if (same_keys) --probes;
+                    key1 = gen_similar_vertex(key, cnt, flag);
+                    same_keys = false;
+                }
+                else
+                    break;
+            }
 
             return candidates;
         }
