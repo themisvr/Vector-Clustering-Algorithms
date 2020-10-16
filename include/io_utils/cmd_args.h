@@ -122,7 +122,7 @@ inline Lsh_args::Lsh_args(const string &ipath, string &qpath, string &opath, uin
 {}
 
 inline Lsh_args::Lsh_args(const string &ipath, string &qpath, string &opath)
-    : Prog_args(ipath, qpath, opath, 1, 1.0), hash_functions_num(4), hash_tables_num(5)
+    : Prog_args(ipath, qpath, opath, 1, 10000.0), hash_functions_num(4), hash_tables_num(5)
 
 {}
 

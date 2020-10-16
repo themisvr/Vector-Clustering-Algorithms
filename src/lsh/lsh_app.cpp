@@ -61,7 +61,7 @@ static void start_lsh_simulation(Lsh_args *args) {
 
         /* Exact NN calculation */
         start = std::chrono::high_resolution_clock::now();
-        enn_distances[i] = exact_nn<uint8_t> (queries, queries[i], args->get_nearest_neighbors_num());
+        enn_distances[i] = exact_nn<uint8_t> (dataset, queries[i], args->get_nearest_neighbors_num());
         stop = std::chrono::high_resolution_clock::now();
         enn_query_times[i] = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
 
