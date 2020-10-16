@@ -11,7 +11,7 @@
 
 
 template<typename T>
-std::vector<uint32_t> Exact_nn(const std::vector<std::vector<T>> &dataset, \
+std::vector<uint32_t> exact_nn(const std::vector<std::vector<T>> &dataset, \
                                                   const std::vector<T> &query, const uint16_t nns) {
 
     std::vector<uint32_t> closest_distances; 

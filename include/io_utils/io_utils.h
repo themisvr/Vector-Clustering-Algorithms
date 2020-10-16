@@ -4,6 +4,8 @@
 
 #include "cmd_args.h"
 
+string user_prompt_exit(const string &);
+
 string user_prompt_file(const string&);
 
 uint16_t user_prompt_search_arg(const string&);
@@ -22,15 +24,13 @@ void lsh_usage(const char *);
 
 void cube_usage(const char *);
 
-void user_interface(Lsh_args **);
-
 void user_interface(Cube_args **);
 
 void user_interface(Cube_args *);
 
-void write_hypercube_output(const string &, const uint16_t, const size_t, const vector<vector<pair<uint32_t, size_t>>> &, \
+void write_output(const string &, const uint16_t, const size_t, const vector<vector<pair<uint32_t, size_t>>> &, \
                             const vector<chrono::seconds> &, const vector<vector<uint32_t>> &, const vector<chrono::seconds> &, \
-                            const vector<vector<size_t>> &);
+                            const vector<vector<size_t>> &, const string &);
 
 
 template <typename T>

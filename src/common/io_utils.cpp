@@ -40,6 +40,17 @@ void cube_usage(const char *exec) {
 }
 
 
+string user_prompt_exit(const string &message) {
+
+    string exit;
+
+    cout << message ;
+    cin >> exit;
+
+    return exit;
+}
+
+
 string user_prompt_file(const string &message) {
     std::string file_path;
 
@@ -242,20 +253,6 @@ void cube_parse_args(int argc, char * const argv[], Cube_args **args) {
 }
 
 
-void user_interface(Lsh_args **args) {
-
-    std::string input_file, query_file, output_file; 
-
-    if (*args == nullptr) {
-        input_file = user_prompt_file("Enter path to input file: ");
-        query_file = user_prompt_file("Enter path to query file: ");
-        output_file = user_prompt_file("Enter path to output file: ");
-
-        *args = new Lsh_args(input_file, query_file, output_file);
-    }
-}
-
-
 void user_interface(Cube_args **args) {
 
     std::string input_file, query_file, output_file; 
@@ -304,12 +301,12 @@ uint32_t bigend_to_littlend(uint32_t big_endian) {
 }
 
 
-void write_hypercube_output(const string &out, const uint16_t nns, const size_t size, \
+void write_output(const string &out, const uint16_t nns, const size_t size, \
                             const vector<vector<pair<uint32_t, size_t>>> &ann_res, \
                             const vector<chrono::seconds> &ann_query_times, \
                             const vector<vector<uint32_t>> &enn_dists, const vector<chrono::seconds> &enn_query_times, \
-                            const vector<vector<size_t>> &range_res)
-{
+                            const vector<vector<size_t>> &range_res, const string &structure) {
+    
     vector<pair<uint32_t, size_t>> approx_nearest;
     vector<uint32_t> exact_nearest;
     ofstream ofile;
@@ -321,10 +318,10 @@ void write_hypercube_output(const string &out, const uint16_t nns, const size_t 
         ofile << "Query: " << i << endl;
         for (size_t j = 0; j != nns; ++j) {
             ofile << "Nearest neighbor-" << j + 1 << ": " << approx_nearest[j].second << endl;
-            ofile << "distanceHypercube: " << approx_nearest[j].first << endl;
+            ofile << "distance" << structure << ": " << approx_nearest[j].first << endl;
             ofile << "distanceTrue: " << exact_nearest[j] << endl;
         }
-        ofile << "tHypercube: " << ann_query_times[i].count() << endl;
+        ofile << "t" << structure << ": " << ann_query_times[i].count() << endl;
         ofile << "tTrue: " << enn_query_times[i].count() << endl;
 
         ofile << "R-near neighbors:" << endl;

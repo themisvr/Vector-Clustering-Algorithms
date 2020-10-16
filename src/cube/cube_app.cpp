@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 
         /* Exact NN calculation */
         start = std::chrono::high_resolution_clock::now();
-        enn_distances[i] = Exact_nn<uint8_t> (training_samples, test_samples[i], args->get_nearest_neighbors_num());
+        enn_distances[i] = exact_nn<uint8_t> (training_samples, test_samples[i], args->get_nearest_neighbors_num());
         stop = std::chrono::high_resolution_clock::now();
         enn_query_times[i] = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
 
@@ -93,11 +93,11 @@ int main(int argc, char *argv[])
         stop = std::chrono::high_resolution_clock::now();
     }
 
-    write_hypercube_output(args->get_output_file_path(), args->get_nearest_neighbors_num(), test_samples.size(), \
-                            ann_results, ann_query_times, enn_distances, enn_query_times, range_results);
+    write_output(args->get_output_file_path(), args->get_nearest_neighbors_num(), test_samples.size(), \
+                            ann_results, ann_query_times, enn_distances, enn_query_times, range_results, "Hypercube");
 
 
     delete args;
 
-    exit(EXIT_SUCCESS);
+    return EXIT_SUCCESS;
 }
