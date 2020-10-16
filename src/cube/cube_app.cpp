@@ -34,8 +34,8 @@ int main(int argc, char *argv[])
     cout << "Done!" << endl;
 
 
-    cout << "\nComputing mean dataset distance..." << endl;
-    double r = 1077.6875; 
+    cout << "\nComputing mean nearest neighbor distance..." << endl;
+    double r = mean_nn_distance<uint8_t> (training_samples); //1077.6875; 
     cout << "Done!" << endl;
 
 
@@ -70,8 +70,8 @@ int main(int argc, char *argv[])
                                                         vector<uint32_t> (args->get_nearest_neighbors_num()));
 
     vector<vector<size_t>>                 range_results(test_samples.size());
-    vector<chrono::duration<int>>          ann_query_times(test_samples.size());
-    vector<chrono::duration<int>>          enn_query_times(test_samples.size());
+    vector<chrono::seconds>                ann_query_times(test_samples.size());
+    vector<chrono::seconds>                enn_query_times(test_samples.size());
 
     for (size_t i = 0; i != test_samples.size(); ++i) {
 

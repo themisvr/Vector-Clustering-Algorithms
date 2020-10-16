@@ -29,14 +29,14 @@ void user_interface(Cube_args **);
 void user_interface(Cube_args *);
 
 void write_hypercube_output(const string &, const uint16_t, const size_t, const vector<vector<pair<uint32_t, size_t>>> &, \
-                            const vector<chrono::duration<int>> &, const vector<vector<uint32_t>> &, const vector<chrono::duration<int>> &, \
+                            const vector<chrono::seconds> &, const vector<vector<uint32_t>> &, const vector<chrono::seconds> &, \
                             const vector<vector<size_t>> &);
 
 
 template <typename T>
-vector<vector<T>> read_file(const string& datapath) {
+vector<vector<T>> read_file(const string& filepath) {
     ifstream data;
-    data.open(datapath, ios::in | ios::binary);
+    data.open(filepath, ios::in | ios::binary);
 
     if(data) {
         uint32_t magic_num, images_number, rows, cols;
@@ -69,11 +69,13 @@ vector<vector<T>> read_file(const string& datapath) {
                 *j = temp;
             }
 
+        data.close();
+
         return pixels;
                 
     }
     else {
-        std::cerr << "Could not open the file containing the dataset!" << std::endl;
+        std::cerr << "Could not open the file!" << std::endl;
         exit(EXIT_FAILURE);
     }
 }

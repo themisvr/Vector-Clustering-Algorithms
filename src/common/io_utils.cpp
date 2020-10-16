@@ -306,8 +306,8 @@ uint32_t bigend_to_littlend(uint32_t big_endian) {
 
 void write_hypercube_output(const string &out, const uint16_t nns, const size_t size, \
                             const vector<vector<pair<uint32_t, size_t>>> &ann_res, \
-                            const vector<chrono::duration<int>> &ann_query_times, \
-                            const vector<vector<uint32_t>> &enn_dists, const vector<chrono::duration<int>> &enn_query_times, \
+                            const vector<chrono::seconds> &ann_query_times, \
+                            const vector<vector<uint32_t>> &enn_dists, const vector<chrono::seconds> &enn_query_times, \
                             const vector<vector<size_t>> &range_res)
 {
     vector<pair<uint32_t, size_t>> approx_nearest;

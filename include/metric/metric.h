@@ -5,6 +5,7 @@
 #include <vector>
 #include <cassert>
 #include <iostream>
+#include <limits>
 
 template <typename T>
 inline uint32_t manhattan_distance_rd(const std::vector<T> &dataset_vector, const std::vector<T> &query_vector) {
@@ -22,4 +23,27 @@ inline uint32_t manhattan_distance_rd(const std::vector<T> &dataset_vector, cons
 };
 
 
+template <typename T>
+inline uint32_t mean_nn_distance(const std::vector<std::vector<T>> &dataset) {
+    
+    uint32_t dist{};
+    uint32_t sum{};
+    uint32_t best_dist = std::numeric_limits<uint32_t>::max();
+
+    for (size_t i = 0; i != dataset.size() / 1000; ++i) {
+
+        for (size_t j = 0; j != dataset.size() / 1000; ++j) {
+
+            if (i == j) continue;
+
+            dist = manhattan_distance_rd<T>(dataset[i], dataset[j]);
+            if (dist < best_dist) best_dist = dist;
+        }
+        sum += best_dist;
+        best_dist = std::numeric_limits<uint32_t>::max();
+
+    }
+
+    return ( sum / ( dataset.size() / 1000) );
+};
 #endif // METRIC_H
