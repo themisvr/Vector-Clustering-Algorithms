@@ -70,7 +70,6 @@ template<typename T>
 std::map<std::vector<T>, std::vector<size_t>> lsh_reverse_assignment(   const std::vector<std::vector<T>> &dataset, LSH<T> *lsh,
                                                                         const std::vector<std::pair<std::vector<T>, size_t>> &centroids) {
 
-    size_t assigned = 0;
     size_t n_centroids, n_vectors;
     double radius;
     uint32_t dist{}, min_dist{};
@@ -114,8 +113,6 @@ std::map<std::vector<T>, std::vector<size_t>> lsh_reverse_assignment(   const st
                     assign_vector_to_centroids(clusters, centroids, i, vector_index);
                     /* mark the vector as "assigned" to a cluster */
                     assigned_vectors[vector_index] = i;
-                    /* increase number of assigned vectors */
-                    ++assigned;
                 }
                 /*  
                     In this case, the vector has been assigned to another centroid before,
@@ -130,8 +127,6 @@ std::map<std::vector<T>, std::vector<size_t>> lsh_reverse_assignment(   const st
                         (it->second).emplace_back(vector_index);
                         /* mark the vector as "assigned" to a cluster */
                         assigned_vectors[vector_index] = i;
-                        /* increase number of assigned vectors */
-                        ++assigned;
                     }
                 }
             }       
@@ -153,7 +148,6 @@ std::map<std::vector<T>, std::vector<size_t>> lsh_reverse_assignment(   const st
             }
             assign_vector_to_centroid(clusters, centroids, best_centroid, i);
             assigned_vectors[i] = best_centroid;
-            ++assigned;
         }
     }
     return clusters;
