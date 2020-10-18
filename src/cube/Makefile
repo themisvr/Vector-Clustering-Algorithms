@@ -5,6 +5,7 @@ OBJDIR := ../../obj
 CC := g++
 CFLAGS := -std=c++11 -g3 -Wall -Wextra -I$(HEADERDIR)
 
+#-Ofast
 
 BINARY := cube
 
