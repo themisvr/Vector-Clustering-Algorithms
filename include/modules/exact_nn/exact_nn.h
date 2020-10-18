@@ -27,4 +27,18 @@ std::vector<uint32_t> exact_nn(const std::vector<std::vector<T>> &dataset, \
 }
 
 
+template<typename T>
+uint32_t exact_nn(const std::vector<std::pair<std::vector<T>, size_t>> &centroids, const std::vector<T> &point) {
+
+    uint32_t min_dist = std::numeric_limits<uint32_t>::max();
+    uint32_t dist = 0;
+
+    for (size_t i = 0; i != centroids.size(); ++i) {
+        dist = manhattan_distance_rd<T> (centroids[i].first, point);
+        if (dist < min_dist) min_dist = dist;
+    }
+
+    return min_dist;
+}
+
 #endif // EXACT_NN
