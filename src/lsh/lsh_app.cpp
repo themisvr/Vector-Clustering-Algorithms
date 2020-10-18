@@ -11,6 +11,7 @@
 
 #define C 1.2
 
+using high_resolution_clock = std::chrono::steady_clock;
 
 static void start_lsh_simulation(Lsh_args *args) {
 
@@ -31,7 +32,7 @@ static void start_lsh_simulation(Lsh_args *args) {
 
     std::cout << "\nCreating LSH structure..." << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
-    LSH<uint8_t> lsh = LSH<uint8_t> (L, N, K, R, r, dataset);
+    LSH<uint8_t> lsh = LSH<uint8_t> (L, N, K, r, dataset);
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start); 
     std::cout << "LSH structure creation lasted " << duration.count() << " seconds" << std::endl;
@@ -48,8 +49,8 @@ static void start_lsh_simulation(Lsh_args *args) {
                                                     std::vector<uint32_t> (args->get_nearest_neighbors_num()));
 
     std::vector<std::vector<size_t>>            range_results(queries.size());
-    std::vector<chrono::seconds>                ann_query_times(queries.size());
-    std::vector<chrono::seconds>                enn_query_times(queries.size());
+    std::vector<chrono::milliseconds>           ann_query_times(queries.size());
+    std::vector<chrono::milliseconds>           enn_query_times(queries.size());
 
     for (size_t i = 0; i != queries.size(); ++i) {
 
@@ -57,17 +58,17 @@ static void start_lsh_simulation(Lsh_args *args) {
         start = std::chrono::high_resolution_clock::now();
         ann_results[i] = lsh.approximate_k_nn(queries[i]);
         stop = std::chrono::high_resolution_clock::now();
-        ann_query_times[i] = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+        ann_query_times[i] = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
         /* Exact NN calculation */
         start = std::chrono::high_resolution_clock::now();
         enn_distances[i] = exact_nn<uint8_t> (dataset, queries[i], args->get_nearest_neighbors_num());
         stop = std::chrono::high_resolution_clock::now();
-        enn_query_times[i] = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+        enn_query_times[i] = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
         /* Range Search */
         start = std::chrono::high_resolution_clock::now();
-        range_results[i] = lsh.approximate_range_search(C, queries[i]);
+        range_results[i] = lsh.approximate_range_search(C, R, queries[i]);
         stop = std::chrono::high_resolution_clock::now();
     }
 

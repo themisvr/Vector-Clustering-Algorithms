@@ -10,6 +10,7 @@
 
 using namespace std;
 
+using high_resolution_clock = std::chrono::steady_clock;
 
 int main(int argc, char *argv[])
 {
@@ -70,8 +71,8 @@ int main(int argc, char *argv[])
                                                         vector<uint32_t> (args->get_nearest_neighbors_num()));
 
     vector<vector<size_t>>                 range_results(test_samples.size());
-    vector<chrono::seconds>                ann_query_times(test_samples.size());
-    vector<chrono::seconds>                enn_query_times(test_samples.size());
+    vector<chrono::milliseconds>                ann_query_times(test_samples.size());
+    vector<chrono::milliseconds>                enn_query_times(test_samples.size());
 
     for (size_t i = 0; i != test_samples.size(); ++i) {
 
@@ -79,13 +80,13 @@ int main(int argc, char *argv[])
         start = std::chrono::high_resolution_clock::now();
         ann_results[i] = cube.approximate_nn(test_samples[i]); 
         stop = std::chrono::high_resolution_clock::now();
-        ann_query_times[i] = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+        ann_query_times[i] = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
         /* Exact NN calculation */
         start = std::chrono::high_resolution_clock::now();
         enn_distances[i] = exact_nn<uint8_t> (training_samples, test_samples[i], args->get_nearest_neighbors_num());
         stop = std::chrono::high_resolution_clock::now();
-        enn_query_times[i] = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+        enn_query_times[i] = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
         /* Range Search */
         start = std::chrono::high_resolution_clock::now();

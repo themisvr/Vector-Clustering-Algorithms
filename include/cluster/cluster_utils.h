@@ -15,7 +15,7 @@ typedef struct cluster_args {
 
 void cluster_usage(const char *exec);
 
-void parse_cluster_args(int argc, char **argv, cluster_args *args);
+void parse_cluster_args(int argc, char * const argv[], cluster_args *args);
 
 
 #endif // CLUSTER_UTILS_H
