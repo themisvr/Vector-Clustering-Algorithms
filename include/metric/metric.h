@@ -6,6 +6,7 @@
 #include <cassert>
 #include <iostream>
 #include <limits>
+#include <map>
 
 
 template <typename T>
