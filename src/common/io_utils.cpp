@@ -83,7 +83,7 @@ float user_prompt_rad(const string &message)
 }
 
 
-inline bool file_exists(const char *filepath) {
+bool file_exists(const char *filepath) {
     struct stat buf;
 
     return ( stat(filepath, &buf) == 0 );

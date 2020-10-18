@@ -28,8 +28,6 @@ class LSH {
         const uint32_t K;
         /* Vector dimension */
         uint32_t D;
-        /* Radius for Range Search */
-        const double R;
         /* Size of each hash table */
         size_t ht_size;
         /* Number of vectors given in the dataset */
@@ -58,8 +56,8 @@ class LSH {
     public:
 
         LSH(    const uint16_t &L, const uint16_t &N, \
-                const uint32_t &K, const double &R, const double &meandist, \
-                std::vector<std::vector<T>> &input) : L(L), N(N), K(K), R(R), dataset(input) {
+                const uint32_t &K, const double &meandist, \
+                std::vector<std::vector<T>> &input) : L(L), N(N), K(K), dataset(input) {
             
             D = dataset[0].size();
             n_vectors = dataset.size();
@@ -131,7 +129,7 @@ class LSH {
         }
 
 
-        std::vector<size_t> approximate_range_search(const double &c, const std::vector<T> &query) {
+        std::vector<size_t> approximate_range_search(const double &c, const double &r, const std::vector<T> &query) {
 
             std::vector<size_t> result;
             uint64_t af_value{};
@@ -148,7 +146,7 @@ class LSH {
                 for (auto item = it.first; item != it.second; ++item) {
                     items_checked++;
                     bucket_item = item->second;
-                    if (manhattan_distance_rd<T>(bucket_item.first, query) < (c * R)) {
+                    if (manhattan_distance_rd<T>(bucket_item.first, query) < (c * r)) {
                         result.emplace_back(bucket_item.second);
                     }
                     // if (items_checked > 20 * L) { return result; }

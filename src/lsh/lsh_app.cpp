@@ -31,7 +31,7 @@ static void start_lsh_simulation(Lsh_args *args) {
 
     std::cout << "\nCreating LSH structure..." << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
-    LSH<uint8_t> lsh = LSH<uint8_t> (L, N, K, R, r, dataset);
+    LSH<uint8_t> lsh = LSH<uint8_t> (L, N, K, r, dataset);
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start); 
     std::cout << "LSH structure creation lasted " << duration.count() << " seconds" << std::endl;
@@ -67,7 +67,7 @@ static void start_lsh_simulation(Lsh_args *args) {
 
         /* Range Search */
         start = std::chrono::high_resolution_clock::now();
-        range_results[i] = lsh.approximate_range_search(C, queries[i]);
+        range_results[i] = lsh.approximate_range_search(C, R, queries[i]);
         stop = std::chrono::high_resolution_clock::now();
     }
 

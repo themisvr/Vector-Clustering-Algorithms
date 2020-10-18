@@ -4,10 +4,11 @@
 
 #include "../../include/io_utils/io_utils.h"
 #include "../../include/cluster/cluster_utils.h"
+#include "../../include/cluster/assignment.h"
 
 
 void cluster_usage(const char *exec) {
-    fprintf(stderr, "\nUsage: %s \n"
+    fprintf(stderr, "\nUsage: %s \n\n"
                         "[+] -i [input_file]\n"
                         "[+] -c [configuration_file]\n"
                         "[+] -o [output_file]\n"
@@ -18,9 +19,10 @@ void cluster_usage(const char *exec) {
 }
 
 
-void parse_cluster_args(int argc, char **argv, cluster_args *args) {
+void parse_cluster_args(int argc, char * const argv[], cluster_args *args) {
     
     int opt;
+    std::string input, output, config;
 
     while ((opt = getopt(argc, argv, "i:c:o:m:")) != -1) {
         switch(opt) {

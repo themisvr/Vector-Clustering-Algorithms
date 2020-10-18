@@ -14,7 +14,7 @@ float user_prompt_rad(const string&);
 
 uint32_t bigend_to_littlend(uint32_t);
 
-inline bool file_exists(const char *);
+bool file_exists(const char *);
 
 void lsh_parse_args(int, char * const [], Lsh_args **);
 
