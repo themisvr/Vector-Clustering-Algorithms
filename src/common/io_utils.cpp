@@ -303,8 +303,8 @@ uint32_t bigend_to_littlend(uint32_t big_endian) {
 
 void write_output(const string &out, const uint16_t nns, const size_t size, \
                             const vector<vector<pair<uint32_t, size_t>>> &ann_res, \
-                            const vector<chrono::seconds> &ann_query_times, \
-                            const vector<vector<uint32_t>> &enn_dists, const vector<chrono::seconds> &enn_query_times, \
+                            const vector<chrono::milliseconds> &ann_query_times, \
+                            const vector<vector<uint32_t>> &enn_dists, const vector<chrono::milliseconds> &enn_query_times, \
                             const vector<vector<size_t>> &range_res, const string &structure) {
     
     vector<pair<uint32_t, size_t>> approx_nearest;
