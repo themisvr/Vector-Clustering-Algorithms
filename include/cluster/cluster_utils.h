@@ -2,6 +2,8 @@
 #define CLUSTER_UTILS_H
 
 #include <string>
+#include <vector>
+#include <utility>
 
 
 typedef struct cluster_args {
@@ -17,5 +19,10 @@ void cluster_usage(const char *exec);
 
 void parse_cluster_args(int argc, char * const argv[], cluster_args *args);
 
+void normalize_distances(std::vector<float> &);
+
+size_t binary_search(const std::vector<std::pair<float, size_t>> &, float);
+
+float find_max(const std::vector<float> &);
 
 #endif // CLUSTER_UTILS_H

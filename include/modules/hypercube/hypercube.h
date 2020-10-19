@@ -5,8 +5,8 @@
 #include <vector>
 #include <utility>
 #include <algorithm>
-#include <assert.h>
-#include <stdlib.h>
+#include <cassert>
+#include <cstdlib>
 
 #include "../../hash_function/hash_function.h"
 #include "../../metric/metric.h"
@@ -14,6 +14,7 @@
 #define MULTIPLE1 4
 #define MULTIPLE2 10
 #define C         1.1
+
 
 template <typename T>
 class Hypercube {
@@ -247,16 +248,56 @@ class Hypercube {
         }
 
 
-        std::string gen_similar_vertex(const std::string &key, uint32_t &counter, uint8_t &flag)
+        std::vector<size_t> range_search(const std::vector<T> &query, double r)
+        {
+            /* vector to store query's nearest neighbors; only store the training index this time */
+            std::vector<size_t> candidates;
+            uint32_t dist;
+            uint32_t cnt = projection_dimension;
+            uint16_t M = max_candidates;
+            uint16_t probes = max_probes;
+            uint8_t  bits = 1;
+            bool     same_keys = false;
+
+            /* project query to a cube vertex / hash table bucket */
+            const std::string key = cube_projection_test(query);
+            std::string key1 = key;
+            std::pair<std::vector<T>, size_t> value;
+
+            while (M > 0) {
+                if (probes > 0) {
+                    auto range = hash_table.equal_range(key1); 
+                    for (auto i = range.first; (i != range.second) && (M > 0); ++i, --M) {
+                        same_keys = true;
+                        value = i->second;
+                        dist = manhattan_distance_rd<T>(query, value.first);
+                        if (dist < C * r) {     // average distance is 20 000 - 35 000
+                            candidates.emplace_back(value.second);
+                        }
+                    }
+                    if (same_keys) --probes;
+                    key1 = gen_similar_vertex(key, cnt, bits);
+                    if (bits > projection_dimension) break;
+                    same_keys = false;
+                }
+                else
+                    break;
+            }
+
+            return candidates;
+        }
+
+
+        std::string gen_similar_vertex(const std::string &key, uint32_t &counter, uint8_t &bits)
         {
             std::string bitstring = key;
-            for (size_t i = 0; i < flag && counter != 0; ++i, --counter) {
+            for (size_t i = 0; i < bits && counter != 0; ++i, --counter) {
                 bitstring[counter - 1] == '0' ? bitstring[counter - 1] = '1' : bitstring[counter - 1] = '0';
             }
 
             if(counter == 0) {
                 counter = projection_dimension; // reset bit counter
-                ++flag;
+                ++bits;
             }
 
             return bitstring;
