@@ -44,7 +44,7 @@ int main(int argc, char *argv[])  {
     std::vector<std::vector<uint8_t>> train_data = read_file<uint8_t> ("../../datasets/train-images-idx3-ubyte");
 
 
-    /* based on the assignment method specified by the user, create the appropriate object */
+    /* based on the assignment method specified by the user, use the appropriate constructor for Cluster */
     if (args.method == "Classic") {
         //cluster = new Cluster<uint8_t> (clusters_num);
     }
@@ -59,7 +59,12 @@ int main(int argc, char *argv[])  {
         cluster = new Cluster<uint8_t> (10, 14, 10, 2, 0, 0.0, train_data.size(), train_data[0].size(), r, train_data);
     }
 
+    auto start = std::chrono::high_resolution_clock::now();
     cluster->k_medians_plus_plus(train_data, args.method);
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+
+    cluster->write_cluster_output("output", "Hypercube", true, duration);
 
     delete cluster;
 
