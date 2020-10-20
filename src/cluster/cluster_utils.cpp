@@ -116,3 +116,20 @@ void normalize_distances(std::vector<float> &min_distances)
     for (float &d : min_distances)
         d /= dmax;
 }
+
+
+bool in(const std::vector<size_t> &centroid_indexes, size_t index)
+{
+          for (size_t j = 0; j != centroid_indexes.size(); ++j) {
+                 if (centroid_indexes[j] == index)
+                     return true;
+             }
+ 
+             return false;
+}
+
+
+bool compare(const std::pair<float, size_t> &p1, const std::pair<float, size_t> &p2) 
+{
+    return p1.first < p2.first;
+}

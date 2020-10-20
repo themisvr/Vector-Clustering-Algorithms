@@ -25,4 +25,8 @@ size_t binary_search(const std::vector<std::pair<float, size_t>> &, float);
 
 float find_max(const std::vector<float> &);
 
+bool compare(const std::pair<float, size_t> &, const std::pair<float, size_t> &);
+
+bool in(const std::vector<size_t> &, size_t);
+
 #endif // CLUSTER_UTILS_H
