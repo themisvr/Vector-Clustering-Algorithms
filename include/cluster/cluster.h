@@ -1,14 +1,16 @@
 #ifndef CLUSTER_H
 #define CLUSTER_H
 
-#include <algorithm>
+#include <algorithm> /* for sort() */
 #include <vector>
 #include <string>
-#include <random>
+#include <random>   /* for rand() */
+#include <chrono>
+#include <fstream>
 #include <cstdlib>
 #include <cstdint>
 #include <ctime>
-#include <cmath>
+#include <cmath>    /* for ceil() */
 #include <cassert>
 
 #include "../modules/lsh/lsh.h"
@@ -16,7 +18,7 @@
 #include "../modules/exact_nn/exact_nn.h"
 #include "../cluster/cluster_utils.h"
 
-#define ITERATIONS 100
+#define ITERATIONS 25
 
 
 template <typename T>
@@ -30,7 +32,7 @@ class Cluster {
         /* 
          * clusters is a vector, where each element is another 
          * vector storing the indexes of the training set points 
-         * that are assigned to cluster with index i
+         * that are assigned to that cluster 
          * i.e clusters[i] is a vector storing the indexes of all
          *     the points assigned to cluster with index i
          *
@@ -44,7 +46,7 @@ class Cluster {
          */
         std::vector<std::vector<T>>       centroids;
 
-        /* for the 2 different assignment methods */
+        /* for the 2 different reverse assignment methods */
         LSH<T>                            *lshptr;
         Hypercube<T>                      *cubeptr;
 
@@ -150,46 +152,26 @@ class Cluster {
         }
 
 
-        //void lloyds_assignment(const std::vector<std::vector<T>> &train_set)
-	//{
-//template<typename T>
-//std::map<std::vector<T>, std::vector<size_t>> lloyds_assignment(   const std::vector<std::vector<T>> &dataset, 
-//                                    const std::vector<std::pair<std::vector<T>, size_t>> &centroids) {
-//
-//    /*  each cluster has a centroid and its data assigned to it
-//        our cluster representation is a map that keys are centroids (unique)
-//        and values are vectors assigned to their centroid
-//    */
-//    std::map<std::vector<T>, std::vector<size_t>> clusters;
-//
-//    uint32_t min_dist{};
-//    uint32_t dist{};
-//
-//    /* for each point compute l1 metric distance to every centroid */
-//    for (size_t i = 0; i != dataset.size(); ++i)  {
-//        min_dist = std::numeric_limits<uint32_t>::max();
-//        std::vector<T> best_centroid{};
-//        for (size_t j = 0; j != centroids.size(); ++j) {
-//            dist = manhattan_distance_rd<T> (dataset[i], centroids[j].first);
-//            if (dist < min_dist) {
-//                min_dist = dist;
-//                best_centroid = centroids[j].first;
-//            }
-//        }
-//        auto it = clusters.find(best_centroid);
-//        if (it == clusters.end()) {
-//            std::vector<size_t> vector_ids;
-//            vector_ids.emplace_back(i);
-//            clusters.insert(std::make_pair(best_centroid, vector_ids));
-//        }
-//        else {
-//            (it->second).emplace_back(i);
-//        }
-//    }
-//
-//    return clusters;
-//}
-        //}
+        void lloyds_assignment(const std::vector<std::vector<T>> &train_set)
+        {
+            uint32_t min_dist{};
+            uint32_t dist{};
+
+            /* for each point compute l1 metric distance to every centroid */
+            for (size_t i = 0; i != train_set.size(); ++i)  {
+                min_dist = std::numeric_limits<uint32_t>::max();
+                size_t best_centroid{};
+                for (size_t j = 0; j != centroids.size(); ++j) {
+                    dist = manhattan_distance_rd<T> (train_set[i], centroids[j]);
+                    if (dist < min_dist) {
+                        min_dist = dist;
+                        best_centroid = j;
+                    }
+                }
+                /* assign i-th training set point to cluster (center) with which it has the shortest distance */
+                clusters[best_centroid].emplace_back(i);
+            }
+        }
 
 
         //void lsh_reverse_assignment(const std::vector<std::vector<T>> &train_set)
@@ -311,7 +293,7 @@ class Cluster {
             /* start with min(dist between centers)/2 */
             double radius = (double) (min_dist / 2);
         
-            size_t new_assigned   = train_set.size();
+            size_t new_assigned   = train_set.size();   // might use new_assigned as a terminating condition for while() loop
             size_t total_assigned = 0;
             std::vector<size_t> range_search_nns;
         
@@ -429,34 +411,83 @@ class Cluster {
             init_plus_plus(train_set);
             
             /* repeat steps (1) and (2) until change in cluster assignments is "small" */
-            for (size_t i = 0; i != ITERATIONS; ++i) {
-
-                std::cout << i << std::endl;
+            for (size_t i = 0; i != ITERATIONS; ++i) {  // might try different terminating condition
 
                 // step 1: assignment
-                //if (method == "Lloyds")
-                //    lloyds_assignment(train_set);
+                if (method == "Lloyds")
+                    lloyds_assignment(train_set);
                 //else if (method == "LSH")
                 //    lsh_reverse_assignment(train_set);
-                //else
+                else
                     hypercube_reverse_assignment(train_set);
 
                 // step 2: median update
                 median_update(train_set);              
 
                 /* 
-                 * after the centroids are updated, each vector in clusters should be cleared
+                 * after the centroids are updated, each vector in clusters should be cleared;
                  * in the next iteration the points assigned to each cluster will be different
+                 * if this the last iteration though, data will be written to output file!
                  *
                  */
-                for (auto &cluster : clusters) {
-                    cluster.clear();
+                if (i != ITERATIONS - 1) {
+                    for (auto &cluster : clusters) {
+                        cluster.clear();
+                    }
+                }
+            }
+        }
+
+
+        void write_cluster_output(const std::string &out, const std::string &method, \
+                                    bool complete, std::chrono::seconds cluster_time)
+        {
+            std::ofstream ofile;
+            ofile.open(out, std::ios::out);
+
+            if (ofile) {
+                ofile << "Algorithm: ";
+                if (method == "Classic") {
+                    ofile << "Lloyds" << std::endl;
+                }
+                else if (method == "LSH") {
+                    ofile << "Range Search LSH" << std::endl;
+                }
+                else {
+                    ofile << "Range Search Hypercube" << std::endl;
                 }
 
+                for (size_t i = 0; i != clusters.size(); ++i) {
+                    ofile << "CLUSTER-" << i + 1 << " {size: " << clusters[i].size() << ", centroid: [";
+                    for (auto &c : centroids[i]) {
+                        ofile << +c << " "; 
+                    }
+                    ofile << "]}" << std::endl;
+                }
+                ofile << "clustering_time: " << std::chrono::duration<double>(cluster_time).count() << std::endl;
+                ofile << "Silhouette: [";
+                /* ... */
+                ofile << "]" << std::endl;
+
+                if (complete) {
+                    for (size_t i = 0; i != clusters.size(); ++i) {
+                        ofile << "CLUSTER-" << i + 1 << " {[";
+                        for (auto &c : centroids[i]) {
+                            ofile << +c << " " ; 
+                        }
+                        ofile << "],";
+                        for (auto &i : clusters[i]) {
+                            ofile << " " << i;
+                        }
+                        ofile << "}" << std::endl;
+                    }
+                }
+            }
+            else {
+                std::cerr << "\nCould not open output file!\n" << std::endl;
             }
         }
 
 };
-
 
 #endif
