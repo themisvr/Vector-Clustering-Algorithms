@@ -51,7 +51,7 @@ class Hypercube {
     public:
 
         Hypercube (uint32_t projdim, uint16_t cands, uint16_t probes, uint16_t nns, float r, \
-                    size_t trn, uint32_t d, double meandist, std::vector<std::vector<T>> &samples) \
+                    size_t trn, uint32_t d, double meandist, const std::vector<std::vector<T>> &samples) \
                     : projection_dimension(projdim), max_candidates(cands), max_probes(probes), \
                       N(nns), R(r), train_samples(trn), D(d), win(MULTIPLE1 * meandist) //win(MULTIPLE2 * R)
         {

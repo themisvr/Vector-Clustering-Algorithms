@@ -157,16 +157,16 @@ std::map<std::vector<T>, std::vector<size_t>> lloyds_assignment(   const std::ve
 
 
 template<typename T>
-std::vector<std::vector<size_t>> hypercube_reverse_assignment( const std::vector<std::vector<T>> &dataset, \
+void hypercube_reverse_assignment( const std::vector<std::vector<T>> &dataset, \
                                                                 Hypercube<T> &cube, \
-                                                                const std::vector<std::pair<std::vector<T>, size_t>> &centroids) 
+                                                                const std::vector<std::pair<std::vector<T>, size_t>> &centroids, \
+                                                                std::vector<std::vector<size_t>> &clusters) 
 {
 
     /* the i-th element of the vector clusters is a vector storing the indexes 
      * of the training set points which are assigned to the i-th cluster
      * i.e clusters[0] is a vector storing the indexes of the cluster with index 0
      */
-    std::vector<std::vector<size_t>> clusters(centroids.size());
     std::map<int, int> assigned_vectors;
     size_t n_vectors = dataset.size();
     size_t n_centroids = centroids.size();
@@ -273,8 +273,6 @@ std::vector<std::vector<size_t>> hypercube_reverse_assignment( const std::vector
             assigned_vectors[i] = best_centroid;
         }
     }
-
-    return clusters;
 }
 
 
