@@ -10,7 +10,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <ctime>
-#include <cmath>    /* for ceil() */
+#include <cmath>    /* for ceil(), abs() */
 #include <cassert>
 
 #include "../modules/lsh/lsh.h"
@@ -18,7 +18,8 @@
 #include "../modules/exact_nn/exact_nn.h"
 #include "../cluster/cluster_utils.h"
 
-#define ITERATIONS 25
+#define MAXRADIUS            1.0e+130 
+#define EPSILON              4000000000 
 
 
 template <typename T>
@@ -35,16 +36,20 @@ class Cluster {
          * that are assigned to that cluster 
          * i.e clusters[i] is a vector storing the indexes of all
          *     the points assigned to cluster with index i
-         *
          */
         std::vector<std::vector<size_t>>  clusters;
 
         /* 
          * centroids is a vector storing the actual components
          * of each centroid
-         *
          */
         std::vector<std::vector<T>>       centroids;
+
+        /* silhouette for each cluster */
+        std::vector<double> avg_sk;
+
+        /* silhouette for overall clustering */
+        double stotal = 0.0;
 
         /* for the 2 different reverse assignment methods */
         LSH<T>                            *lshptr;
@@ -57,6 +62,7 @@ class Cluster {
         Cluster(size_t nclusters): num_clusters(nclusters), lshptr(nullptr), cubeptr(nullptr)
         {
             clusters.resize(num_clusters);
+            avg_sk.resize(num_clusters, 0.0);
         }
 
 
@@ -65,6 +71,7 @@ class Cluster {
                 num_clusters(nclusters), cubeptr(nullptr)
         {
             clusters.resize(num_clusters);
+            avg_sk.resize(num_clusters, 0.0);
             lshptr = new LSH<T> (L, N, K, meandist, train_set);
         }
 
@@ -76,6 +83,7 @@ class Cluster {
                 num_clusters(nclusters), lshptr(nullptr)
         {
             clusters.resize(num_clusters);
+            avg_sk.resize(num_clusters, 0.0);
             cubeptr = new Hypercube<T> (cube_dims, M, probes, N, R, train_size, data_dims, mean_nn_dist, train_set);
         }
 
@@ -297,7 +305,7 @@ class Cluster {
             size_t total_assigned = 0;
             std::vector<size_t> range_search_nns;
         
-            while (radius < 1.0e+160) {
+            while (radius < MAXRADIUS) {
         
                 new_assigned = 0;
         
@@ -352,9 +360,9 @@ class Cluster {
                 }
                 /* multiply radius by 2 */
                 total_assigned += new_assigned;
-                std::cout << "New Points Assigned to Clusters: " << new_assigned << std::endl;
-                std::cout << "Total Points Assigned to Clusters: " << total_assigned << std::endl;
-                std::cout << "Radius for this Iteration was: " << radius << std::endl;
+                //std::cout << "New Points Assigned to Clusters: " << new_assigned << std::endl;
+                //std::cout << "Total Points Assigned to Clusters: " << total_assigned << std::endl;
+                //std::cout << "Radius for this Iteration was: " << radius << std::endl;
                 radius *= 2;
             }
 
@@ -405,13 +413,31 @@ class Cluster {
         }
 
 
+        uint64_t objective_function(const std::vector<std::vector<T>> &train_set)
+        {
+            size_t size = train_set.size();
+            uint32_t min_dist = 0;
+            uint64_t eucl_norm = 0;
+
+            for (size_t i = 0; i != size; ++i) {
+                min_dist = exact_nn<T> (centroids, train_set[i]);
+                eucl_norm += min_dist * min_dist;
+            }
+
+            return eucl_norm;
+        }
+
+
         void k_medians_plus_plus(const std::vector<std::vector<T>> &train_set, const std::string &method)
         {
+            long prev_objective = 0;
+            long new_objective = 0;
+
             /* initialization++ */
             init_plus_plus(train_set);
             
             /* repeat steps (1) and (2) until change in cluster assignments is "small" */
-            for (size_t i = 0; i != ITERATIONS; ++i) {  // might try different terminating condition
+            while (1) {  
 
                 // step 1: assignment
                 if (method == "Lloyds")
@@ -424,18 +450,115 @@ class Cluster {
                 // step 2: median update
                 median_update(train_set);              
 
+                // calculate k-medians objective function after centroids update
+                new_objective = objective_function(train_set);
+
+                std::cout << "Objective of n-1 is " << prev_objective << std::endl;
+                std::cout << "Objective of n   is " << new_objective << std::endl;
+
+                // k-medians terminating condition
+                if ( std::abs(prev_objective - new_objective) < EPSILON )
+                    break;
+                
                 /* 
                  * after the centroids are updated, each vector in clusters should be cleared;
                  * in the next iteration the points assigned to each cluster will be different
-                 * if this the last iteration though, data will be written to output file!
-                 *
                  */
-                if (i != ITERATIONS - 1) {
-                    for (auto &cluster : clusters) {
+                for (auto &cluster : clusters) {
                         cluster.clear();
+                }
+
+                prev_objective = new_objective;
+            }
+        }
+
+
+        void silhouette(const std::vector<std::vector<T>> &dataset)
+        {
+            std::cout << "Silhouette!" << std::endl;
+
+            const size_t n_vectors = dataset.size();
+
+            std::vector<double> s(n_vectors);
+            std::vector<double> a(n_vectors);
+            std::vector<double> b(n_vectors);
+
+            /* compute a[i] values */
+            for (auto it = clusters.cbegin(); it != clusters.cend(); ++it) {
+                const std::vector<size_t> &each_cluster_vector_indexes = *it; // reference instead of copying it
+                for (size_t i = 0; i != each_cluster_vector_indexes.size(); ++i) {
+                    size_t total_a_dist{};
+                    for (size_t j = 0; j != each_cluster_vector_indexes.size(); ++j) {
+                        if (i == j) continue;
+                        total_a_dist += manhattan_distance_rd<T> (dataset[each_cluster_vector_indexes[i]], \
+                                                                    dataset[each_cluster_vector_indexes[j]]);
+                    }
+                    if (each_cluster_vector_indexes.size() > 1) {
+                        a[each_cluster_vector_indexes[i]] = (double) total_a_dist / each_cluster_vector_indexes.size(); 
+                    }
+                    else {
+                        a[each_cluster_vector_indexes[i]] = (double) total_a_dist;  // in this case a[i] = 0
                     }
                 }
             }
+
+            /* compute closest centroid to each centroid */
+            std::vector<size_t> closest_centroids(centroids.size());
+            for (size_t i = 0; i != centroids.size(); ++i) {
+                uint32_t min_dist = std::numeric_limits<uint32_t>::max();
+                size_t closest = 0;
+                for (size_t j = 0; j != centroids.size(); ++j) {
+                    if (i == j) continue;
+                    uint32_t dist = manhattan_distance_rd<T> (centroids[i], centroids[j]);
+                    if (dist < min_dist) {
+                        min_dist = dist;
+                        closest = j;
+                    }
+                }
+                closest_centroids[i] = closest; // indicating that i-th centroid is closer to the j-th centroid 
+            }
+
+            /* compute b[i] values */
+            for (size_t k = 0; k != clusters.size(); ++k) {
+                const std::vector<size_t> &each_cluster_vector_indexes = clusters[k];
+                const std::vector<size_t> &closest_cluster_vector_indexes = clusters[closest_centroids[k]];
+                for (size_t i = 0; i != each_cluster_vector_indexes.size(); ++i) {
+                    size_t total_b_dist{};
+                    for (size_t j = 0; j != closest_cluster_vector_indexes.size(); ++j) {
+                        total_b_dist += manhattan_distance_rd<T> (dataset[each_cluster_vector_indexes[i]], \
+                                                                    dataset[closest_cluster_vector_indexes[j]]);
+                    }
+                    if (closest_cluster_vector_indexes.size() > 0) {
+                        b[each_cluster_vector_indexes[i]] = (double) total_b_dist / closest_cluster_vector_indexes.size(); 
+                    }
+                    else {
+                        b[each_cluster_vector_indexes[i]] = (double) total_b_dist;
+                    }
+                }
+            }
+
+            /* compute s[i] values */
+            for (size_t i = 0; i != n_vectors; ++i) {
+                s[i] = (b[i] - a[i]) / std::max(a[i], b[i]);
+            }
+            /* compute average s(p) of points in cluster i */
+            for (size_t i = 0; i != centroids.size(); ++i) {
+                const std::vector<size_t> &each_cluster_vector_index = clusters[i];
+                size_t n_vectors = each_cluster_vector_index.size();
+                for (size_t j = 0; j != n_vectors; ++j) {
+                    avg_sk[i] += s[each_cluster_vector_index[j]];
+                }
+                if (n_vectors != 0) {
+                    avg_sk[i] /= n_vectors;
+                }
+            }
+            /* compute stotal = average s(p) of points in dataset */
+            uint32_t n_centroids = centroids.size();
+
+            for (size_t i = 0; i != n_centroids; ++i) {
+                stotal += avg_sk[i];
+            }
+            stotal /= n_centroids;
         }
 
 
@@ -464,10 +587,12 @@ class Cluster {
                     }
                     ofile << "]}" << std::endl;
                 }
-                ofile << "clustering_time: " << std::chrono::duration<double>(cluster_time).count() << std::endl;
+                ofile << "clustering_time: " << std::chrono::duration<double>(cluster_time).count() << " seconds" << std::endl;
                 ofile << "Silhouette: [";
-                /* ... */
-                ofile << "]" << std::endl;
+                for (auto &s : avg_sk) {
+                    ofile << s << ", ";
+                }
+                ofile << stotal <<"]\n\n" << std::endl;
 
                 if (complete) {
                     for (size_t i = 0; i != clusters.size(); ++i) {
