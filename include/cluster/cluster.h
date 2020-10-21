@@ -19,7 +19,8 @@
 #include "../cluster/cluster_utils.h"
 
 #define MAXRADIUS            1.0e+130 
-#define EPSILON              4000000000 
+#define EPSILON              4000000000
+#define CLSH 1.8
 
 
 template <typename T>
@@ -103,7 +104,7 @@ class Cluster {
 
             /* randomly select the index of the 1st centroid from the training set */
             std::default_random_engine generator;
-            srand( time(NULL) );
+            srand( ( unsigned ) time(NULL) );
             size_t size = train_set.size();
             size_t index = rand() % size;
 
@@ -182,115 +183,24 @@ class Cluster {
         }
 
 
-        //void lsh_reverse_assignment(const std::vector<std::vector<T>> &train_set)
-        //{
-//template<typename T>
-//std::map<std::vector<T>, std::vector<size_t>> lsh_reverse_assignment(   const std::vector<std::vector<T>> &dataset, LSH<T> *lsh,
-//                                                                        const std::vector<std::pair<std::vector<T>, size_t>> &centroids) {
-//
-//    size_t n_centroids, n_vectors;
-//    double radius;
-//    uint32_t dist{}, min_dist{};
-//    std::map<int, int> assigned_vectors;
-//
-//    /*  each cluster has a centroid and its data assigned to it
-//        our cluster representation is a map that keys are centroids (unique)
-//        and values are vectors assigned to their centroid
-//    */
-//    std::map<std::vector<T>, std::vector<size_t>> clusters;
-//
-//    n_vectors = dataset.size();
-//    n_centroids = centroids.size();
-//
-//    /* at the beggining mark each vector as unassigned (-1) */
-//    for (size_t i = 0; i != n_vectors; ++i) {
-//        assigned_vectors[i] = -1;
-//    }
-//
-//    /* calculate min distance between centers */
-//    min_dist = std::numeric_limits<uint32_t>::max();
-//    for (size_t i = 0; i != n_centroids; ++i) {
-//        for (size_t j = i + 1; j != n_centroids; ++j) {
-//            dist = manhattan_distance_rd<T> (centroids[i].first, centroids[j].first);
-//            if (dist < min_dist) {
-//                min_dist = dist;
-//            }
-//        }
-//    }
-//
-//    /* start with min(dist between centers)/2 */
-//    radius = (double) (min_dist / 2);
-//    // TODO: stop condition ??
-//    while (...) {
-//        /* for each centroid c, range/ball queries centered at c */
-//        for (size_t i = 0; i != n_centroids; ++i) {
-//            auto res = lsh->approximate_range_search(C, radius, centroids[i].first);
-//            for (const auto &vector_index: res) {
-//                /* The case where the vector is not assigned to a cluster */ 
-//                if (assigned_vectors[vector_index] == -1) {
-//                    assign_vector_to_centroids(clusters, centroids, i, vector_index);
-//                    /* mark the vector as "assigned" to a cluster */
-//                    assigned_vectors[vector_index] = i;
-//                }
-//                /*  
-//                    In this case, the vector has been assigned to another centroid before,
-//                    so compare its distances to the respective centroids, assign to closest centroid.     
-//                */
-//                else {
-//                    int assigned_centroid = assigned_vectors[vector_index];
-//                    uint32_t assigned_dist = manhattan_distance_rd<T> (dataset[vector_index], centroids[assigned_centroid].first);
-//                    // TODO: calculate previous dist
-//                    if (vec_dist < assigned_dist) {
-//                        auto it = clusters.find(centroids[assigned_centroid].first);
-//                        (it->second).emplace_back(vector_index);
-//                        /* mark the vector as "assigned" to a cluster */
-//                        assigned_vectors[vector_index] = i;
-//                    }
-//                }
-//            }       
-//        }
-//        /* multiply radius by 2 */
-//        radius *= 2;
-//    }
-//    /* At end: for every unassigned point, compare its distances to all centroids */
-//    for (size_t i = 0; i != n_vectors; ++i) {
-//        if (assigned_vectors[i] == -1) {
-//            min_dist = std::numeric_limits<uint32_t>::max();
-//            int best_centroid{};
-//            for (size_t j = 0; j != n_centroids; ++j) {
-//                uint32_t dist = manhattan_distance_rd(dataset[i], centroids[j].first);
-//                if (dist < min_dist) {
-//                    min_dist = dist;
-//                    best_centroid = j;
-//                }
-//            }
-//            assign_vector_to_centroid(clusters, centroids, best_centroid, i);
-//            assigned_vectors[i] = best_centroid;
-//        }
-//    }
-//    return clusters;
-//}
-        //}
-
-
-        void hypercube_reverse_assignment(const std::vector<std::vector<T>> &train_set)
+        void reverse_assignment(const std::vector<std::vector<T>> &train_set)
         {
             assert(centroids.size() == num_clusters);
 
             std::map<int, int> assigned_vectors;
-            size_t n_vectors = train_set.size();
-            size_t n_centroids = centroids.size();
+            ssize_t n_vectors = train_set.size();
+            ssize_t n_centroids = centroids.size();
         
             /* at the beggining mark each vector as unassigned (-1) */
-            for (size_t i = 0; i != n_vectors; ++i) {
+            for (ssize_t i = 0; i != n_vectors; ++i) {
                 assigned_vectors[i] = -1;
             }
         
             /* calculate min distance between centers */
             uint32_t dist{};
             uint32_t min_dist = std::numeric_limits<uint32_t>::max();
-            for (size_t i = 0; i != n_centroids; ++i) {
-                for (size_t j = i + 1; j != n_centroids; ++j) {
+            for (ssize_t i = 0; i != n_centroids; ++i) {
+                for (ssize_t j = i + 1; j != n_centroids; ++j) {
                     dist = manhattan_distance_rd<T> (centroids[i], centroids[j]);
                     if (dist < min_dist) {
                         min_dist = dist;
@@ -310,10 +220,15 @@ class Cluster {
                 new_assigned = 0;
         
                 /* for each centroid c, range/ball queries centered at c */
-                for (size_t i = 0; i != n_centroids; ++i) {
+                for (ssize_t i = 0; i != n_centroids; ++i) {
         
                     //std::cout << "For centroid with index " << centroids[i].second << std::endl;
-                    range_search_nns = cubeptr->range_search(centroids[i], radius);
+                    if (cubeptr == nullptr) {
+                        range_search_nns = lshptr->approximate_range_search(CLSH, radius, centroids[i]);
+                    }
+                    else {
+                        range_search_nns = cubeptr->range_search(centroids[i], radius);
+                    }
                     for (const auto &vector_index: range_search_nns) {
         
                         //std::cout << vector_index << std::endl;
@@ -367,11 +282,11 @@ class Cluster {
             }
 
             /* At end: for every unassigned point, compare its distances to all centroids */
-            for (size_t i = 0; i != n_vectors; ++i) {
+            for (ssize_t i = 0; i != n_vectors; ++i) {
                 if (assigned_vectors[i] == -1) {
                     min_dist = std::numeric_limits<uint32_t>::max();
                     int best_centroid{};
-                    for (size_t j = 0; j != n_centroids; ++j) {
+                    for (ssize_t j = 0; j != n_centroids; ++j) {
                         uint32_t dist = manhattan_distance_rd(train_set[i], centroids[j]);
                         if (dist < min_dist) {
                             min_dist = dist;
@@ -442,10 +357,8 @@ class Cluster {
                 // step 1: assignment
                 if (method == "Lloyds")
                     lloyds_assignment(train_set);
-                //else if (method == "LSH")
-                //    lsh_reverse_assignment(train_set);
                 else
-                    hypercube_reverse_assignment(train_set);
+                    reverse_assignment(train_set);
 
                 // step 2: median update
                 median_update(train_set);              

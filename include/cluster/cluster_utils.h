@@ -15,9 +15,21 @@ typedef struct cluster_args {
 } cluster_args;
 
 
-void cluster_usage(const char *exec);
+typedef struct cluster_configs {
+    int number_of_clusters;
+    int number_of_hash_tables;
+    int number_of_hash_functions;
+    int max_number_M_hypercube;    
+    int hypercube_dimensions;    
+    int number_of_probes;      
+} cluster_configs;
 
-void parse_cluster_args(int argc, char * const argv[], cluster_args *args);
+
+void cluster_usage(const char *);
+
+void parse_cluster_args(int , char * const *, cluster_args *);
+
+void parse_cluster_configurations(std::string, cluster_configs *);
 
 void normalize_distances(std::vector<float> &);
 

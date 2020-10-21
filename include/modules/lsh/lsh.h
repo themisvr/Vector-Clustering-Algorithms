@@ -57,7 +57,7 @@ class LSH {
 
         LSH(    const uint16_t &L, const uint16_t &N, \
                 const uint32_t &K, const double &meandist, \
-                std::vector<std::vector<T>> &input) : L(L), N(N), K(K), dataset(input) {
+                const std::vector<std::vector<T>> &input) : L(L), N(N), K(K), dataset(input) {
             
             D = dataset[0].size();
             n_vectors = dataset.size();

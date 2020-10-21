@@ -5,7 +5,6 @@
 
 #include "../../include/io_utils/io_utils.h"
 #include "../../include/cluster/cluster_utils.h"
-#include "../../include/cluster/assignment.h"
 
 
 void cluster_usage(const char *exec) {
@@ -66,6 +65,53 @@ void parse_cluster_args(int argc, char * const argv[], cluster_args *args) {
 }
 
 
+static void evaluate_configuration_values(cluster_configs *configs) {
+    
+    if (configs->number_of_hash_tables == 0) configs->number_of_hash_tables = 3;
+    if (configs->number_of_hash_functions == 0) configs->number_of_hash_functions = 4;
+    if (configs->max_number_M_hypercube == 0) configs->max_number_M_hypercube = 10;
+    if (configs->hypercube_dimensions == 0) configs->hypercube_dimensions = 3;
+    if (configs->number_of_probes == 0) configs->number_of_probes = 2;
+}
+
+
+void parse_cluster_configurations(std::string config_file, cluster_configs *configs) {
+
+    std::string delimiter = ": ";
+    std::string token;
+    size_t pos = 0;
+
+    std::ifstream file(config_file);
+    std::string line;
+    while (std::getline(file, line)) {
+        while ((pos = line.find(delimiter)) != std::string::npos) {
+            token = line.substr(0, pos);
+            line.erase(0, pos + delimiter.length());
+        }
+        if (token == "number_of_clusters") {
+            configs->number_of_clusters = stoi(line);
+        }
+        else if (token == "number_of_vector_hash_tables") {
+            configs->number_of_hash_tables = stoi(line);
+        }
+        else if (token == "number_of_vector_hash_functions") {
+            configs->number_of_hash_functions = stoi(line);
+        }
+        else if (token == "max_number_M_hypercube") {
+            configs->max_number_M_hypercube = stoi(line);
+        }
+        else if (token == "number_of_hypercube_dimensions") {
+            configs->hypercube_dimensions = stoi(line);
+        }
+        else if (token == "number_of_probes") {
+            configs->number_of_probes = stoi(line);
+        }
+    }
+
+    evaluate_configuration_values(configs); 
+}
+
+
 size_t binary_search(const std::vector<std::pair<float, size_t>> &partial_sums, float val)
 {
 
@@ -120,12 +166,12 @@ void normalize_distances(std::vector<float> &min_distances)
 
 bool in(const std::vector<size_t> &centroid_indexes, size_t index)
 {
-          for (size_t j = 0; j != centroid_indexes.size(); ++j) {
-                 if (centroid_indexes[j] == index)
-                     return true;
-             }
- 
-             return false;
+    for (size_t j = 0; j != centroid_indexes.size(); ++j) {
+        if (centroid_indexes[j] == index)
+            return true;
+    }
+
+    return false;
 }
 
 
