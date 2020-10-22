@@ -11,7 +11,7 @@
 #include "../../metric/metric.h"
 
 #define HT_SIZE(N) ((N / 8))
-#define MULTIPLE 10
+#define MULTIPLE 4
 
 template <typename T>
 class LSH {
@@ -39,7 +39,7 @@ class LSH {
 
         std::vector<std::unordered_multimap<int, std::pair<std::vector<T>, size_t>>> lsh_tables;
         
-        std::vector<HashFunction<T>> hash_functions;
+        std::vector<AmplifiedHashFunction<T>> g_hash_functions;
 
 
         void initialize_k_best_vectors(std::vector<std::pair<uint32_t, size_t>> &k_best_vectors) {
@@ -64,20 +64,23 @@ class LSH {
             ht_size = HT_SIZE(n_vectors);
             M = 1ULL << (32 / K);
             m = (1ULL << 32) - (5);
-            w = meandist * MULTIPLE;
+            // up to 4000 results are not so go good
+            // w = meandist * MULTIPLE;
+            // best results till now with w = 4000
+            w = 4000;
 
 
             uint64_t amplified_value{};
 
             for (size_t i = 0; i != L; ++i) {
-                hash_functions.emplace_back(HashFunction<T>(K, D, m, M, w));
+                g_hash_functions.emplace_back(AmplifiedHashFunction<T>(K, D, m, M, w));
             }
 
             for (size_t i = 0; i != L; ++i) {                
                 std::unordered_multimap<int, std::pair<std::vector<T>, size_t>> hash_table{};
 
                 for (size_t index = 0; index != n_vectors; ++index) {           
-                    amplified_value = hash_functions[i].amplified_function_construction(dataset[index]);
+                    amplified_value = g_hash_functions[i].amplified_function_construction(dataset[index]);
                     hash_table.insert(std::make_pair(amplified_value % ht_size, std::make_pair(dataset[index], index)));
                 }
                 lsh_tables.emplace_back(hash_table);
@@ -101,7 +104,7 @@ class LSH {
             std::pair<std::vector<T>, size_t> bucket_item;
 
             for (size_t i = 0; i != L; ++i) {
-                af_value = hash_functions[i].amplified_function_construction(query);
+                af_value = g_hash_functions[i].amplified_function_construction(query);
                 bucket = fast_mod(af_value, ht_size);
                 auto it = lsh_tables[i].equal_range(bucket);
 
@@ -139,7 +142,7 @@ class LSH {
             std::pair<std::vector<T>, size_t> bucket_item;
 
             for (size_t i = 0; i != L; ++i) {
-                af_value = hash_functions[i].amplified_function_construction(query);
+                af_value = g_hash_functions[i].amplified_function_construction(query);
                 bucket = fast_mod(af_value , ht_size);
                 auto it = lsh_tables[i].equal_range(bucket);
 

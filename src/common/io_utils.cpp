@@ -303,8 +303,8 @@ uint32_t bigend_to_littlend(uint32_t big_endian) {
 
 void write_output(const string &out, const uint16_t nns, const size_t size, \
                             const vector<vector<pair<uint32_t, size_t>>> &ann_res, \
-                            const vector<chrono::milliseconds> &ann_query_times, \
-                            const vector<vector<uint32_t>> &enn_dists, const vector<chrono::milliseconds> &enn_query_times, \
+                            const vector<uint64_t> &ann_query_times, \
+                            const vector<vector<uint32_t>> &enn_dists, const vector<uint64_t> &enn_query_times, \
                             const vector<vector<size_t>> &range_res, const string &structure) {
     
     vector<pair<uint32_t, size_t>> approx_nearest;
@@ -317,14 +317,26 @@ void write_output(const string &out, const uint16_t nns, const size_t size, \
         exact_nearest  = enn_dists[i];
         ofile << "Query: " << i << endl;
         for (size_t j = 0; j != nns; ++j) {
-            ofile << "Nearest neighbor-" << j + 1 << ": " << approx_nearest[j].second << endl;
-            ofile << "distance" << structure << ": " << approx_nearest[j].first << endl;
+            uint32_t dist = approx_nearest[j].first;
+            size_t ith_vec = approx_nearest[j].second;
+            if (dist == std::numeric_limits<uint32_t>::max()) {
+                ofile << "Nearest neighbor-" << j + 1 << ": " << "Not Found" << endl;
+                ofile << "distance" << structure << ": " << "None" << endl;
+            }
+            else {
+                ofile << "Nearest neighbor-" << j + 1 << ": " << ith_vec << endl;
+                ofile << "distance" << structure << ": " << dist << endl;
+            }
             ofile << "distanceTrue: " << exact_nearest[j] << endl;
         }
-        ofile << "t" << structure << ": " << ann_query_times[i].count() << endl;
-        ofile << "tTrue: " << enn_query_times[i].count() << endl;
+        ofile << "t" << structure << ": " << ann_query_times[i] << endl;
+        ofile << "tTrue: " << (double) enn_query_times[i] << endl;
 
         ofile << "R-near neighbors:" << endl;
+        if (range_res[i].empty()) {
+            ofile << "Not Found" << std::endl;
+            continue;
+        }
         for (auto &c : range_res[i]) {
             ofile << c << endl;
         }
