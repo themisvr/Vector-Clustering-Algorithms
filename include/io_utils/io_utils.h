@@ -34,9 +34,9 @@ void write_output(const string &, const uint16_t, const size_t, const vector<vec
 
 
 template <typename T>
-vector<vector<T>> read_file(const string& filepath) {
-    ifstream data;
-    data.open(filepath, ios::in | ios::binary);
+void read_file(const string& filepath, vector<vector<T>> &data) {
+    ifstream data_file;
+    data_file.open(filepath, ios::in | ios::binary);
 
     if(data) {
         uint32_t magic_num, images_number, rows, cols;
@@ -61,18 +61,18 @@ vector<vector<T>> read_file(const string& filepath) {
          * each pixel takes values from [0, 255]
          * "flatten" and store i-th image to the i-th element of the vector
          */
-        std::vector<std::vector<T> > pixels(images_number, std::vector<T>(rows * cols, 0));
-        for(auto i = pixels.begin(); i != pixels.end(); ++i) 
-            for(auto j = i->begin(); j != i->end(); ++j) {
-                unsigned char temp;
-                data.read( (char *) &temp, sizeof(temp) );
-                *j = temp;
+        data.resize(images_number, vector<T>(rows * cols, 0));
+        for(size_t i = 0; i != images_number; ++i) {
+            vector<T> &vec = data[i];
+            for(size_t j = 0; j != rows * cols; ++j) {
+                //unsigned char temp;
+                //data.read( (char *) &temp, sizeof(temp) );
+                data.read( (char *) &vec[j], sizeof(vec[j]) );
+                //*j = temp;
             }
+        }
 
-        data.close();
-
-        return pixels;
-                
+        data_file.close();
     }
     else {
         std::cerr << "Could not open the file!" << std::endl;

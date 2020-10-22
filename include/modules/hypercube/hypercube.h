@@ -42,7 +42,7 @@ class Hypercube {
         std::vector<std::unordered_multimap<uint32_t, bool>> uniform_binary_mapppings;
 
         /* hash table representing the hypercube; each vertex is basically a bucket */
-        std::unordered_multimap<std::string, std::pair<std::vector<T>, size_t>> hash_table;
+        std::unordered_multimap<std::string, std::pair<std::vector<T> &, size_t>> hash_table;
 
         /* for the hypercube method we use d' x LSH hash functions */
         std::vector<HashFunction<T>> hash_functions;
@@ -53,7 +53,7 @@ class Hypercube {
         Hypercube (uint32_t projdim, uint16_t cands, uint16_t probes, uint16_t nns, float r, \
                     size_t trn, uint32_t d, double meandist, const std::vector<std::vector<T>> &samples) \
                     : projection_dimension(projdim), max_candidates(cands), max_probes(probes), \
-                      N(nns), R(r), train_samples(trn), D(d), win(MULTIPLE1 * meandist) //win(MULTIPLE2 * R)
+                      N(nns), R(r), train_samples(trn), D(d), win(MULTIPLE1 * meandist)
         {
             std:: cout << "Window is: ";
             std::cout << win << std::endl;

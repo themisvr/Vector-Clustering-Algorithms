@@ -3,7 +3,7 @@
 #include <vector>
 #include <chrono>
 
-#include "../../include/modules/hypercube/hypercube.h"
+#include "../../include/modules/hypercube/hypercube.h" 
 #include "../../include/io_utils/cmd_args.h"
 #include "../../include/io_utils/io_utils.h"
 #include "../../include/modules/exact_nn/exact_nn.h"
@@ -30,13 +30,14 @@ int main(int argc, char *argv[])
 
 
     /* read training set and store each data sample */
+    vector<vector<uint8_t>> training_samples;
     cout << "\nReading training set..." << endl;
-    vector<vector<uint8_t>> training_samples = read_file<uint8_t> (args->get_input_file_path());
+    read_file<uint8_t> (args->get_input_file_path(), training_samples);
     cout << "Done!" << endl;
 
 
     cout << "\nComputing mean nearest neighbor distance..." << endl;
-    double r = mean_nn_distance<uint8_t> (training_samples); //1077.6875; 
+    double r = mean_nn_distance<uint8_t> (training_samples);  
     cout << "Done!" << endl;
 
 
@@ -59,7 +60,8 @@ int main(int argc, char *argv[])
 
 
     /* read test set and store each query point */
-    vector<vector<uint8_t>> test_samples = read_file<uint8_t> (args->get_query_file_path());
+    vector<vector<uint8_t>> test_samples;
+    read_file<uint8_t> (args->get_query_file_path(), test_samples);
 
 
     /********** Start ANN / ENN / Range search **********/
