@@ -2,6 +2,7 @@
 #include <string>
 #include <utility>
 #include <unistd.h>
+#include <getopt.h>
 
 #include "../../include/io_utils/io_utils.h"
 #include "../../include/cluster/cluster_utils.h"
@@ -24,7 +25,14 @@ void parse_cluster_args(int argc, char * const argv[], cluster_args *args) {
     int opt;
     std::string input, output, config;
 
-    while ((opt = getopt(argc, argv, "i:c:o:m:")) != -1) {
+    int option_index = 0;
+    const struct option longopts[] = {
+        {"complete", no_argument, 0, 'f'},
+        {0, 0, 0, 0}
+    };
+
+    args->complete = false;
+    while ((opt = getopt_long(argc, argv, "i:c:o:m:f", longopts, &option_index)) != -1) {
         switch(opt) {
             case 'i':
                 if ( !file_exists(optarg) ) {
@@ -54,6 +62,10 @@ void parse_cluster_args(int argc, char * const argv[], cluster_args *args) {
 
             case 'm':
                 args->method = optarg;
+                break;
+            
+            case 'f':
+                args->complete = true;
                 break;
 
             default: 

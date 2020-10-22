@@ -29,7 +29,7 @@ void user_interface(Cube_args **);
 void user_interface(Cube_args *);
 
 void write_output(const string &, const uint16_t, const size_t, const vector<vector<pair<uint32_t, size_t>>> &, \
-                            const vector<chrono::milliseconds> &, const vector<vector<uint32_t>> &, const vector<chrono::milliseconds> &, \
+                            const vector<uint64_t> &, const vector<vector<uint32_t>> &, const vector<uint64_t> &, \
                             const vector<vector<size_t>> &, const string &);
 
 

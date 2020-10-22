@@ -2,6 +2,7 @@
 #include <string>
 #include <cstdint>
 #include <chrono>
+#include <sys/time.h>
 
 #include "../../include/io_utils/cmd_args.h"
 #include "../../include/io_utils/io_utils.h"
@@ -11,7 +12,6 @@
 
 #define C 1.2
 
-using high_resolution_clock = std::chrono::steady_clock;
 
 static void start_lsh_simulation(Lsh_args *args) {
 
@@ -49,27 +49,30 @@ static void start_lsh_simulation(Lsh_args *args) {
                                                     std::vector<uint32_t> (args->get_nearest_neighbors_num()));
 
     std::vector<std::vector<size_t>>            range_results(queries.size());
-    std::vector<chrono::milliseconds>           ann_query_times(queries.size());
-    std::vector<chrono::milliseconds>           enn_query_times(queries.size());
+    std::vector<uint64_t>           ann_query_times(queries.size());
+    std::vector<uint64_t>           enn_query_times(queries.size());
 
     for (size_t i = 0; i != queries.size(); ++i) {
 
+        struct timeval end_t, start_t;
+        uint64_t millis;
+
         /* Approximate K-NN calculation */
-        start = std::chrono::high_resolution_clock::now();
+        gettimeofday(&start_t, NULL);
         ann_results[i] = lsh.approximate_k_nn(queries[i]);
-        stop = std::chrono::high_resolution_clock::now();
-        ann_query_times[i] = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+        gettimeofday(&end_t, NULL);
+        millis = ((end_t.tv_sec * (uint64_t)1000 + (end_t.tv_usec / 1000)) - (start_t.tv_sec * (uint64_t)1000 + (start_t.tv_usec / 1000)));
+        ann_query_times[i] = millis;
 
         /* Exact NN calculation */
-        start = std::chrono::high_resolution_clock::now();
+        gettimeofday(&start_t, NULL);
         enn_distances[i] = exact_nn<uint8_t> (dataset, queries[i], args->get_nearest_neighbors_num());
-        stop = std::chrono::high_resolution_clock::now();
-        enn_query_times[i] = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+        gettimeofday(&end_t, NULL);
+        millis = ((end_t.tv_sec * (uint64_t)1000 + (end_t.tv_usec / 1000)) - (start_t.tv_sec * (uint64_t)1000 + (start_t.tv_usec / 1000)));
+        enn_query_times[i] = millis;
 
         /* Range Search */
-        start = std::chrono::high_resolution_clock::now();
         range_results[i] = lsh.approximate_range_search(C, R, queries[i]);
-        stop = std::chrono::high_resolution_clock::now();
     }
 
     std::cout << "\nCreating the output format file..." << std::endl;

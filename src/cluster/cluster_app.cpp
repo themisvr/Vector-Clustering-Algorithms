@@ -14,7 +14,7 @@ int main(int argc, char *argv[])  {
     cluster_configs configs = {};
     Cluster<uint8_t> *cluster = nullptr;
 
-    if (argc != 9) cluster_usage(argv[0]);
+    if (argc != 10 && argc != 9) cluster_usage(argv[0]);
     
     parse_cluster_args(argc, argv, &args);
     parse_cluster_configurations(args.config_file, &configs);
