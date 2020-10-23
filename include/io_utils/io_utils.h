@@ -24,10 +24,6 @@ void lsh_usage(const char *);
 
 void cube_usage(const char *);
 
-void user_interface(Cube_args **);
-
-void user_interface(Cube_args *);
-
 void write_output(const string &, const uint16_t, const size_t, const vector<vector<pair<uint32_t, size_t>>> &, \
                             const vector<uint64_t> &, const vector<vector<uint32_t>> &, const vector<uint64_t> &, \
                             const vector<vector<size_t>> &, const string &);
@@ -38,23 +34,23 @@ void read_file(const string& filepath, vector<vector<T>> &data) {
     ifstream data_file;
     data_file.open(filepath, ios::in | ios::binary);
 
-    if(data) {
+    if(data_file) {
         uint32_t magic_num, images_number, rows, cols;
 
         // read magic number
-        data.read( (char *) &magic_num, sizeof(magic_num) );
+        data_file.read( (char *) &magic_num, sizeof(magic_num) );
         magic_num = bigend_to_littlend(magic_num);
 
         // read number of images
-        data.read( (char *) &images_number, sizeof(images_number) );
+        data_file.read( (char *) &images_number, sizeof(images_number) );
         images_number = bigend_to_littlend(images_number);
 
         // read number of rows
-        data.read( (char *) &rows, sizeof(rows) );
+        data_file.read( (char *) &rows, sizeof(rows) );
         rows = bigend_to_littlend(rows);
 
         // read number of columns
-        data.read( (char *) &cols, sizeof(cols) );
+        data_file.read( (char *) &cols, sizeof(cols) );
         cols = bigend_to_littlend(cols);
 
         /* images_number images, and each image is of dimension rows * columns
@@ -67,7 +63,7 @@ void read_file(const string& filepath, vector<vector<T>> &data) {
             for(size_t j = 0; j != rows * cols; ++j) {
                 //unsigned char temp;
                 //data.read( (char *) &temp, sizeof(temp) );
-                data.read( (char *) &vec[j], sizeof(vec[j]) );
+                data_file.read( (char *) &vec[j], sizeof(vec[j]) );
                 //*j = temp;
             }
         }

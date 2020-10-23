@@ -241,14 +241,6 @@ void cube_parse_args(int argc, char * const argv[], Cube_args **args) {
         }
     }
 
-    /* if -k -M -probes were not specified, use default values */
-    if (projection_dimension == 0 && max_candidates == 0 && max_probes == 0) {
-        projection_dimension = 3;
-        max_candidates = 10;
-        max_probes = 2;
-        nn_num = 1;
-        rad = 1.0;
-    }
     *args = new Cube_args(dataset_file, query_file, output_file, nn_num, rad, projection_dimension, max_candidates, max_probes); 
 }
 
@@ -264,25 +256,6 @@ void user_interface(Cube_args **args) {
 
         *args = new Cube_args(input_file, query_file, output_file);
     }
-}
-
-
-void user_interface(Cube_args *args) {
-    uint32_t projection_dimension;
-    uint16_t nearest_neighbors, max_candidates, max_probes;
-    float radius;
-
-    nearest_neighbors    = user_prompt_search_arg("Enter number of nearest neighbors: ");
-    radius               = user_prompt_rad("Enter search radius: ");
-    projection_dimension = user_prompt_search_arg("Enter hypercube dimension: ");
-    max_candidates       = user_prompt_search_arg("Enter max candidate points to be checked: ");
-    max_probes           = user_prompt_search_arg("Enter max hypercube vertices to be ckecked: ");
-
-    args->set_nearest_neighbors_num(nearest_neighbors);
-    args->set_radius(radius);
-    args->set_projection_dim(projection_dimension);
-    args->set_max_candidates(max_candidates);
-    args->set_max_probes(max_probes);
 }
 
 

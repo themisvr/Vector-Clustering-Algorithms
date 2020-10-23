@@ -1,10 +1,8 @@
 #ifndef EXACT_NN
 #define EXACT_NN
 
-#include <iostream>
-#include <utility>
 #include <vector>
-#include <limits>
+#include <limits> 
 #include <algorithm>
 
 #include "../../../include/metric/metric.h"
@@ -12,16 +10,23 @@
 
 template<typename T>
 std::vector<uint32_t> exact_nn(const std::vector<std::vector<T>> &dataset, \
-                                                  const std::vector<T> &query, const uint16_t nns) {
+                                                  const std::vector<T> &query, uint16_t nns) {
 
-    std::vector<uint32_t> closest_distances; 
+    std::vector<uint32_t> closest_distances(nns); 
+
+    for (size_t i = 0; i != nns; ++i) {
+        closest_distances[i] = std::numeric_limits<uint32_t>::max();
+    }
 
     for (size_t i = 0; i != dataset.size(); ++i) {
-        auto dist = manhattan_distance_rd<T> (dataset[i], query);
-        closest_distances.emplace_back(dist);
+        uint32_t dist = manhattan_distance_rd<T> (dataset[i], query);
+        if (dist < closest_distances[0]) {
+            closest_distances[0] = dist;
+            std::sort(closest_distances.begin(), closest_distances.end(), [](const uint32_t &left, const uint32_t &right) \
+                                                                             { return (left > right); } );
+        }
     }
     std::sort(closest_distances.begin(), closest_distances.end());
-    closest_distances.resize(nns);
 
     return closest_distances;
 }
