@@ -1,16 +1,17 @@
 #include <vector>
+#include <string>
 #include <iostream>
 #include <fstream>
 
 #include "cmd_args.h"
 
-string user_prompt_exit(const string &);
+std::string user_prompt_exit(const std::string &);
 
-string user_prompt_file(const string&);
+std::string user_prompt_file(const std::string&);
 
-uint16_t user_prompt_search_arg(const string&);
+uint16_t user_prompt_search_arg(const std::string&);
 
-float user_prompt_rad(const string&);
+float user_prompt_rad(const std::string&);
 
 uint32_t bigend_to_littlend(uint32_t);
 
@@ -24,15 +25,15 @@ void lsh_usage(const char *);
 
 void cube_usage(const char *);
 
-void write_output(const string &, const uint16_t, const size_t, const vector<vector<pair<uint32_t, size_t>>> &, \
-                            const vector<uint64_t> &, const vector<vector<uint32_t>> &, const vector<uint64_t> &, \
-                            const vector<vector<size_t>> &, const string &);
+void write_output(const std::string &, const uint16_t, const size_t, const std::vector<std::vector<std::pair<uint32_t, size_t>>> &, \
+                            const std::vector<uint64_t> &, const std::vector<std::vector<uint32_t>> &, const std::vector<uint64_t> &, \
+                            const std::vector<std::vector<size_t>> &, const std::string &);
 
 
 template <typename T>
-void read_file(const string& filepath, vector<vector<T>> &data) {
-    ifstream data_file;
-    data_file.open(filepath, ios::in | ios::binary);
+void read_file(const std::string& filepath, std::vector<std::vector<T>> &data) {
+    std::ifstream data_file;
+    data_file.open(filepath, std::ios::in | std::ios::binary);
 
     if(data_file) {
         uint32_t magic_num, images_number, rows, cols;
@@ -57,14 +58,11 @@ void read_file(const string& filepath, vector<vector<T>> &data) {
          * each pixel takes values from [0, 255]
          * "flatten" and store i-th image to the i-th element of the vector
          */
-        data.resize(images_number, vector<T>(rows * cols, 0));
+        data.resize(images_number, std::vector<T>(rows * cols, 0));
         for(size_t i = 0; i != images_number; ++i) {
-            vector<T> &vec = data[i];
+            std::vector<T> &vec = data[i];
             for(size_t j = 0; j != rows * cols; ++j) {
-                //unsigned char temp;
-                //data.read( (char *) &temp, sizeof(temp) );
                 data_file.read( (char *) &vec[j], sizeof(vec[j]) );
-                //*j = temp;
             }
         }
 

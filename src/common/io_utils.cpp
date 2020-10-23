@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <vector>
+#include <utility>
 #include <chrono>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -40,18 +41,18 @@ void cube_usage(const char *exec) {
 }
 
 
-string user_prompt_exit(const string &message) {
+std::string user_prompt_exit(const std::string &message) {
 
-    string exit;
+    std::string exit;
 
-    cout << message ;
-    cin >> exit;
+    std::cout << message ;
+    std::cin >> exit;
 
     return exit;
 }
 
 
-string user_prompt_file(const string &message) {
+std::string user_prompt_file(const std::string &message) {
     std::string file_path;
 
     std::cout << message ;
@@ -61,23 +62,23 @@ string user_prompt_file(const string &message) {
 }
 
 
-uint16_t user_prompt_search_arg(const string &message)
+uint16_t user_prompt_search_arg(const std::string &message)
 {
     uint16_t search_arg = 0;
 
-    cout << message;
-    cin >> search_arg;
+    std::cout << message;
+    std::cin >> search_arg;
 
     return search_arg;
 }
 
 
-float user_prompt_rad(const string &message)
+float user_prompt_rad(const std::string &message)
 {
     float radius = 0.0;
 
-    cout << message;
-    cin >> radius;
+    std::cout << message;
+    std::cin >> radius;
 
     return radius;
 }
@@ -138,7 +139,7 @@ void lsh_parse_args(int argc, char * const argv[], Lsh_args **args) {
                 if( file_exists(optarg) ) 
                     output_file = optarg;
                 else {
-                    ofstream out("./output");
+                    std::ofstream out("./output");
                     output_file = "output";
                 }
                 break;
@@ -217,7 +218,7 @@ void cube_parse_args(int argc, char * const argv[], Cube_args **args) {
                 if( file_exists(optarg) ) 
                     output_file = optarg;
                 else {
-                    ofstream out("./output");
+                    std::ofstream out("./output");
                     output_file = "output";
                 }
                 break;
@@ -274,44 +275,44 @@ uint32_t bigend_to_littlend(uint32_t big_endian) {
 }
 
 
-void write_output(const string &out, const uint16_t nns, const size_t size, \
-                            const vector<vector<pair<uint32_t, size_t>>> &ann_res, \
-                            const vector<uint64_t> &ann_query_times, \
-                            const vector<vector<uint32_t>> &enn_dists, const vector<uint64_t> &enn_query_times, \
-                            const vector<vector<size_t>> &range_res, const string &structure) {
+void write_output(const std::string &out, const uint16_t nns, const size_t size, \
+                            const std::vector<std::vector<std::pair<uint32_t, size_t>>> &ann_res, \
+                            const std::vector<uint64_t> &ann_query_times, \
+                            const std::vector<std::vector<uint32_t>> &enn_dists, const std::vector<uint64_t> &enn_query_times, \
+                            const std::vector<std::vector<size_t>> &range_res, const std::string &structure) {
     
-    vector<pair<uint32_t, size_t>> approx_nearest;
-    vector<uint32_t> exact_nearest;
-    ofstream ofile;
-    ofile.open(out, ios::out | ios::app);
+    std::vector<std::pair<uint32_t, size_t>> approx_nearest;
+    std::vector<uint32_t> exact_nearest;
+    std::ofstream ofile;
+    ofile.open(out, std::ios::out | std::ios::app);
 
     for (size_t i = 0; i != size; ++i) {
         approx_nearest = ann_res[i];
         exact_nearest  = enn_dists[i];
-        ofile << "Query: " << i << endl;
+        ofile << "Query: " << i << std::endl;
         for (size_t j = 0; j != nns; ++j) {
             uint32_t dist = approx_nearest[j].first;
             size_t ith_vec = approx_nearest[j].second;
             if (dist == std::numeric_limits<uint32_t>::max()) {
-                ofile << "Nearest neighbor-" << j + 1 << ": " << "Not Found" << endl;
-                ofile << "distance" << structure << ": " << "None" << endl;
+                ofile << "Nearest neighbor-" << j + 1 << ": " << "Not Found" << std::endl;
+                ofile << "distance" << structure << ": " << "None" << std::endl;
             }
             else {
-                ofile << "Nearest neighbor-" << j + 1 << ": " << ith_vec << endl;
-                ofile << "distance" << structure << ": " << dist << endl;
+                ofile << "Nearest neighbor-" << j + 1 << ": " << ith_vec << std::endl;
+                ofile << "distance" << structure << ": " << dist << std::endl;
             }
-            ofile << "distanceTrue: " << exact_nearest[j] << endl;
+            ofile << "distanceTrue: " << exact_nearest[j] << std::endl;
         }
-        ofile << "t" << structure << ": " << ann_query_times[i] << endl;
-        ofile << "tTrue: " << (double) enn_query_times[i] << endl;
+        ofile << "t" << structure << ": " << ann_query_times[i] << std::endl;
+        ofile << "tTrue: " << (double) enn_query_times[i] << std::endl;
 
-        ofile << "R-near neighbors:" << endl;
+        ofile << "R-near neighbors:" << std::endl;
         if (range_res[i].empty()) {
             ofile << "Not Found" << std::endl;
             continue;
         }
         for (auto &c : range_res[i]) {
-            ofile << c << endl;
+            ofile << c << std::endl;
         }
     }
 

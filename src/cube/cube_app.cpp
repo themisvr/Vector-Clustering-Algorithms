@@ -31,22 +31,22 @@ static void start_hypercube_simulation(Cube_args *args)
                                                     training_samples[0].size(), r, training_samples);
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
-    cout << "Done!" << endl;
-    cout << "Hypercube Structure Creation lasted " << duration.count() << " seconds" << endl;
+    std::cout << "Done!" << std::endl;
+    std::cout << "Hypercube Structure Creation lasted " << duration.count() << " seconds" << std::endl;
 
     /* read test set and store each query point */
-    std::vector<vector<uint8_t>> test_samples;
+    std::vector<std::vector<uint8_t>> test_samples;
     std::cout << "\nReading test set from \"" << args->get_query_file_path() << "\"..." << std::endl;
     read_file<uint8_t> (args->get_query_file_path(), test_samples);
     std::cout << "Done!" << std::endl;
 
 
     /********** Start ANN / ENN / Range search **********/
-    std::vector<std::vector<pair<uint32_t, size_t>>> ann_results(test_samples.size(), \
-                                                                    vector<pair<uint32_t, size_t>> (args->get_nearest_neighbors_num()));
+    std::vector<std::vector<std::pair<uint32_t, size_t>>> ann_results(test_samples.size(), \
+                                                                std::vector<std::pair<uint32_t, size_t>> (args->get_nearest_neighbors_num()));
 
     std::vector<std::vector<uint32_t>>               enn_distances(test_samples.size(), \
-                                                                    vector<uint32_t> (args->get_nearest_neighbors_num()));
+                                                                    std::vector<uint32_t> (args->get_nearest_neighbors_num()));
 
     std::vector<std::vector<size_t>>                 range_results(test_samples.size());
     std::vector<uint64_t>                            ann_query_times(test_samples.size());
