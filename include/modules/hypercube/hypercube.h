@@ -3,8 +3,9 @@
 
 #include <unordered_map>
 #include <vector>
-#include <utility>
-#include <algorithm>
+#include <utility>   /* for make_pair() */
+#include <limits>    /* for numeric_limits() */
+#include <algorithm> /* for sort() */
 #include <cassert>
 #include <cstdlib>
 
@@ -42,10 +43,20 @@ class Hypercube {
         std::vector<std::unordered_multimap<uint32_t, bool>> uniform_binary_mapppings;
 
         /* hash table representing the hypercube; each vertex is basically a bucket */
-        std::unordered_multimap<std::string, std::pair<std::vector<T>, size_t>> hash_table;
+        std::unordered_multimap<std::string, std::pair<const std::vector<T>*, size_t>> hash_table;
 
         /* for the hypercube method we use d' x LSH hash functions */
         std::vector<HashFunction<T>> hash_functions;
+
+
+        void init_k_nearest_neighbors(std::vector<std::pair<uint32_t, size_t>> &k_nearest)
+        {
+            uint32_t best_dist = std::numeric_limits<uint32_t>::max();
+
+            for (size_t i = 0; i != max_candidates; ++i) {
+                k_nearest.emplace_back(best_dist, 0);
+            }
+        }
 
 
     public:
@@ -53,9 +64,9 @@ class Hypercube {
         Hypercube (uint32_t projdim, uint16_t cands, uint16_t probes, uint16_t nns, float r, \
                     size_t trn, uint32_t d, double meandist, const std::vector<std::vector<T>> &samples) \
                     : projection_dimension(projdim), max_candidates(cands), max_probes(probes), \
-                      N(nns), R(r), train_samples(trn), D(d), win(MULTIPLE1 * meandist) //win(MULTIPLE2 * R)
+                      N(nns), R(r), train_samples(trn), D(d), /*win(MULTIPLE1 * meandist)*/ win(40000.0)
         {
-            std:: cout << "Window is: ";
+            std::cout << "\nWindow is: ";
             std::cout << win << std::endl;
 
             M = 1ULL << (32 / projection_dimension);
@@ -70,10 +81,11 @@ class Hypercube {
             for (size_t i = 0; i != train_samples; ++i) {
                 cube_projection_train(samples[i], i);
             }
+
         }
 
 
-        void cube_projection_train(const std::vector<T> &point, const size_t index)
+        void cube_projection_train(const std::vector<T> &point, size_t index)
         {
             uint32_t    hval;
             short       bit;
@@ -100,7 +112,8 @@ class Hypercube {
             assert(bitstring.size() == projection_dimension);
 
             /* create object {point, index}; insert the object into the hash table as a pair: { key, {point, index} } */
-            hash_table.insert( std::make_pair(bitstring, std::make_pair(point, index)) );   // we want to avoid creating a copy of point!
+            hash_table.insert( std::make_pair(bitstring, std::make_pair(&point, index)) );  
+
         }
 
 
@@ -134,7 +147,7 @@ class Hypercube {
         }
 
 
-        short retrieve_val(std::unordered_multimap<uint32_t, bool> &map, uint32_t hval)
+        short retrieve_val(const std::unordered_multimap<uint32_t, bool> &map, uint32_t hval)
         {
             if ( !map.empty() ) {
                 auto retrieved = map.find(hval);
@@ -158,52 +171,51 @@ class Hypercube {
         }
 
 
-        static bool compare(const std::pair<uint32_t, size_t> &p1, const std::pair<uint32_t, size_t> &p2)
-        {
-            return p1.first < p2.first;
-        }
-
-
         std::vector<std::pair<uint32_t, size_t>> approximate_nn(const std::vector<T> &query)
         {
             /* vector to store query's nearest neighbors - M candidates */
             std::vector<std::pair<uint32_t, size_t>> candidates;
-            uint32_t dist;
+            uint32_t dist = 0;
             uint32_t cnt = projection_dimension;
             uint16_t M = max_candidates;
             uint16_t probes = max_probes;
-            uint8_t  flag = 1;
-            bool     same_keys = false;
+            uint8_t  bits = 1;
+
+            init_k_nearest_neighbors(candidates);
 
             /* project query to a cube vertex / hash table bucket */
             const std::string key = cube_projection_test(query);
             std::string key1 = key;
-            std::pair<std::vector<T>, size_t> value;
+            std::pair<const std::vector<T>*, size_t> value;
 
             while (M > 0) {
                 if (probes > 0) {
                     auto range = hash_table.equal_range(key1); 
                     for (auto i = range.first; (i != range.second) && (M > 0); ++i, --M) {
-                        same_keys = true;
-                        value = i->second; // value = (vector<uint8_t>, size_t)
-                        dist = manhattan_distance_rd<T>(query, value.first);
-                        candidates.emplace_back(dist, value.second);
+                        value = i->second; 
+                        dist = manhattan_distance_rd<T>(query, *(value.first));
+                        if (dist < candidates[0].first) {
+                            candidates[0] = std::make_pair(dist, value.second);
+                            std::sort(candidates.begin(), candidates.end(), [](const std::pair<uint32_t, size_t> &left, \
+                                                                                const std::pair<uint32_t, size_t> &right) \
+                                                                                { return (left.first > right.first); } );
+
+                        }
                     }
 
-                    /* if no points with the same keys were found 
-                     * don't decrement number of probes; otherwise might
-                     * not find nearest neighbors at all
-                     */
-                    if (same_keys) --probes;
-                    key1 = gen_similar_vertex(key, cnt, flag);
-                    same_keys = false;
+                    /* generate a "nearby" vertex using hamming distance (hamming distance = 1, then hamming distance = 2, etc) */
+                    key1 = gen_nearby_vertex(key, cnt, bits);
+                    /* can't generate hamming distance = x > cube dimension */
+                    if (bits > projection_dimension) break;
+                    --probes;
                 }
                 else
                     break;
             }
 
-            std::sort(candidates.begin(), candidates.end(), compare);
-            if(candidates.size() > N) candidates.resize(N); // keep only the N best candidates
+            std::sort(candidates.begin(), candidates.end(), [](const std::pair<uint32_t, size_t> &left, \
+                                                                const std::pair<uint32_t, size_t> &right) \
+                                                                { return (left.first < right.first); } );
 
             return candidates;
         }
@@ -213,32 +225,33 @@ class Hypercube {
         {
             /* vector to store query's nearest neighbors; only store the training index this time */
             std::vector<size_t> candidates;
-            uint32_t dist;
+            uint32_t dist = 0;
             uint32_t cnt = projection_dimension;
             uint16_t M = max_candidates;
             uint16_t probes = max_probes;
-            uint8_t  flag = 1;
-            bool     same_keys = false;
+            uint8_t  bits = 1;
 
             /* project query to a cube vertex / hash table bucket */
             const std::string key = cube_projection_test(query);
             std::string key1 = key;
-            std::pair<std::vector<T>, size_t> value;
+            std::pair<const std::vector<T>*, size_t> value;
 
             while (M > 0) {
                 if (probes > 0) {
                     auto range = hash_table.equal_range(key1); 
                     for (auto i = range.first; (i != range.second) && (M > 0); ++i, --M) {
-                        same_keys = true;
                         value = i->second;
-                        dist = manhattan_distance_rd<T>(query, value.first);
+                        dist = manhattan_distance_rd<T>(query, *(value.first));
                         if (dist < C * R) {     // average distance is 20 000 - 35 000
                             candidates.emplace_back(value.second);
                         }
                     }
-                    if (same_keys) --probes;
-                    key1 = gen_similar_vertex(key, cnt, flag);
-                    same_keys = false;
+
+                    /* generate a "nearby" vertex using hamming distance (hamming distance = 1, then hamming distance = 2, etc) */
+                    key1 = gen_nearby_vertex(key, cnt, bits);
+                    /* can't generate hamming distance = x > cube dimension */
+                    if (bits > projection_dimension) break;
+                    --probes;
                 }
                 else
                     break;
@@ -252,12 +265,11 @@ class Hypercube {
         {
             /* vector to store query's nearest neighbors; only store the training index this time */
             std::vector<size_t> candidates;
-            uint32_t dist;
+            uint32_t dist = 0;
             uint32_t cnt = projection_dimension;
             uint16_t M = max_candidates;
             uint16_t probes = max_probes;
             uint8_t  bits = 1;
-            bool     same_keys = false;
 
             /* project query to a cube vertex / hash table bucket */
             const std::string key = cube_projection_test(query);
@@ -268,17 +280,18 @@ class Hypercube {
                 if (probes > 0) {
                     auto range = hash_table.equal_range(key1); 
                     for (auto i = range.first; (i != range.second) && (M > 0); ++i, --M) {
-                        same_keys = true;
                         value = i->second;
                         dist = manhattan_distance_rd<T>(query, value.first);
                         if (dist < C * r) {     // average distance is 20 000 - 35 000
                             candidates.emplace_back(value.second);
                         }
                     }
-                    if (same_keys) --probes;
-                    key1 = gen_similar_vertex(key, cnt, bits);
+
+                    /* generate a "nearby" vertex using hamming distance (hamming distance = 1, then hamming distance = 2, etc) */
+                    key1 = gen_nearby_vertex(key, cnt, bits);
+                    /* can't generate hamming distance = x > cube dimension */
                     if (bits > projection_dimension) break;
-                    same_keys = false;
+                    --probes;
                 }
                 else
                     break;
@@ -288,11 +301,14 @@ class Hypercube {
         }
 
 
-        std::string gen_similar_vertex(const std::string &key, uint32_t &counter, uint8_t &bits)
+        std::string gen_nearby_vertex(const std::string &key, uint32_t &counter, uint8_t &bits)
         {
             std::string bitstring = key;
             for (size_t i = 0; i < bits && counter != 0; ++i, --counter) {
                 bitstring[counter - 1] == '0' ? bitstring[counter - 1] = '1' : bitstring[counter - 1] = '0';
+                if (counter == 1 && i < bits) { // wrap-around
+                    counter = projection_dimension;
+                }
             }
 
             if(counter == 0) {
