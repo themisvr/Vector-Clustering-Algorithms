@@ -23,7 +23,8 @@ static void start_lsh_simulation(Lsh_args *args) {
 
     /* read training set and store each data sample */
     std::cout << "\nReading training set..." << std::endl;
-    std::vector<std::vector<uint8_t>> dataset = read_file<uint8_t> (args->get_input_file_path());
+    std::vector<std::vector<uint8_t>> dataset;
+    read_file<uint8_t> (args->get_input_file_path(), dataset);
     std::cout << "Done!" << std::endl;
 
     std::cout << "\nComputing mean nearest neighbor distance..." << std::endl;
@@ -39,7 +40,8 @@ static void start_lsh_simulation(Lsh_args *args) {
 
 
     /* read test set and store each query point */
-    std::vector<std::vector<uint8_t>> queries = read_file<uint8_t> (args->get_query_file_path());
+    std::vector<std::vector<uint8_t>> queries;
+    read_file<uint8_t> (args->get_query_file_path(), queries);
 
     /********** Start ANN / ENN / Range search **********/
     std::vector<std::vector<std::pair<uint32_t, size_t>>> ann_results(queries.size(), \

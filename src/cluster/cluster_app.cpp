@@ -19,13 +19,9 @@ int main(int argc, char *argv[])  {
     parse_cluster_args(argc, argv, &args);
     parse_cluster_configurations(args.config_file, &configs);
 
-    /* doesn't work - empty string!!! */
-    std::cout << args.input_file << std::endl;
-
-
     /* read training set file and store the training data */
-    //std::vector<std::vector<uint8_t>> train_data = read_file<uint8_t> (args.input_file);
-    std::vector<std::vector<uint8_t>> train_data = read_file<uint8_t> ("../../datasets/train-images-idx3-ubyte");
+    std::vector<std::vector<uint8_t>> train_data;
+    read_file<uint8_t> (args.input_file, train_data);
 
 
     /* based on the assignment method specified by the user, use the appropriate constructor for Cluster */

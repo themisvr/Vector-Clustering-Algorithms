@@ -6,6 +6,8 @@
 #include <vector>
 #include <unordered_map>
 #include <utility>
+#include <map>
+#include <set>
 
 #include "../../hash_function/hash_function.h"
 #include "../../metric/metric.h"
@@ -41,6 +43,8 @@ class LSH {
         
         std::vector<AmplifiedHashFunction<T>> g_hash_functions;
 
+        std::map<uint64_t, std::set<size_t>> g_values;
+
 
         void initialize_k_best_vectors(std::vector<std::pair<uint32_t, size_t>> &k_best_vectors) {
             
@@ -51,6 +55,19 @@ class LSH {
             }
         }
 
+
+        void map_vec_to_g_value(uint64_t amplified_value, size_t vec_index) {
+            
+            auto it = g_values.find(amplified_value);
+            if (it != g_values.end()) {
+                it->second.insert(vec_index);
+            }
+            else {
+                std::set<size_t> g_vec_ids;
+                g_vec_ids.insert(vec_index);
+                g_values.insert(std::make_pair(amplified_value, g_vec_ids));
+            }
+        }
 
 
     public:
@@ -81,6 +98,7 @@ class LSH {
 
                 for (size_t index = 0; index != n_vectors; ++index) {           
                     amplified_value = g_hash_functions[i].amplified_function_construction(dataset[index]);
+                    map_vec_to_g_value(amplified_value, index);
                     hash_table.insert(std::make_pair(amplified_value % ht_size, std::make_pair(dataset[index], index)));
                 }
                 lsh_tables.emplace_back(hash_table);
@@ -105,6 +123,10 @@ class LSH {
 
             for (size_t i = 0; i != L; ++i) {
                 af_value = g_hash_functions[i].amplified_function_construction(query);
+                auto map_it = g_values.find(af_value);
+                if (map_it == g_values.end()) {
+                    continue;
+                }
                 bucket = fast_mod(af_value, ht_size);
                 auto it = lsh_tables[i].equal_range(bucket);
 
@@ -112,6 +134,7 @@ class LSH {
                 /* Finds a range containing all elements whose key is the number of bucket in the multimap */
                 for (auto item = it.first; item != it.second; ++item) {
                     bucket_item = item->second;
+                    if (map_it->second.find(bucket_item.second) == map_it->second.end()) continue;
                     dist = manhattan_distance_rd<T>(bucket_item.first, query);
                     items_checked++;
                     if (dist < k_best_vectors[0].first) {
@@ -144,11 +167,16 @@ class LSH {
             for (size_t i = 0; i != L; ++i) {
                 af_value = g_hash_functions[i].amplified_function_construction(query);
                 bucket = fast_mod(af_value , ht_size);
+                auto map_it = g_values.find(af_value);
+                if (map_it == g_values.end()) {
+                    continue;
+                }
                 auto it = lsh_tables[i].equal_range(bucket);
 
                 for (auto item = it.first; item != it.second; ++item) {
                     items_checked++;
                     bucket_item = item->second;
+                    if (map_it->second.find(bucket_item.second) == map_it->second.end()) continue;
                     if (manhattan_distance_rd<T>(bucket_item.first, query) < (c * r)) {
                         result.emplace_back(bucket_item.second);
                     }
