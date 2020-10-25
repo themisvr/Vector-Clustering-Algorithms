@@ -274,14 +274,14 @@ class Hypercube {
             /* project query to a cube vertex / hash table bucket */
             const std::string key = cube_projection_test(query);
             std::string key1 = key;
-            std::pair<std::vector<T>, size_t> value;
+            std::pair<const std::vector<T> *, size_t> value;
 
             while (M > 0) {
                 if (probes > 0) {
                     auto range = hash_table.equal_range(key1); 
                     for (auto i = range.first; (i != range.second) && (M > 0); ++i, --M) {
                         value = i->second;
-                        dist = manhattan_distance_rd<T>(query, value.first);
+                        dist = manhattan_distance_rd<T>(query, *(value.first));
                         if (dist < C * r) {     // average distance is 20 000 - 35 000
                             candidates.emplace_back(value.second);
                         }

@@ -13,7 +13,7 @@
 #include "../../metric/metric.h"
 
 
-#define HT_SIZE(N) ((N / 16))
+#define HT_SIZE(N) ((N / 32))
 #define MULTIPLE 4
 
 
@@ -83,11 +83,11 @@ class LSH {
             M = 1ULL << (32 / K);
             m = (1ULL << 32) - (5);
             ht_size = HT_SIZE(n_vectors);
-            // some issues with w
-            // w = meandist;
-            // std::cout <<  "Window is: " << w << std::endl;
-            // best results till now with w = 4000
-            w = 4000;
+            
+            // w = 4000;
+            // w = 40000
+            w = meandist;
+            std::cout <<  "\nWindow is: " << w << std::endl;
 
 
             uint64_t amplified_value{};
@@ -114,11 +114,14 @@ class LSH {
 
         std::vector<std::pair<uint32_t, size_t>> approximate_k_nn(const std::vector<T> &query) {
             
-            std::vector<std::pair<uint32_t, size_t>> k_best_vectors;
+            std::vector<std::pair<uint32_t, size_t>> best_vectors;
+            std::vector<std::pair<uint32_t, size_t>> res;
             uint64_t af_value{};
             uint32_t dist{};
 
-            initialize_k_best_vectors(k_best_vectors);
+            initialize_k_best_vectors(res);
+
+            uint32_t min_dist = std::numeric_limits<uint32_t>::max();
 
             for (size_t i = 0; i != L; ++i) {
                 af_value = g_hash_functions[i].amplified_function_construction(query);
@@ -128,20 +131,23 @@ class LSH {
 
                 for (auto const &index : bucket) {
                     dist = manhattan_distance_rd<T> (dataset[index], query);
-                    if (dist < k_best_vectors[0].first) {
-                        k_best_vectors[0] = std::make_pair(dist, index);
-                        std::sort(k_best_vectors.begin(), k_best_vectors.end(), [](const std::pair<uint32_t, size_t> &left, \
-                                                                                    const std::pair<uint32_t, size_t> &right) { \
-                            return left.first > right.first;
-                        });
+                    if (dist < min_dist) {
+                        min_dist = dist;
+                        best_vectors.emplace_back(std::make_pair(dist, index));
                     }
                 }
             }
-            std::sort(k_best_vectors.begin(), k_best_vectors.end(), [](const std::pair<uint32_t, size_t> &left, \
+            std::sort(best_vectors.begin(), best_vectors.end(), [](const std::pair<uint32_t, size_t> &left, \
                                                                                     const std::pair<uint32_t, size_t> &right) { \
-                            return left.first < right.first;
-                        });
-            return k_best_vectors;
+                    return left.first < right.first;
+            });
+
+            if (best_vectors.size() >= N) {
+                for (size_t i = 0; i != N; ++i) {
+                    res[i] = best_vectors[i];
+                }
+            }
+            return res;
         }
 
 

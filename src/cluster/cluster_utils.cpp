@@ -3,6 +3,7 @@
 #include <utility>
 #include <unistd.h>
 #include <getopt.h>
+#include <fstream>
 
 #include "../../include/io_utils/io_utils.h"
 #include "../../include/cluster/cluster_utils.h"
@@ -55,7 +56,7 @@ void parse_cluster_args(int argc, char * const argv[], cluster_args *args) {
                 if( file_exists(optarg) ) 
                     args->output_file = optarg;
                 else {
-                    ofstream out("./output");
+                    std::ofstream out("./output");
                     args->output_file = "output";
                 }
                 break;
