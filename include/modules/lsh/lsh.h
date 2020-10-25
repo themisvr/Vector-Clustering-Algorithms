@@ -12,8 +12,10 @@
 #include "../../hash_function/hash_function.h"
 #include "../../metric/metric.h"
 
-#define HT_SIZE(N) ((N / 8))
+
+#define HT_SIZE(N) ((N / 16))
 #define MULTIPLE 4
+
 
 template <typename T>
 class LSH {
@@ -39,7 +41,7 @@ class LSH {
 
         std::vector<std::vector<T>> dataset;
 
-        std::vector<std::unordered_multimap<int, std::pair<std::vector<T>, size_t>>> lsh_tables;
+        std::vector<std::unordered_map<int, std::vector<size_t>>> lsh_tables;
         
         std::vector<AmplifiedHashFunction<T>> g_hash_functions;
 
@@ -65,7 +67,7 @@ class LSH {
             else {
                 std::set<size_t> g_vec_ids;
                 g_vec_ids.insert(vec_index);
-                g_values.insert(std::make_pair(amplified_value, g_vec_ids));
+                g_values[amplified_value] = g_vec_ids;
             }
         }
 
@@ -78,11 +80,12 @@ class LSH {
             
             D = dataset[0].size();
             n_vectors = dataset.size();
-            ht_size = HT_SIZE(n_vectors);
             M = 1ULL << (32 / K);
             m = (1ULL << 32) - (5);
-            // up to 4000 results are not so go good
-            // w = meandist * MULTIPLE;
+            ht_size = HT_SIZE(n_vectors);
+            // some issues with w
+            // w = meandist;
+            // std::cout <<  "Window is: " << w << std::endl;
             // best results till now with w = 4000
             w = 4000;
 
@@ -94,12 +97,12 @@ class LSH {
             }
 
             for (size_t i = 0; i != L; ++i) {                
-                std::unordered_multimap<int, std::pair<std::vector<T>, size_t>> hash_table{};
+                std::unordered_map<int, std::vector<size_t>> hash_table;
 
                 for (size_t index = 0; index != n_vectors; ++index) {           
                     amplified_value = g_hash_functions[i].amplified_function_construction(dataset[index]);
-                    map_vec_to_g_value(amplified_value, index);
-                    hash_table.insert(std::make_pair(amplified_value % ht_size, std::make_pair(dataset[index], index)));
+                   // map_vec_to_g_value(amplified_value, index);
+                    hash_table[amplified_value % ht_size].emplace_back(index);
                 }
                 lsh_tables.emplace_back(hash_table);
             }
@@ -114,37 +117,24 @@ class LSH {
             std::vector<std::pair<uint32_t, size_t>> k_best_vectors;
             uint64_t af_value{};
             uint32_t dist{};
-            uint32_t bucket{};
-            uint32_t items_checked = 0;
 
             initialize_k_best_vectors(k_best_vectors);
 
-            std::pair<std::vector<T>, size_t> bucket_item;
-
             for (size_t i = 0; i != L; ++i) {
                 af_value = g_hash_functions[i].amplified_function_construction(query);
-                auto map_it = g_values.find(af_value);
-                if (map_it == g_values.end()) {
-                    continue;
-                }
-                bucket = fast_mod(af_value, ht_size);
-                auto it = lsh_tables[i].equal_range(bucket);
 
+                std::unordered_map<int, std::vector<size_t>> &ith_table = lsh_tables[i];
+                std::vector<size_t> bucket = ith_table[af_value % ht_size];
 
-                /* Finds a range containing all elements whose key is the number of bucket in the multimap */
-                for (auto item = it.first; item != it.second; ++item) {
-                    bucket_item = item->second;
-                    if (map_it->second.find(bucket_item.second) == map_it->second.end()) continue;
-                    dist = manhattan_distance_rd<T>(bucket_item.first, query);
-                    items_checked++;
+                for (auto const &index : bucket) {
+                    dist = manhattan_distance_rd<T> (dataset[index], query);
                     if (dist < k_best_vectors[0].first) {
-                        k_best_vectors[0] = std::make_pair(dist, bucket_item.second);
+                        k_best_vectors[0] = std::make_pair(dist, index);
                         std::sort(k_best_vectors.begin(), k_best_vectors.end(), [](const std::pair<uint32_t, size_t> &left, \
                                                                                     const std::pair<uint32_t, size_t> &right) { \
                             return left.first > right.first;
                         });
                     }
-                    // if (items_checked > 10 * L) return k_best_vectors;
                 }
             }
             std::sort(k_best_vectors.begin(), k_best_vectors.end(), [](const std::pair<uint32_t, size_t> &left, \
@@ -159,28 +149,17 @@ class LSH {
 
             std::vector<size_t> result;
             uint64_t af_value{};
-            uint32_t bucket{};
-            uint32_t items_checked = 0;
-
-            std::pair<std::vector<T>, size_t> bucket_item;
 
             for (size_t i = 0; i != L; ++i) {
                 af_value = g_hash_functions[i].amplified_function_construction(query);
-                bucket = fast_mod(af_value , ht_size);
-                auto map_it = g_values.find(af_value);
-                if (map_it == g_values.end()) {
-                    continue;
-                }
-                auto it = lsh_tables[i].equal_range(bucket);
 
-                for (auto item = it.first; item != it.second; ++item) {
-                    items_checked++;
-                    bucket_item = item->second;
-                    if (map_it->second.find(bucket_item.second) == map_it->second.end()) continue;
-                    if (manhattan_distance_rd<T>(bucket_item.first, query) < (c * r)) {
-                        result.emplace_back(bucket_item.second);
+                std::unordered_map<int, std::vector<size_t>> &ith_table = lsh_tables[i];
+                std::vector<size_t> bucket = ith_table[af_value % ht_size];
+
+                for (auto const &index : bucket) {
+                    if (manhattan_distance_rd<T> (dataset[index], query) < (c * r)) {
+                        result.emplace_back(index);
                     }
-                    // if (items_checked > 20 * L) { return result; }
                 }    
             }
             return result;

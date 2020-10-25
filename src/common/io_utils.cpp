@@ -286,6 +286,8 @@ void write_output(const std::string &out, const uint16_t nns, const size_t size,
     std::ofstream ofile;
     ofile.open(out, std::ios::out | std::ios::app);
 
+    size_t test{};
+
     for (size_t i = 0; i != size; ++i) {
         approx_nearest = ann_res[i];
         exact_nearest  = enn_dists[i];
@@ -300,6 +302,7 @@ void write_output(const std::string &out, const uint16_t nns, const size_t size,
             else {
                 ofile << "Nearest neighbor-" << j + 1 << ": " << ith_vec << std::endl;
                 ofile << "distance" << structure << ": " << dist << std::endl;
+                if (dist < exact_nearest[j]) test++;
             }
             ofile << "distanceTrue: " << exact_nearest[j] << std::endl;
         }
@@ -315,6 +318,7 @@ void write_output(const std::string &out, const uint16_t nns, const size_t size,
             ofile << c << std::endl;
         }
     }
+    std::cout << "wrong dists: " << test << std::endl;
 
     ofile.close();
 }

@@ -74,7 +74,7 @@ static void start_lsh_simulation(Lsh_args *args) {
         enn_query_times[i] = millis;
 
         /* Range Search */
-        range_results[i] = lsh.approximate_range_search(C, R, queries[i]);
+       // range_results[i] = lsh.approximate_range_search(C, R, queries[i]);
     }
 
     std::cout << "\nCreating the output format file..." << std::endl;
