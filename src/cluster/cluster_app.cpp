@@ -21,6 +21,10 @@ int main(int argc, char *argv[])  {
 
     /* read training set file and store the training data */
     std::vector<std::vector<uint8_t>> train_data;
+    std::cout << "\nReading training set from \"" << args.input_file << "\"..." << std::endl;
+    read_file<uint8_t> (args.input_file, train_data);
+    std::cout << "Done!" << std::endl;
+
     read_file<uint8_t> (args.input_file, train_data);
 
 
