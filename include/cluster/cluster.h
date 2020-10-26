@@ -18,8 +18,8 @@
 #include "../modules/exact_nn/exact_nn.h"
 #include "../cluster/cluster_utils.h"
 
-#define MAXRADIUS            1.0e+130 
-#define EPSILON              4000000000
+#define MAXRADIUS   1.0e+130 
+#define EPSILON     3000000000
 #define CLSH 1.8
 
 
@@ -96,11 +96,10 @@ class Cluster {
         }
 
 
-        void init_plus_plus(const std::vector<std::vector<T>> &train_set)
+        void init_plus_plus(const std::vector<std::vector<T>> &train_set, std::vector<size_t> &centroid_indexes)
         {
             std::vector<std::pair<float, size_t>>   partial_sums;
             std::vector<float>                      min_distances(train_set.size());
-            std::vector<size_t>                     centroid_indexes(num_clusters);
 
             /* randomly select the index of the 1st centroid from the training set */
             std::default_random_engine generator;
@@ -136,7 +135,7 @@ class Cluster {
 
                     if ( in(centroid_indexes, j) ) continue;
 
-                    new_partial_sum = prev_partial_sum + (min_distances[j] * min_distances[j]);
+                    new_partial_sum = prev_partial_sum + (min_distances[j] * min_distances[j]); // P(r) = P(r - 1) + (D(r) * D(r))
                     partial_sums.emplace_back(new_partial_sum, j);
                     prev_partial_sum = new_partial_sum;
                 }
@@ -157,6 +156,31 @@ class Cluster {
                 centroid_indexes[t] = r;
                 /* next iteration: partial_sum's size will be decreased by one */
                 partial_sums.clear();   
+            }
+        }
+
+
+        /* this version of lloyd's assignment is used ONLY in the first iteration of k-medians++ */
+        void lloyds_assignment(const std::vector<std::vector<T>> &train_set, std::vector<size_t> &centroid_indexes)
+        {
+            uint32_t min_dist{};
+            uint32_t dist{};
+
+            /* for each point compute l1 metric distance to every centroid */
+            for (size_t i = 0; i != train_set.size(); ++i)  {
+                /* point with index i is one of k centers, so do not assign it to another center */
+                if ( in(centroid_indexes, i) ) continue;
+                min_dist = std::numeric_limits<uint32_t>::max();
+                size_t best_centroid{};
+                for (size_t j = 0; j != centroids.size(); ++j) {
+                    dist = manhattan_distance_rd<T> (train_set[i], centroids[j]);
+                    if (dist < min_dist) {
+                        min_dist = dist;
+                        best_centroid = j;
+                    }
+                }
+                /* assign i-th training set point to cluster (center) with which it has the shortest distance */
+                clusters[best_centroid].emplace_back(i);
             }
         }
 
@@ -183,7 +207,8 @@ class Cluster {
         }
 
 
-        void reverse_assignment(const std::vector<std::vector<T>> &train_set)
+        /* this version of reverse assignment is used ONLY in the first iteration of k-medians++ */
+        void reverse_assignment(const std::vector<std::vector<T>> &train_set, std::vector<size_t> &centroid_indexes)
         {
             assert(centroids.size() == num_clusters);
 
@@ -211,7 +236,7 @@ class Cluster {
             /* start with min(dist between centers)/2 */
             double radius = (double) (min_dist / 2);
         
-            size_t new_assigned   = train_set.size();   // might use new_assigned as a terminating condition for while() loop
+            size_t new_assigned = 0;
             size_t total_assigned = 0;
             std::vector<size_t> range_search_nns;
         
@@ -222,7 +247,6 @@ class Cluster {
                 /* for each centroid c, range/ball queries centered at c */
                 for (ssize_t i = 0; i != n_centroids; ++i) {
         
-                    //std::cout << "For centroid with index " << centroids[i].second << std::endl;
                     if (cubeptr == nullptr) {
                         range_search_nns = lshptr->approximate_range_search(CLSH, radius, centroids[i]);
                     }
@@ -231,7 +255,9 @@ class Cluster {
                     }
                     for (const auto &vector_index: range_search_nns) {
         
-                        //std::cout << vector_index << std::endl;
+                        /* If vector_index is one of the k-centers, it cannot be assigned to another center */
+                        if( in(centroid_indexes, vector_index) ) continue;
+                        
                         /* The case where the vector is not assigned to a cluster */
                         if (assigned_vectors[vector_index] == -1) {
                             clusters[i].emplace_back(vector_index);
@@ -275,9 +301,114 @@ class Cluster {
                 }
                 /* multiply radius by 2 */
                 total_assigned += new_assigned;
-                //std::cout << "New Points Assigned to Clusters: " << new_assigned << std::endl;
-                //std::cout << "Total Points Assigned to Clusters: " << total_assigned << std::endl;
-                //std::cout << "Radius for this Iteration was: " << radius << std::endl;
+                std::cout << "New Points Assigned to Clusters: " << new_assigned << std::endl;
+                std::cout << "Total Points Assigned to Clusters: " << total_assigned << std::endl;
+                std::cout << "Radius for this Iteration was: " << radius << std::endl;
+                radius *= 2;
+            }
+
+            /* At end: for every unassigned point, compare its distances to all centroids */
+            for (ssize_t i = 0; i != n_vectors; ++i) {
+                if (assigned_vectors[i] == -1) {
+                    min_dist = std::numeric_limits<uint32_t>::max();
+                    int best_centroid{};
+                    for (ssize_t j = 0; j != n_centroids; ++j) {
+                        uint32_t dist = manhattan_distance_rd(train_set[i], centroids[j]);
+                        if (dist < min_dist) {
+                            min_dist = dist;
+                            best_centroid = j;
+                        }
+                    }
+                    clusters[best_centroid].emplace_back(i);
+                }
+            }
+        }
+
+
+        void reverse_assignment(const std::vector<std::vector<T>> &train_set)
+        {
+            assert(centroids.size() == num_clusters);
+
+            std::map<int, int> assigned_vectors;
+            ssize_t n_vectors = train_set.size();
+            ssize_t n_centroids = centroids.size();
+        
+            /* at the beggining mark each vector as unassigned (-1) */
+            for (ssize_t i = 0; i != n_vectors; ++i) {
+                assigned_vectors[i] = -1;
+            }
+        
+            /* calculate min distance between centers */
+            uint32_t dist{};
+            uint32_t min_dist = std::numeric_limits<uint32_t>::max();
+            for (ssize_t i = 0; i != n_centroids; ++i) {
+                for (ssize_t j = i + 1; j != n_centroids; ++j) {
+                    dist = manhattan_distance_rd<T> (centroids[i], centroids[j]);
+                    if (dist < min_dist) {
+                        min_dist = dist;
+                    }
+                }
+            }
+        
+            /* start with min(dist between centers)/2 */
+            double radius = (double) (min_dist / 2);
+        
+            std::vector<size_t> range_search_nns;
+        
+            while (radius < MAXRADIUS) {
+        
+                /* for each centroid c, range/ball queries centered at c */
+                for (ssize_t i = 0; i != n_centroids; ++i) {
+        
+                    if (cubeptr == nullptr) {
+                        range_search_nns = lshptr->approximate_range_search(CLSH, radius, centroids[i]);
+                    }
+                    else {
+                        range_search_nns = cubeptr->range_search(centroids[i], radius);
+                    }
+                    for (const auto &vector_index: range_search_nns) {
+        
+                        /* The case where the vector is not assigned to a cluster */
+                        if (assigned_vectors[vector_index] == -1) {
+                            clusters[i].emplace_back(vector_index);
+                            /* mark the vector as "assigned" to cluster */
+                            assigned_vectors[vector_index] = i;
+                        }
+
+                        /*
+                            In this case, the vector has been assigned to a defferent centroid before,
+                            so compare its distances to the respective centroids, assign to closest centroid.
+                        */
+                        else if (assigned_vectors[vector_index] != i) { // conversion here from int to unsigned long (size_t) !
+                            int assigned_centroid = assigned_vectors[vector_index];
+                            uint32_t prev_centroid_dist = manhattan_distance_rd<T> (train_set[vector_index], centroids[assigned_centroid]);
+                            uint32_t new_centroid_dist = manhattan_distance_rd<T> (train_set[vector_index], centroids[i]);
+
+                            /* if trainset[vector_index] is located on the inside of 2
+                             * range search queries executed by 2 different centroids,
+                             * assign the vector to its closest center
+                             */
+                            if (new_centroid_dist < prev_centroid_dist) {
+
+                                /* delete vector_index from the previous cluster, to which
+                                 * it was assigned
+                                 */
+                                for (auto iter = clusters[assigned_centroid].begin(); iter != clusters[assigned_centroid].end(); ++iter) {
+                                    if (*iter == vector_index) {
+                                        clusters[assigned_centroid].erase(iter);
+                                        break;
+                                    }
+                                }
+                                /* insert vector_index to its closest cluster */
+                                clusters[i].emplace_back(vector_index);
+
+                                /* mark the vector as "assigned" to the new cluster */
+                                assigned_vectors[vector_index] = i;
+                            }
+                        }
+                    }
+                }
+                /* multiply radius by 2 */
                 radius *= 2;
             }
 
@@ -346,16 +477,36 @@ class Cluster {
         void k_medians_plus_plus(const std::vector<std::vector<T>> &train_set, const std::string &method)
         {
             long prev_objective = 0;
-            long new_objective = 0;
+            long new_objective  = 0;
+            std::vector<size_t> centroid_indexes(num_clusters);
+
 
             /* initialization++ */
-            init_plus_plus(train_set);
+            init_plus_plus(train_set, centroid_indexes);
+
+            /* 
+             * in the first assignment operation, a point can be assigned to a center, 
+             * which is actually itself; so the first iteration requires special handling.
+             * after the first median update, it is not possible for the new centers
+             * to be points of the training set
+             */
+            if (method == "Classic")
+                lloyds_assignment(train_set, centroid_indexes);
+            else
+                reverse_assignment(train_set, centroid_indexes);
+
+            // step 2: median update
+            median_update(train_set);              
+
+            for (auto &cluster : clusters) {
+                    cluster.clear();
+            }
             
             /* repeat steps (1) and (2) until change in cluster assignments is "small" */
             while (1) {  
 
                 // step 1: assignment
-                if (method == "Lloyds")
+                if (method == "Classic")
                     lloyds_assignment(train_set);
                 else
                     reverse_assignment(train_set);
@@ -363,13 +514,13 @@ class Cluster {
                 // step 2: median update
                 median_update(train_set);              
 
-                // calculate k-medians objective function after centroids update
+                // calculate k-medians objective function after centroids are updated
                 new_objective = objective_function(train_set);
 
                 std::cout << "Objective of n-1 is " << prev_objective << std::endl;
                 std::cout << "Objective of n   is " << new_objective << std::endl;
 
-                // k-medians terminating condition
+                // terminating condition
                 if ( std::abs(prev_objective - new_objective) < EPSILON )
                     break;
                 
@@ -388,8 +539,6 @@ class Cluster {
 
         void silhouette(const std::vector<std::vector<T>> &dataset)
         {
-            std::cout << "Silhouette!" << std::endl;
-
             const size_t n_vectors = dataset.size();
 
             std::vector<double> s(n_vectors);
