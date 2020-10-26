@@ -14,7 +14,7 @@ void cluster_usage(const char *exec) {
                         "[+] -i [input_file]\n"
                         "[+] -c [configuration_file]\n"
                         "[+] -o [output_file]\n"
-                        "[+] -complete [optional]\n"
+                        "[+] --complete [optional]\n"
                         "[+] -m [assignment method]\n"
                         "\nProvide all the above arguments\n", exec); 
 
