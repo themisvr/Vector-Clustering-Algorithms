@@ -64,7 +64,7 @@ class Hypercube {
         Hypercube (uint32_t projdim, uint16_t cands, uint16_t probes, uint16_t nns, float r, \
                     size_t trn, uint32_t d, double meandist, const std::vector<std::vector<T>> &samples) \
                     : projection_dimension(projdim), max_candidates(cands), max_probes(probes), \
-                      N(nns), R(r), train_samples(trn), D(d), /*win(MULTIPLE1 * meandist)*/ win(40000.0)
+                      N(nns), R(r), train_samples(trn), D(d), win(40000.0)//win(MULTIPLE1 * meandist)
         {
             std::cout << "\nWindow is: ";
             std::cout << win << std::endl;
@@ -274,14 +274,14 @@ class Hypercube {
             /* project query to a cube vertex / hash table bucket */
             const std::string key = cube_projection_test(query);
             std::string key1 = key;
-            std::pair<std::vector<T>, size_t> value;
+            std::pair<const std::vector<T>*, size_t> value;
 
             while (M > 0) {
                 if (probes > 0) {
                     auto range = hash_table.equal_range(key1); 
                     for (auto i = range.first; (i != range.second) && (M > 0); ++i, --M) {
                         value = i->second;
-                        dist = manhattan_distance_rd<T>(query, value.first);
+                        dist = manhattan_distance_rd<T>(query, *(value.first));
                         if (dist < C * r) {     // average distance is 20 000 - 35 000
                             candidates.emplace_back(value.second);
                         }

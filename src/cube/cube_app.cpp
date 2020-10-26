@@ -77,7 +77,7 @@ static void start_hypercube_simulation(Cube_args *args)
         stop = std::chrono::high_resolution_clock::now();
     }
 
-    std::cout << "Writing formatted output to \"" << args->get_output_file_path() << "\"..."<< std::endl;
+    std::cout << "\nWriting formatted output to \"" << args->get_output_file_path() << "\"..."<< std::endl;
     write_output(args->get_output_file_path(), args->get_nearest_neighbors_num(), test_samples.size() / 100, \
                             ann_results, ann_query_times, enn_distances, enn_query_times, range_results, "Hypercube");
     std::cout << "Done!" << std::endl;

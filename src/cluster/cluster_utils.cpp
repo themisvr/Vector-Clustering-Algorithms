@@ -13,6 +13,7 @@ void cluster_usage(const char *exec) {
                         "[+] -i [input_file]\n"
                         "[+] -c [configuration_file]\n"
                         "[+] -o [output_file]\n"
+                        "[+] -complete [optional]\n"
                         "[+] -m [assignment method]\n"
                         "\nProvide all the above arguments\n", exec); 
 
@@ -55,7 +56,7 @@ void parse_cluster_args(int argc, char * const argv[], cluster_args *args) {
                 if( file_exists(optarg) ) 
                     args->output_file = optarg;
                 else {
-                    ofstream out("./output");
+                    std::ofstream out("./output");
                     args->output_file = "output";
                 }
                 break;

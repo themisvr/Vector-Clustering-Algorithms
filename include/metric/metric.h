@@ -32,9 +32,9 @@ inline uint32_t mean_nn_distance(const std::vector<std::vector<T>> &dataset) {
     uint32_t sum{};
     uint32_t best_dist = std::numeric_limits<uint32_t>::max();
 
-    for (size_t i = 0; i != dataset.size() / 1000; ++i) {
+    for (size_t i = 0; i != dataset.size() / 60; ++i) {
 
-        for (size_t j = 0; j != dataset.size() / 1000; ++j) {
+        for (size_t j = 0; j != dataset.size() / 60; ++j) {
 
             if (i == j) continue;
 
@@ -46,7 +46,7 @@ inline uint32_t mean_nn_distance(const std::vector<std::vector<T>> &dataset) {
 
     }
 
-    return ( sum / ( dataset.size() / 1000) );
+    return ( sum / ( dataset.size() / 60) );
 }
 
 #endif // METRIC_H
