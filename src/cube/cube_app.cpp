@@ -52,7 +52,7 @@ static void start_hypercube_simulation(Cube_args *args)
     std::vector<uint64_t>                            ann_query_times(test_samples.size());
     std::vector<uint64_t>                            enn_query_times(test_samples.size());
 
-    for (size_t i = 0; i != test_samples.size() / 100; ++i) {
+    for (size_t i = 0; i != test_samples.size(); ++i) {
 
         struct timeval end_t, start_t;
         uint64_t millis;

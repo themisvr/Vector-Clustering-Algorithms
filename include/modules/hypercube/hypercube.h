@@ -274,7 +274,7 @@ class Hypercube {
             /* project query to a cube vertex / hash table bucket */
             const std::string key = cube_projection_test(query);
             std::string key1 = key;
-            std::pair<const std::vector<T>*, size_t> value;
+            std::pair<const std::vector<T> *, size_t> value;
 
             while (M > 0) {
                 if (probes > 0) {

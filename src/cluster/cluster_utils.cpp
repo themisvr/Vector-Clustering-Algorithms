@@ -3,6 +3,7 @@
 #include <utility>
 #include <unistd.h>
 #include <getopt.h>
+#include <fstream>
 
 #include "../../include/io_utils/io_utils.h"
 #include "../../include/cluster/cluster_utils.h"
