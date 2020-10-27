@@ -85,8 +85,8 @@ class LSH {
             ht_size = HT_SIZE(n_vectors);
             
             // w = 4000;
-            // w = 40000
-            w = meandist;
+            w = 40000;
+            // w = meandist;
             std::cout <<  "\nWindow is: " << w << std::endl;
 
 

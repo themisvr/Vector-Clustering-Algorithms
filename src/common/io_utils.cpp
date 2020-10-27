@@ -136,8 +136,8 @@ void lsh_parse_args(int argc, char * const argv[], Lsh_args **args) {
                 if( file_exists(optarg) ) 
                     output_file = optarg;
                 else {
-                    std::ofstream out("./output");
-                    output_file = "output";
+                    std::ofstream out(optarg);
+                    output_file = optarg;
                 }
                 break;
 
@@ -215,8 +215,8 @@ void cube_parse_args(int argc, char * const argv[], Cube_args **args) {
                 if( file_exists(optarg) ) 
                     output_file = optarg;
                 else {
-                    std::ofstream out("./output");
-                    output_file = "output";
+                    std::ofstream out(optarg);
+                    output_file = optarg;
                 }
                 break;
 
