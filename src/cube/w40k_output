@@ -1,1596 +1,975 @@
 Query: 0
-Nearest neighbor-1: 59665
-distanceHypercube: 9595
+Nearest neighbor-1: 59977
+distanceHypercube: 19104
 distanceTrue: 5244
-Nearest neighbor-2: 59638
-distanceHypercube: 13950
-distanceTrue: 6539
-Nearest neighbor-3: 59717
-distanceHypercube: 15404
-distanceTrue: 6731
-tHypercube: 2
-tTrue: 942
-R-near neighbors:
-59774
-59717
-59665
-59638
-Query: 1
-Nearest neighbor-1: 46656
-distanceHypercube: 18891
-distanceTrue: 10378
-Nearest neighbor-2: 34316
-distanceHypercube: 35086
-distanceTrue: 11497
-Nearest neighbor-3: Not Found
-distanceHypercube: None
-distanceTrue: 12048
-tHypercube: 2
-tTrue: 1048
-R-near neighbors:
-46656
-Query: 2
-Nearest neighbor-1: 58673
-distanceHypercube: 5883
-distanceTrue: 1799
-Nearest neighbor-2: 59832
-distanceHypercube: 7625
-distanceTrue: 1932
-Nearest neighbor-3: 59796
-distanceHypercube: 11093
-distanceTrue: 2054
-tHypercube: 2
-tTrue: 943
-R-near neighbors:
-59948
-59832
-59796
-58704
-58673
-Query: 3
-Nearest neighbor-1: 59249
-distanceHypercube: 12412
-distanceTrue: 10954
-Nearest neighbor-2: 59155
-distanceHypercube: 17732
-distanceTrue: 10974
-Nearest neighbor-3: 59187
-distanceHypercube: 21838
-distanceTrue: 11149
-tHypercube: 1
-tTrue: 947
-R-near neighbors:
-59249
-59187
-59155
-Query: 4
-Nearest neighbor-1: 57099
-distanceHypercube: 24306
-distanceTrue: 9566
-Nearest neighbor-2: 57090
-distanceHypercube: 24823
-distanceTrue: 9970
-Nearest neighbor-3: 58208
-distanceHypercube: 26374
-distanceTrue: 10316
-tHypercube: 2
-tTrue: 949
-R-near neighbors:
-Not Found
-Query: 5
-Nearest neighbor-1: 59488
-distanceHypercube: 3275
-distanceTrue: 1670
-Nearest neighbor-2: 59498
-distanceHypercube: 5368
-distanceTrue: 1828
-Nearest neighbor-3: 59176
-distanceHypercube: 6370
-distanceTrue: 2033
-tHypercube: 2
-tTrue: 951
+tHypercube: 3526
+tTrue: 956714
 R-near neighbors:
 59977
-59854
-59827
-59749
-59710
-59498
-59488
-59214
-59176
+59969
+59948
+Query: 1
+Nearest neighbor-1: 58476
+distanceHypercube: 14781
+distanceTrue: 10378
+tHypercube: 1776
+tTrue: 973582
+R-near neighbors:
+58476
+54457
+36064
+Query: 2
+Nearest neighbor-1: 59958
+distanceHypercube: 8530
+distanceTrue: 1799
+tHypercube: 3408
+tTrue: 928451
+R-near neighbors:
+59992
+59977
+59969
+59958
+59948
+Query: 3
+Nearest neighbor-1: 59802
+distanceHypercube: 32022
+distanceTrue: 10954
+tHypercube: 2447
+tTrue: 926072
+R-near neighbors:
+Not Found
+Query: 4
+Nearest neighbor-1: 57370
+distanceHypercube: 14404
+distanceTrue: 9566
+tHypercube: 1839
+tTrue: 927519
+R-near neighbors:
+58066
+57841
+57370
+Query: 5
+Nearest neighbor-1: 59958
+distanceHypercube: 8126
+distanceTrue: 1670
+tHypercube: 3377
+tTrue: 927075
+R-near neighbors:
+59992
+59977
+59958
+59948
 Query: 6
-Nearest neighbor-1: 59494
-distanceHypercube: 20788
+Nearest neighbor-1: 59942
+distanceHypercube: 22976
 distanceTrue: 11951
-Nearest neighbor-2: 59138
-distanceHypercube: 24811
-distanceTrue: 12280
-Nearest neighbor-3: 59792
-distanceHypercube: 25896
-distanceTrue: 13818
-tHypercube: 2
-tTrue: 946
+tHypercube: 3131
+tTrue: 931116
 R-near neighbors:
-59494
+Not Found
 Query: 7
-Nearest neighbor-1: 52074
-distanceHypercube: 17292
+Nearest neighbor-1: 59941
+distanceHypercube: 23918
 distanceTrue: 11261
-Nearest neighbor-2: 55776
-distanceHypercube: 17891
-distanceTrue: 12129
-Nearest neighbor-3: 51551
-distanceHypercube: 29990
-distanceTrue: 12742
-tHypercube: 2
-tTrue: 948
+tHypercube: 3000
+tTrue: 927943
 R-near neighbors:
-55776
-52074
+Not Found
 Query: 8
-Nearest neighbor-1: 55753
-distanceHypercube: 30762
+Nearest neighbor-1: 59817
+distanceHypercube: 27998
 distanceTrue: 18244
-Nearest neighbor-2: 3524
-distanceHypercube: 32904
-distanceTrue: 18348
-Nearest neighbor-3: 2863
-distanceHypercube: 32954
-distanceTrue: 18884
-tHypercube: 2
-tTrue: 941
+tHypercube: 2141
+tTrue: 930926
 R-near neighbors:
 Not Found
 Query: 9
-Nearest neighbor-1: 59019
-distanceHypercube: 14798
+Nearest neighbor-1: 59917
+distanceHypercube: 17303
 distanceTrue: 8712
-Nearest neighbor-2: 59079
-distanceHypercube: 19790
-distanceTrue: 10302
-Nearest neighbor-3: 59532
-distanceHypercube: 21189
-distanceTrue: 11291
-tHypercube: 2
-tTrue: 943
+tHypercube: 2201
+tTrue: 930631
 R-near neighbors:
-59532
-59079
-59019
+59943
+59935
+59917
+59908
+59894
+59830
+59717
 Query: 10
-Nearest neighbor-1: 55290
-distanceHypercube: 21987
+Nearest neighbor-1: 59996
+distanceHypercube: 31894
 distanceTrue: 10937
-Nearest neighbor-2: 56908
-distanceHypercube: 24223
-distanceTrue: 10940
-Nearest neighbor-3: 54896
-distanceHypercube: 32016
-distanceTrue: 11156
-tHypercube: 2
-tTrue: 942
+tHypercube: 3381
+tTrue: 928748
 R-near neighbors:
-55290
+Not Found
 Query: 11
-Nearest neighbor-1: 57198
-distanceHypercube: 18356
+Nearest neighbor-1: 59619
+distanceHypercube: 29780
 distanceTrue: 15875
-Nearest neighbor-2: 50034
-distanceHypercube: 19087
-distanceTrue: 15986
-Nearest neighbor-3: 51538
-distanceHypercube: 20922
-distanceTrue: 16038
-tHypercube: 2
-tTrue: 941
+tHypercube: 2188
+tTrue: 927836
 R-near neighbors:
-57198
-51538
-50034
+Not Found
 Query: 12
-Nearest neighbor-1: 57896
-distanceHypercube: 10585
+Nearest neighbor-1: 59969
+distanceHypercube: 21008
 distanceTrue: 7151
-Nearest neighbor-2: 55201
-distanceHypercube: 13756
-distanceTrue: 7228
-Nearest neighbor-3: 55116
-distanceHypercube: 27039
-distanceTrue: 7532
-tHypercube: 2
-tTrue: 942
+tHypercube: 3392
+tTrue: 928893
 R-near neighbors:
-57896
-55201
+59969
 Query: 13
-Nearest neighbor-1: 58642
-distanceHypercube: 29025
+Nearest neighbor-1: 58739
+distanceHypercube: 24885
 distanceTrue: 8155
-Nearest neighbor-2: 59766
-distanceHypercube: 31267
-distanceTrue: 8168
-Nearest neighbor-3: 58475
-distanceHypercube: 31708
-distanceTrue: 8267
-tHypercube: 2
-tTrue: 943
+tHypercube: 1935
+tTrue: 926591
 R-near neighbors:
 Not Found
 Query: 14
-Nearest neighbor-1: 59478
-distanceHypercube: 7607
+Nearest neighbor-1: 59958
+distanceHypercube: 18656
 distanceTrue: 3152
-Nearest neighbor-2: 59586
-distanceHypercube: 7609
-distanceTrue: 3471
-Nearest neighbor-3: 59428
-distanceHypercube: 10663
-distanceTrue: 3582
-tHypercube: 2
-tTrue: 939
+tHypercube: 3392
+tTrue: 928931
 R-near neighbors:
-59586
-59478
-59428
-59414
+59977
+59958
+59948
 Query: 15
-Nearest neighbor-1: 56420
-distanceHypercube: 20036
+Nearest neighbor-1: 59630
+distanceHypercube: 32092
 distanceTrue: 13738
-Nearest neighbor-2: 57166
-distanceHypercube: 21230
-distanceTrue: 14092
-Nearest neighbor-3: 52096
-distanceHypercube: 26642
-distanceTrue: 15271
-tHypercube: 2
-tTrue: 954
-R-near neighbors:
-57166
-56420
-Query: 16
-Nearest neighbor-1: 58213
-distanceHypercube: 15299
-distanceTrue: 7101
-Nearest neighbor-2: 57874
-distanceHypercube: 17703
-distanceTrue: 9094
-Nearest neighbor-3: 58838
-distanceHypercube: 19166
-distanceTrue: 9487
-tHypercube: 2
-tTrue: 942
-R-near neighbors:
-59172
-58838
-58213
-57874
-Query: 17
-Nearest neighbor-1: 59756
-distanceHypercube: 19832
-distanceTrue: 6724
-Nearest neighbor-2: 59776
-distanceHypercube: 22582
-distanceTrue: 6856
-Nearest neighbor-3: 59890
-distanceHypercube: 26547
-distanceTrue: 7008
-tHypercube: 2
-tTrue: 948
-R-near neighbors:
-59756
-Query: 18
-Nearest neighbor-1: 39722
-distanceHypercube: 21896
-distanceTrue: 17803
-Nearest neighbor-2: 14689
-distanceHypercube: 23353
-distanceTrue: 18146
-Nearest neighbor-3: 20015
-distanceHypercube: 25200
-distanceTrue: 18537
-tHypercube: 2
-tTrue: 940
-R-near neighbors:
-39722
-Query: 19
-Nearest neighbor-1: 58712
-distanceHypercube: 13248
-distanceTrue: 7094
-Nearest neighbor-2: 58818
-distanceHypercube: 15899
-distanceTrue: 7534
-Nearest neighbor-3: 58715
-distanceHypercube: 18253
-distanceTrue: 7588
-tHypercube: 2
-tTrue: 947
-R-near neighbors:
-58850
-58818
-58715
-58712
-Query: 20
-Nearest neighbor-1: 59258
-distanceHypercube: 11696
-distanceTrue: 7561
-Nearest neighbor-2: 58994
-distanceHypercube: 13871
-distanceTrue: 7805
-Nearest neighbor-3: 59020
-distanceHypercube: 16221
-distanceTrue: 8040
-tHypercube: 2
-tTrue: 939
-R-near neighbors:
-59772
-59614
-59258
-59020
-58994
-58780
-Query: 21
-Nearest neighbor-1: 58535
-distanceHypercube: 21558
-distanceTrue: 7695
-Nearest neighbor-2: 58799
-distanceHypercube: 27075
-distanceTrue: 8456
-Nearest neighbor-3: 57921
-distanceHypercube: 30592
-distanceTrue: 8473
-tHypercube: 1
-tTrue: 940
-R-near neighbors:
-58535
-Query: 22
-Nearest neighbor-1: 59599
-distanceHypercube: 25065
-distanceTrue: 11432
-Nearest neighbor-2: 58975
-distanceHypercube: 29956
-distanceTrue: 11860
-Nearest neighbor-3: 59484
-distanceHypercube: 30082
-distanceTrue: 13206
-tHypercube: 2
-tTrue: 942
+tHypercube: 1915
+tTrue: 926990
 R-near neighbors:
 Not Found
+Query: 16
+Nearest neighbor-1: 59817
+distanceHypercube: 15490
+distanceTrue: 7101
+tHypercube: 2173
+tTrue: 926737
+R-near neighbors:
+59835
+59817
+Query: 17
+Nearest neighbor-1: 59611
+distanceHypercube: 13814
+distanceTrue: 6724
+tHypercube: 1944
+tTrue: 926573
+R-near neighbors:
+59611
+58974
+58925
+58907
+Query: 18
+Nearest neighbor-1: 59923
+distanceHypercube: 37146
+distanceTrue: 17803
+tHypercube: 3193
+tTrue: 926157
+R-near neighbors:
+Not Found
+Query: 19
+Nearest neighbor-1: 59941
+distanceHypercube: 20556
+distanceTrue: 7094
+tHypercube: 3017
+tTrue: 933656
+R-near neighbors:
+59994
+59993
+59979
+59968
+59956
+59941
+59906
+Query: 20
+Nearest neighbor-1: 59894
+distanceHypercube: 15382
+distanceTrue: 7561
+tHypercube: 2166
+tTrue: 927793
+R-near neighbors:
+59943
+59917
+59908
+59894
+59830
+59717
+59661
+Query: 21
+Nearest neighbor-1: 59876
+distanceHypercube: 16360
+distanceTrue: 7695
+tHypercube: 1825
+tTrue: 932626
+R-near neighbors:
+59876
+56747
+56727
+56044
+55348
+Query: 22
+Nearest neighbor-1: 49969
+distanceHypercube: 14537
+distanceTrue: 11432
+tHypercube: 1794
+tTrue: 925418
+R-near neighbors:
+49969
 Query: 23
-Nearest neighbor-1: 53634
-distanceHypercube: 15946
+Nearest neighbor-1: 59822
+distanceHypercube: 20988
 distanceTrue: 11003
-Nearest neighbor-2: 56172
-distanceHypercube: 19937
-distanceTrue: 11364
-Nearest neighbor-3: 56720
-distanceHypercube: 20031
-distanceTrue: 11448
-tHypercube: 2
-tTrue: 943
+tHypercube: 2465
+tTrue: 925147
 R-near neighbors:
-56720
-56172
-53634
+59891
+59822
 Query: 24
-Nearest neighbor-1: 58539
-distanceHypercube: 17193
+Nearest neighbor-1: 59994
+distanceHypercube: 19449
 distanceTrue: 9718
-Nearest neighbor-2: 57895
-distanceHypercube: 19485
-distanceTrue: 9932
-Nearest neighbor-3: 59089
-distanceHypercube: 21234
-distanceTrue: 9991
-tHypercube: 1
-tTrue: 941
+tHypercube: 3144
+tTrue: 925687
 R-near neighbors:
-59413
-59089
-58539
-57895
-57853
+59994
+59979
+59956
+59932
 Query: 25
-Nearest neighbor-1: 49097
-distanceHypercube: 32949
+Nearest neighbor-1: 58934
+distanceHypercube: 28115
 distanceTrue: 12818
-Nearest neighbor-2: Not Found
-distanceHypercube: None
-distanceTrue: 14021
-Nearest neighbor-3: Not Found
-distanceHypercube: None
-distanceTrue: 14573
-tHypercube: 1
-tTrue: 939
+tHypercube: 1960
+tTrue: 927647
 R-near neighbors:
 Not Found
 Query: 26
-Nearest neighbor-1: 59734
-distanceHypercube: 20958
+Nearest neighbor-1: 59942
+distanceHypercube: 22703
 distanceTrue: 8050
-Nearest neighbor-2: 59773
-distanceHypercube: 22942
-distanceTrue: 8239
-Nearest neighbor-3: 59728
-distanceHypercube: 23535
-distanceTrue: 8320
-tHypercube: 2
-tTrue: 941
+tHypercube: 3160
+tTrue: 925694
 R-near neighbors:
-59734
+Not Found
 Query: 27
-Nearest neighbor-1: 58843
-distanceHypercube: 10301
+Nearest neighbor-1: 59941
+distanceHypercube: 24509
 distanceTrue: 9015
-Nearest neighbor-2: 59765
-distanceHypercube: 16539
-distanceTrue: 9082
-Nearest neighbor-3: 58918
-distanceHypercube: 17372
-distanceTrue: 9215
-tHypercube: 1
-tTrue: 940
+tHypercube: 2977
+tTrue: 925357
 R-near neighbors:
-59765
-58921
-58918
-58843
+Not Found
 Query: 28
-Nearest neighbor-1: 59654
-distanceHypercube: 32862
+Nearest neighbor-1: 57494
+distanceHypercube: 17451
 distanceTrue: 10194
-Nearest neighbor-2: 59886
-distanceHypercube: 34585
-distanceTrue: 11018
-Nearest neighbor-3: 59946
-distanceHypercube: 36206
-distanceTrue: 11035
-tHypercube: 1
-tTrue: 957
+tHypercube: 1828
+tTrue: 926089
 R-near neighbors:
-Not Found
+58738
+57843
+57494
 Query: 29
-Nearest neighbor-1: 56683
-distanceHypercube: 3608
+Nearest neighbor-1: 59958
+distanceHypercube: 20035
 distanceTrue: 2836
-Nearest neighbor-2: 57340
-distanceHypercube: 4356
-distanceTrue: 3087
-Nearest neighbor-3: 56471
-distanceHypercube: 4621
-distanceTrue: 3195
-tHypercube: 2
-tTrue: 941
+tHypercube: 3404
+tTrue: 925554
 R-near neighbors:
-57998
-57398
-57340
-56683
-56471
-55314
+59958
+59948
 Query: 30
-Nearest neighbor-1: 59800
-distanceHypercube: 23263
+Nearest neighbor-1: 58077
+distanceHypercube: 17560
 distanceTrue: 10659
-Nearest neighbor-2: 59978
-distanceHypercube: 24437
-distanceTrue: 11012
-Nearest neighbor-3: 59715
-distanceHypercube: 25589
-distanceTrue: 11388
-tHypercube: 2
-tTrue: 942
+tHypercube: 1840
+tTrue: 928337
+R-near neighbors:
+58077
+Query: 31
+Nearest neighbor-1: 59994
+distanceHypercube: 17593
+distanceTrue: 2395
+tHypercube: 3232
+tTrue: 925651
+R-near neighbors:
+59994
+59993
+59984
+59979
+59960
+59956
+59947
+59945
+59942
+59932
+59923
+59906
+Query: 32
+Nearest neighbor-1: 59958
+distanceHypercube: 31409
+distanceTrue: 6351
+tHypercube: 3386
+tTrue: 929422
 R-near neighbors:
 Not Found
-Query: 31
-Nearest neighbor-1: 59632
-distanceHypercube: 20167
-distanceTrue: 2395
-Nearest neighbor-2: 59822
-distanceHypercube: 22248
-distanceTrue: 2508
-Nearest neighbor-3: 59665
-distanceHypercube: 22261
-distanceTrue: 3022
-tHypercube: 2
-tTrue: 939
-R-near neighbors:
-59632
-Query: 32
-Nearest neighbor-1: 59691
-distanceHypercube: 17252
-distanceTrue: 6351
-Nearest neighbor-2: 59923
-distanceHypercube: 28943
-distanceTrue: 9785
-Nearest neighbor-3: 59722
-distanceHypercube: 30072
-distanceTrue: 10996
-tHypercube: 2
-tTrue: 942
-R-near neighbors:
-59691
 Query: 33
-Nearest neighbor-1: 29767
-distanceHypercube: 32204
+Nearest neighbor-1: 59923
+distanceHypercube: 29449
 distanceTrue: 13343
-Nearest neighbor-2: 33423
-distanceHypercube: 34552
-distanceTrue: 19047
-Nearest neighbor-3: 45397
-distanceHypercube: 35700
-distanceTrue: 19194
-tHypercube: 2
-tTrue: 941
+tHypercube: 3115
+tTrue: 925894
 R-near neighbors:
 Not Found
 Query: 34
-Nearest neighbor-1: 59746
-distanceHypercube: 11524
+Nearest neighbor-1: 56410
+distanceHypercube: 20177
 distanceTrue: 6669
-Nearest neighbor-2: 59925
-distanceHypercube: 13694
-distanceTrue: 6786
-Nearest neighbor-3: 59917
-distanceHypercube: 16129
-distanceTrue: 8096
-tHypercube: 1
-tTrue: 944
+tHypercube: 1816
+tTrue: 926141
 R-near neighbors:
-59927
-59925
-59917
-59814
-59746
+56410
 Query: 35
-Nearest neighbor-1: 34214
-distanceHypercube: 17914
+Nearest neighbor-1: 59915
+distanceHypercube: 30170
 distanceTrue: 15547
-Nearest neighbor-2: 38197
-distanceHypercube: 27768
-distanceTrue: 16074
-Nearest neighbor-3: 54454
-distanceHypercube: 33374
-distanceTrue: 16095
-tHypercube: 2
-tTrue: 946
+tHypercube: 2213
+tTrue: 971885
 R-near neighbors:
-34214
+Not Found
 Query: 36
-Nearest neighbor-1: 57723
-distanceHypercube: 19971
+Nearest neighbor-1: 59977
+distanceHypercube: 19351
 distanceTrue: 10557
-Nearest neighbor-2: 58574
-distanceHypercube: 21395
-distanceTrue: 10674
-Nearest neighbor-3: 58925
-distanceHypercube: 21587
-distanceTrue: 11056
-tHypercube: 1
-tTrue: 948
-R-near neighbors:
-58925
-58574
-57723
-Query: 37
-Nearest neighbor-1: 59414
-distanceHypercube: 10259
-distanceTrue: 1883
-Nearest neighbor-2: 59586
-distanceHypercube: 11219
-distanceTrue: 2200
-Nearest neighbor-3: 59478
-distanceHypercube: 11259
-distanceTrue: 2287
-tHypercube: 2
-tTrue: 939
-R-near neighbors:
-59586
-59478
-59428
-59414
-Query: 38
-Nearest neighbor-1: 59587
-distanceHypercube: 18574
-distanceTrue: 11952
-Nearest neighbor-2: 59630
-distanceHypercube: 20305
-distanceTrue: 12541
-Nearest neighbor-3: 59956
-distanceHypercube: 25325
-distanceTrue: 15957
-tHypercube: 2
-tTrue: 943
-R-near neighbors:
-59630
-59587
-Query: 39
-Nearest neighbor-1: 59428
-distanceHypercube: 6120
-distanceTrue: 2910
-Nearest neighbor-2: 59478
-distanceHypercube: 6642
-distanceTrue: 3685
-Nearest neighbor-3: 59586
-distanceHypercube: 8516
-distanceTrue: 3700
-tHypercube: 2
-tTrue: 1056
-R-near neighbors:
-59586
-59478
-59428
-59414
-Query: 40
-Nearest neighbor-1: 59827
-distanceHypercube: 10237
-distanceTrue: 2349
-Nearest neighbor-2: 59488
-distanceHypercube: 12135
-distanceTrue: 2500
-Nearest neighbor-3: 59498
-distanceHypercube: 13562
-distanceTrue: 2509
-tHypercube: 2
-tTrue: 947
+tHypercube: 3461
+tTrue: 926383
 R-near neighbors:
 59977
-59854
-59827
-59749
-59710
-59498
-59488
-59214
-59176
+Query: 37
+Nearest neighbor-1: 59958
+distanceHypercube: 18860
+distanceTrue: 1883
+tHypercube: 3290
+tTrue: 965433
+R-near neighbors:
+59977
+59958
+59948
+Query: 38
+Nearest neighbor-1: 59958
+distanceHypercube: 20694
+distanceTrue: 11952
+tHypercube: 3296
+tTrue: 926173
+R-near neighbors:
+59958
+Query: 39
+Nearest neighbor-1: 59958
+distanceHypercube: 15865
+distanceTrue: 2910
+tHypercube: 3247
+tTrue: 936063
+R-near neighbors:
+59958
+Query: 40
+Nearest neighbor-1: 59958
+distanceHypercube: 14496
+distanceTrue: 2349
+tHypercube: 4539
+tTrue: 960357
+R-near neighbors:
+59992
+59977
+59969
+59958
+59948
 Query: 41
-Nearest neighbor-1: 59204
-distanceHypercube: 18443
+Nearest neighbor-1: 59942
+distanceHypercube: 18947
 distanceTrue: 7781
-Nearest neighbor-2: 59323
-distanceHypercube: 22517
-distanceTrue: 8172
-Nearest neighbor-3: 59618
-distanceHypercube: 23456
-distanceTrue: 8487
-tHypercube: 2
-tTrue: 939
+tHypercube: 3077
+tTrue: 925317
 R-near neighbors:
-59204
+59973
+59942
 Query: 42
-Nearest neighbor-1: 59634
-distanceHypercube: 19654
+Nearest neighbor-1: 59979
+distanceHypercube: 21750
 distanceTrue: 8241
-Nearest neighbor-2: 59858
-distanceHypercube: 19737
-distanceTrue: 8872
-Nearest neighbor-3: 59566
-distanceHypercube: 21908
-distanceTrue: 10043
-tHypercube: 2
-tTrue: 944
+tHypercube: 2982
+tTrue: 924796
 R-near neighbors:
-59858
-59634
-59566
+59979
 Query: 43
-Nearest neighbor-1: 58610
-distanceHypercube: 15925
+Nearest neighbor-1: 26898
+distanceHypercube: 21345
 distanceTrue: 14014
-Nearest neighbor-2: 59527
-distanceHypercube: 16661
-distanceTrue: 14020
-Nearest neighbor-3: 58913
-distanceHypercube: 16762
-distanceTrue: 14061
-tHypercube: 1
-tTrue: 948
+tHypercube: 1515
+tTrue: 925359
 R-near neighbors:
-59671
-59527
-58913
-58903
-58685
-58610
+26898
 Query: 44
-Nearest neighbor-1: 54756
-distanceHypercube: 14891
+Nearest neighbor-1: 59947
+distanceHypercube: 20544
 distanceTrue: 8803
-Nearest neighbor-2: 58483
-distanceHypercube: 15431
-distanceTrue: 10148
-Nearest neighbor-3: 54252
-distanceHypercube: 20039
-distanceTrue: 10342
-tHypercube: 2
-tTrue: 939
+tHypercube: 3166
+tTrue: 924730
 R-near neighbors:
-58483
-54756
-54252
+59993
+59968
+59947
+59906
 Query: 45
-Nearest neighbor-1: 59529
-distanceHypercube: 19283
+Nearest neighbor-1: 59860
+distanceHypercube: 18323
 distanceTrue: 11602
-Nearest neighbor-2: 59528
-distanceHypercube: 21442
-distanceTrue: 11779
-Nearest neighbor-3: 59193
-distanceHypercube: 23674
-distanceTrue: 11949
-tHypercube: 2
-tTrue: 946
+tHypercube: 2523
+tTrue: 929586
 R-near neighbors:
-59529
-59528
+59961
+59904
+59891
+59886
+59860
+59822
+59815
+59800
 Query: 46
-Nearest neighbor-1: 56336
-distanceHypercube: 7041
+Nearest neighbor-1: 59997
+distanceHypercube: 23462
 distanceTrue: 4140
-Nearest neighbor-2: 59382
-distanceHypercube: 14309
-distanceTrue: 4444
-Nearest neighbor-3: 59354
-distanceHypercube: 16759
-distanceTrue: 4822
-tHypercube: 2
-tTrue: 939
+tHypercube: 3114
+tTrue: 925026
 R-near neighbors:
-59382
-59354
-56336
-55202
+Not Found
 Query: 47
-Nearest neighbor-1: 19890
-distanceHypercube: 17372
+Nearest neighbor-1: 57815
+distanceHypercube: 16695
 distanceTrue: 11974
-Nearest neighbor-2: 57104
-distanceHypercube: 19594
-distanceTrue: 12274
-Nearest neighbor-3: 8784
-distanceHypercube: 19755
-distanceTrue: 12597
-tHypercube: 2
-tTrue: 941
+tHypercube: 1811
+tTrue: 925113
 R-near neighbors:
-57104
-19890
-8784
+57815
+57799
+57686
 Query: 48
-Nearest neighbor-1: 58213
-distanceHypercube: 20541
+Nearest neighbor-1: 59815
+distanceHypercube: 30114
 distanceTrue: 11039
-Nearest neighbor-2: 58838
-distanceHypercube: 24246
-distanceTrue: 11263
-Nearest neighbor-3: 59172
-distanceHypercube: 26155
-distanceTrue: 11692
-tHypercube: 1
-tTrue: 944
+tHypercube: 2480
+tTrue: 926015
 R-near neighbors:
-58213
+Not Found
 Query: 49
-Nearest neighbor-1: 57835
-distanceHypercube: 20003
+Nearest neighbor-1: 58539
+distanceHypercube: 24983
 distanceTrue: 9033
-Nearest neighbor-2: 56304
-distanceHypercube: 21912
-distanceTrue: 9195
-Nearest neighbor-3: 56187
-distanceHypercube: 25064
-distanceTrue: 9219
-tHypercube: 1
-tTrue: 947
+tHypercube: 1936
+tTrue: 925766
 R-near neighbors:
-57835
-56304
+Not Found
 Query: 50
-Nearest neighbor-1: 59841
-distanceHypercube: 13502
+Nearest neighbor-1: 59998
+distanceHypercube: 22080
 distanceTrue: 7549
-Nearest neighbor-2: 59346
-distanceHypercube: 21863
-distanceTrue: 8080
-Nearest neighbor-3: 59891
-distanceHypercube: 25325
-distanceTrue: 8111
-tHypercube: 1
-tTrue: 939
+tHypercube: 3375
+tTrue: 927134
 R-near neighbors:
-59841
-59346
+Not Found
 Query: 51
-Nearest neighbor-1: 55698
-distanceHypercube: 25098
+Nearest neighbor-1: 59416
+distanceHypercube: 22588
 distanceTrue: 12313
-Nearest neighbor-2: 55042
-distanceHypercube: 28956
-distanceTrue: 12820
-Nearest neighbor-3: 56695
-distanceHypercube: 30271
-distanceTrue: 14459
-tHypercube: 2
-tTrue: 946
+tHypercube: 1879
+tTrue: 925415
 R-near neighbors:
 Not Found
 Query: 52
-Nearest neighbor-1: 59880
-distanceHypercube: 20089
+Nearest neighbor-1: 59969
+distanceHypercube: 24000
 distanceTrue: 11078
-Nearest neighbor-2: 58843
-distanceHypercube: 25021
-distanceTrue: 12095
-Nearest neighbor-3: 58918
-distanceHypercube: 25256
-distanceTrue: 12605
-tHypercube: 2
-tTrue: 942
-R-near neighbors:
-59880
-Query: 53
-Nearest neighbor-1: 58739
-distanceHypercube: 20126
-distanceTrue: 10911
-Nearest neighbor-2: 58740
-distanceHypercube: 24786
-distanceTrue: 12187
-Nearest neighbor-3: 58921
-distanceHypercube: 25905
-distanceTrue: 12358
-tHypercube: 2
-tTrue: 945
-R-near neighbors:
-58739
-Query: 54
-Nearest neighbor-1: 36476
-distanceHypercube: 27476
-distanceTrue: 12429
-Nearest neighbor-2: 56641
-distanceHypercube: 28305
-distanceTrue: 13358
-Nearest neighbor-3: 28222
-distanceHypercube: 29488
-distanceTrue: 15871
-tHypercube: 2
-tTrue: 941
+tHypercube: 3380
+tTrue: 926189
 R-near neighbors:
 Not Found
+Query: 53
+Nearest neighbor-1: 59990
+distanceHypercube: 26453
+distanceTrue: 10911
+tHypercube: 2426
+tTrue: 926477
+R-near neighbors:
+Not Found
+Query: 54
+Nearest neighbor-1: 49838
+distanceHypercube: 12429
+distanceTrue: 12429
+tHypercube: 1772
+tTrue: 925421
+R-near neighbors:
+49838
 Query: 55
-Nearest neighbor-1: 59914
-distanceHypercube: 24026
+Nearest neighbor-1: 58739
+distanceHypercube: 23426
 distanceTrue: 5843
-Nearest neighbor-2: 59828
-distanceHypercube: 24839
-distanceTrue: 9462
-Nearest neighbor-3: 59699
-distanceHypercube: 27306
-distanceTrue: 9709
-tHypercube: 2
-tTrue: 947
+tHypercube: 1958
+tTrue: 927524
 R-near neighbors:
 Not Found
 Query: 56
-Nearest neighbor-1: 56877
-distanceHypercube: 22979
+Nearest neighbor-1: 54149
+distanceHypercube: 14987
 distanceTrue: 10793
-Nearest neighbor-2: 57002
-distanceHypercube: 23657
-distanceTrue: 11120
-Nearest neighbor-3: 56828
-distanceHypercube: 26476
-distanceTrue: 11356
-tHypercube: 1
-tTrue: 941
+tHypercube: 1776
+tTrue: 925322
 R-near neighbors:
-Not Found
+59608
+57382
+56825
+54149
 Query: 57
-Nearest neighbor-1: 58610
-distanceHypercube: 3962
+Nearest neighbor-1: 59958
+distanceHypercube: 9593
 distanceTrue: 2282
-Nearest neighbor-2: 59527
-distanceHypercube: 4610
-distanceTrue: 2355
-Nearest neighbor-3: 58913
-distanceHypercube: 6093
-distanceTrue: 2368
-tHypercube: 1
-tTrue: 942
+tHypercube: 3387
+tTrue: 925187
 R-near neighbors:
-59900
-59750
-59688
-59671
-59527
-58913
-58903
-58685
-58610
+59992
+59977
+59958
+59948
 Query: 58
-Nearest neighbor-1: 57444
-distanceHypercube: 10805
+Nearest neighbor-1: 59782
+distanceHypercube: 19131
 distanceTrue: 7761
-Nearest neighbor-2: 50373
-distanceHypercube: 14468
-distanceTrue: 8042
-Nearest neighbor-3: 50376
-distanceHypercube: 15726
-distanceTrue: 9523
-tHypercube: 1
-tTrue: 943
+tHypercube: 1961
+tTrue: 927012
 R-near neighbors:
-57444
-50376
-50373
-49335
+59782
+58925
+58907
 Query: 59
-Nearest neighbor-1: 59662
-distanceHypercube: 12496
+Nearest neighbor-1: 59960
+distanceHypercube: 14923
 distanceTrue: 7867
-Nearest neighbor-2: 59994
-distanceHypercube: 15623
-distanceTrue: 8747
-Nearest neighbor-3: 59521
-distanceHypercube: 16752
-distanceTrue: 8955
-tHypercube: 1
-tTrue: 940
+tHypercube: 3185
+tTrue: 925927
 R-near neighbors:
 59994
+59993
 59984
-59694
-59662
-59596
-59571
-59521
+59979
+59960
+59956
+59947
+59945
+59942
+59941
+59932
+59923
+59910
+59906
 Query: 60
-Nearest neighbor-1: 58816
-distanceHypercube: 13445
+Nearest neighbor-1: 58925
+distanceHypercube: 20062
 distanceTrue: 10077
-Nearest neighbor-2: 58197
-distanceHypercube: 17485
-distanceTrue: 10286
-Nearest neighbor-3: 58932
-distanceHypercube: 20462
-distanceTrue: 10752
-tHypercube: 2
-tTrue: 940
+tHypercube: 1944
+tTrue: 926783
 R-near neighbors:
-58932
-58816
-58221
-58205
-58197
+58925
+58907
 Query: 61
-Nearest neighbor-1: 56992
-distanceHypercube: 24531
+Nearest neighbor-1: 44436
+distanceHypercube: 29245
 distanceTrue: 17426
-Nearest neighbor-2: 55695
-distanceHypercube: 25984
-distanceTrue: 17926
-Nearest neighbor-3: 55445
-distanceHypercube: 26186
-distanceTrue: 18836
-tHypercube: 2
-tTrue: 941
+tHypercube: 1768
+tTrue: 927988
 R-near neighbors:
 Not Found
 Query: 62
-Nearest neighbor-1: 58054
-distanceHypercube: 8570
+Nearest neighbor-1: 59977
+distanceHypercube: 19325
 distanceTrue: 8226
-Nearest neighbor-2: 58093
-distanceHypercube: 18628
-distanceTrue: 8503
-Nearest neighbor-3: 58157
-distanceHypercube: 22500
-distanceTrue: 8570
-tHypercube: 2
-tTrue: 939
+tHypercube: 3402
+tTrue: 926034
 R-near neighbors:
-58093
-58054
+59992
+59977
+59958
+59948
 Query: 63
-Nearest neighbor-1: 52370
-distanceHypercube: 20086
+Nearest neighbor-1: 59964
+distanceHypercube: 19474
 distanceTrue: 11860
-Nearest neighbor-2: 55291
-distanceHypercube: 23977
-distanceTrue: 13592
-Nearest neighbor-3: 57396
-distanceHypercube: 24824
-distanceTrue: 13898
-tHypercube: 1
-tTrue: 943
+tHypercube: 3243
+tTrue: 927479
 R-near neighbors:
-52370
+59977
+59964
+59921
 Query: 64
-Nearest neighbor-1: 59710
-distanceHypercube: 24954
+Nearest neighbor-1: 51558
+distanceHypercube: 16473
 distanceTrue: 13643
-Nearest neighbor-2: 59977
-distanceHypercube: 25528
-distanceTrue: 13823
-Nearest neighbor-3: 59749
-distanceHypercube: 27240
-distanceTrue: 13870
-tHypercube: 2
-tTrue: 950
+tHypercube: 1796
+tTrue: 927359
 R-near neighbors:
-Not Found
+51558
 Query: 65
 Nearest neighbor-1: 59891
 distanceHypercube: 17078
 distanceTrue: 7727
-Nearest neighbor-2: 59815
-distanceHypercube: 21035
-distanceTrue: 9191
-Nearest neighbor-3: 59841
-distanceHypercube: 22527
-distanceTrue: 9276
-tHypercube: 2
-tTrue: 939
+tHypercube: 2471
+tTrue: 928486
 R-near neighbors:
 59891
+59886
+59825
 59815
 Query: 66
-Nearest neighbor-1: 51276
-distanceHypercube: 21236
+Nearest neighbor-1: 59902
+distanceHypercube: 26171
 distanceTrue: 12586
-Nearest neighbor-2: 57959
-distanceHypercube: 21823
-distanceTrue: 12646
-Nearest neighbor-3: 59226
-distanceHypercube: 23219
-distanceTrue: 12663
-tHypercube: 2
-tTrue: 952
-R-near neighbors:
-57959
-51276
-Query: 67
-Nearest neighbor-1: 58212
-distanceHypercube: 13511
-distanceTrue: 11130
-Nearest neighbor-2: 59126
-distanceHypercube: 20596
-distanceTrue: 12479
-Nearest neighbor-3: 33064
-distanceHypercube: 21231
-distanceTrue: 12567
-tHypercube: 2
-tTrue: 957
-R-near neighbors:
-59126
-58212
-33064
-Query: 68
-Nearest neighbor-1: 59715
-distanceHypercube: 19697
-distanceTrue: 7395
-Nearest neighbor-2: 59978
-distanceHypercube: 26563
-distanceTrue: 8086
-Nearest neighbor-3: 59678
-distanceHypercube: 28349
-distanceTrue: 9236
-tHypercube: 2
-tTrue: 946
-R-near neighbors:
-59715
-Query: 69
-Nearest neighbor-1: 57634
-distanceHypercube: 9254
-distanceTrue: 7650
-Nearest neighbor-2: 58882
-distanceHypercube: 20825
-distanceTrue: 8341
-Nearest neighbor-3: 59017
-distanceHypercube: 24482
-distanceTrue: 9254
-tHypercube: 2
-tTrue: 941
-R-near neighbors:
-58882
-57634
-Query: 70
-Nearest neighbor-1: 59646
-distanceHypercube: 13987
-distanceTrue: 7765
-Nearest neighbor-2: 58034
-distanceHypercube: 25744
-distanceTrue: 8413
-Nearest neighbor-3: 58060
-distanceHypercube: 31551
-distanceTrue: 8621
-tHypercube: 1
-tTrue: 951
-R-near neighbors:
-59646
-Query: 71
-Nearest neighbor-1: 57650
-distanceHypercube: 16798
-distanceTrue: 9719
-Nearest neighbor-2: 57176
-distanceHypercube: 17346
-distanceTrue: 9883
-Nearest neighbor-3: 58454
-distanceHypercube: 17361
-distanceTrue: 10201
-tHypercube: 2
-tTrue: 948
-R-near neighbors:
-59017
-58882
-58782
-58454
-58121
-58062
-57650
-57176
-Query: 72
-Nearest neighbor-1: 57953
-distanceHypercube: 16064
-distanceTrue: 15621
-Nearest neighbor-2: 56513
-distanceHypercube: 26390
-distanceTrue: 15739
-Nearest neighbor-3: 54401
-distanceHypercube: 31246
-distanceTrue: 16064
-tHypercube: 1
-tTrue: 941
-R-near neighbors:
-57953
-Query: 73
-Nearest neighbor-1: 59716
-distanceHypercube: 16276
-distanceTrue: 9134
-Nearest neighbor-2: 59992
-distanceHypercube: 16505
-distanceTrue: 9782
-Nearest neighbor-3: 59830
-distanceHypercube: 16628
-distanceTrue: 9872
-tHypercube: 2
-tTrue: 948
-R-near neighbors:
-59992
-59915
-59910
-59908
-59830
-59716
-59663
-Query: 74
-Nearest neighbor-1: 59414
-distanceHypercube: 8998
-distanceTrue: 2545
-Nearest neighbor-2: 59478
-distanceHypercube: 9200
-distanceTrue: 2750
-Nearest neighbor-3: 59586
-distanceHypercube: 9546
-distanceTrue: 2770
-tHypercube: 2
-tTrue: 948
-R-near neighbors:
-59586
-59478
-59428
-59414
-Query: 75
-Nearest neighbor-1: 58605
-distanceHypercube: 28000
-distanceTrue: 8339
-Nearest neighbor-2: 59877
-distanceHypercube: 30916
-distanceTrue: 11366
-Nearest neighbor-3: 56105
-distanceHypercube: 31321
-distanceTrue: 11556
-tHypercube: 2
-tTrue: 940
+tHypercube: 2206
+tTrue: 965872
 R-near neighbors:
 Not Found
-Query: 76
-Nearest neighbor-1: 59828
-distanceHypercube: 15178
-distanceTrue: 7843
-Nearest neighbor-2: 59914
-distanceHypercube: 16787
-distanceTrue: 9173
-Nearest neighbor-3: 59904
-distanceHypercube: 17777
-distanceTrue: 9310
-tHypercube: 1
-tTrue: 1033
+Query: 67
+Nearest neighbor-1: 59905
+distanceHypercube: 20488
+distanceTrue: 11130
+tHypercube: 2207
+tTrue: 970046
 R-near neighbors:
-59996
-59914
-59904
-59860
-59828
-59699
+59975
+59905
+Query: 68
+Nearest neighbor-1: 59996
+distanceHypercube: 28276
+distanceTrue: 7395
+tHypercube: 3440
+tTrue: 956539
+R-near neighbors:
+Not Found
+Query: 69
+Nearest neighbor-1: 59313
+distanceHypercube: 30845
+distanceTrue: 7650
+tHypercube: 2046
+tTrue: 1.01431e+06
+R-near neighbors:
+Not Found
+Query: 70
+Nearest neighbor-1: 59973
+distanceHypercube: 22965
+distanceTrue: 7765
+tHypercube: 3159
+tTrue: 978685
+R-near neighbors:
+Not Found
+Query: 71
+Nearest neighbor-1: 59976
+distanceHypercube: 37083
+distanceTrue: 9719
+tHypercube: 3537
+tTrue: 961064
+R-near neighbors:
+Not Found
+Query: 72
+Nearest neighbor-1: 32314
+distanceHypercube: 27736
+distanceTrue: 15621
+tHypercube: 1801
+tTrue: 956050
+R-near neighbors:
+Not Found
+Query: 73
+Nearest neighbor-1: 59992
+distanceHypercube: 16505
+distanceTrue: 9134
+tHypercube: 3389
+tTrue: 928756
+R-near neighbors:
+59992
+59977
+59950
+59948
+Query: 74
+Nearest neighbor-1: 59958
+distanceHypercube: 18925
+distanceTrue: 2545
+tHypercube: 3380
+tTrue: 927344
+R-near neighbors:
+59992
+59977
+59958
+59948
+Query: 75
+Nearest neighbor-1: 58433
+distanceHypercube: 18923
+distanceTrue: 8339
+tHypercube: 1862
+tTrue: 927114
+R-near neighbors:
+59734
+58433
+58211
+Query: 76
+Nearest neighbor-1: 59993
+distanceHypercube: 22154
+distanceTrue: 7843
+tHypercube: 3188
+tTrue: 929519
+R-near neighbors:
+Not Found
 Query: 77
-Nearest neighbor-1: 32424
-distanceHypercube: 23815
+Nearest neighbor-1: 59994
+distanceHypercube: 22574
 distanceTrue: 12714
-Nearest neighbor-2: 4986
-distanceHypercube: 28762
-distanceTrue: 12926
-Nearest neighbor-3: 12079
-distanceHypercube: 30587
-distanceTrue: 13549
-tHypercube: 2
-tTrue: 957
+tHypercube: 3143
+tTrue: 926516
 R-near neighbors:
 Not Found
 Query: 78
-Nearest neighbor-1: 59716
-distanceHypercube: 14298
+Nearest neighbor-1: 59992
+distanceHypercube: 19075
 distanceTrue: 7545
-Nearest neighbor-2: 59910
-distanceHypercube: 15820
-distanceTrue: 8059
-Nearest neighbor-3: 59830
-distanceHypercube: 16674
-distanceTrue: 8157
-tHypercube: 1
-tTrue: 940
+tHypercube: 3361
+tTrue: 925629
 R-near neighbors:
 59992
-59910
-59908
-59830
-59716
+59977
+59958
+59950
+59948
 Query: 79
-Nearest neighbor-1: 59871
-distanceHypercube: 20968
+Nearest neighbor-1: 59617
+distanceHypercube: 21553
 distanceTrue: 7903
-Nearest neighbor-2: 59279
-distanceHypercube: 21876
-distanceTrue: 8675
-Nearest neighbor-3: 59080
-distanceHypercube: 26311
-distanceTrue: 8851
-tHypercube: 2
-tTrue: 961
+tHypercube: 1843
+tTrue: 933321
 R-near neighbors:
-59871
-59279
+59617
 Query: 80
-Nearest neighbor-1: 59362
-distanceHypercube: 17295
+Nearest neighbor-1: 59435
+distanceHypercube: 18760
 distanceTrue: 7754
-Nearest neighbor-2: 59766
-distanceHypercube: 26399
-distanceTrue: 8279
-Nearest neighbor-3: 58642
-distanceHypercube: 27033
-distanceTrue: 9363
-tHypercube: 2
-tTrue: 941
+tHypercube: 1953
+tTrue: 925951
 R-near neighbors:
-59362
+59435
 Query: 81
-Nearest neighbor-1: 54847
-distanceHypercube: 20408
+Nearest neighbor-1: 58443
+distanceHypercube: 13452
 distanceTrue: 9342
-Nearest neighbor-2: 56442
-distanceHypercube: 23002
-distanceTrue: 9924
-Nearest neighbor-3: 56844
-distanceHypercube: 27814
-distanceTrue: 9949
-tHypercube: 2
-tTrue: 939
+tHypercube: 1808
+tTrue: 931360
 R-near neighbors:
-54847
+59876
+58958
+58443
+56747
+56727
+55984
+55348
 Query: 82
-Nearest neighbor-1: 53323
-distanceHypercube: 13219
+Nearest neighbor-1: 38216
+distanceHypercube: 12786
 distanceTrue: 11094
-Nearest neighbor-2: 54613
-distanceHypercube: 15686
-distanceTrue: 11650
-Nearest neighbor-3: 59245
-distanceHypercube: 18867
-distanceTrue: 11660
-tHypercube: 2
-tTrue: 940
+tHypercube: 1756
+tTrue: 925214
 R-near neighbors:
-59579
-59245
-59030
-57799
-57658
-55100
-54613
-53323
+58087
+57284
+50504
+38216
+11203
+9284
+4777
 Query: 83
-Nearest neighbor-1: 58828
-distanceHypercube: 15434
+Nearest neighbor-1: 59942
+distanceHypercube: 22454
 distanceTrue: 6350
-Nearest neighbor-2: 58927
-distanceHypercube: 18596
-distanceTrue: 6636
-Nearest neighbor-3: 59644
-distanceHypercube: 19333
-distanceTrue: 7262
-tHypercube: 2
-tTrue: 942
+tHypercube: 3166
+tTrue: 925959
 R-near neighbors:
-59695
-59644
-58927
-58840
-58828
+Not Found
 Query: 84
-Nearest neighbor-1: 57853
-distanceHypercube: 23988
+Nearest neighbor-1: 59994
+distanceHypercube: 22177
 distanceTrue: 14820
-Nearest neighbor-2: 58539
-distanceHypercube: 27859
-distanceTrue: 16517
-Nearest neighbor-3: 59413
-distanceHypercube: 28102
-distanceTrue: 17820
-tHypercube: 2
-tTrue: 942
+tHypercube: 2982
+tTrue: 925539
 R-near neighbors:
 Not Found
 Query: 85
-Nearest neighbor-1: 49940
-distanceHypercube: 16513
+Nearest neighbor-1: 59941
+distanceHypercube: 34053
 distanceTrue: 11885
-Nearest neighbor-2: 44515
-distanceHypercube: 19994
-distanceTrue: 12121
-Nearest neighbor-3: 30529
-distanceHypercube: 25238
-distanceTrue: 12194
-tHypercube: 2
-tTrue: 979
+tHypercube: 3043
+tTrue: 926197
 R-near neighbors:
-49940
-44515
+Not Found
 Query: 86
-Nearest neighbor-1: 59839
-distanceHypercube: 11864
+Nearest neighbor-1: 59977
+distanceHypercube: 15745
 distanceTrue: 5684
-Nearest neighbor-2: 59552
-distanceHypercube: 15517
-distanceTrue: 6923
-Nearest neighbor-3: 59124
-distanceHypercube: 15951
-distanceTrue: 7087
-tHypercube: 2
-tTrue: 961
+tHypercube: 3341
+tTrue: 928070
 R-near neighbors:
-59839
-59768
-59552
-59348
-59306
-59124
-59075
+59977
 Query: 87
-Nearest neighbor-1: 59338
-distanceHypercube: 28047
+Nearest neighbor-1: 59604
+distanceHypercube: 28348
 distanceTrue: 13961
-Nearest neighbor-2: 59724
-distanceHypercube: 29083
-distanceTrue: 14027
-Nearest neighbor-3: 59792
-distanceHypercube: 30713
-distanceTrue: 14085
-tHypercube: 2
-tTrue: 942
+tHypercube: 1839
+tTrue: 925517
 R-near neighbors:
 Not Found
 Query: 88
-Nearest neighbor-1: 9635
-distanceHypercube: 12848
+Nearest neighbor-1: 57158
+distanceHypercube: 17350
 distanceTrue: 9581
-Nearest neighbor-2: 39212
-distanceHypercube: 13943
-distanceTrue: 9669
-Nearest neighbor-3: 41974
-distanceHypercube: 15444
-distanceTrue: 9703
-tHypercube: 2
-tTrue: 939
+tHypercube: 1834
+tTrue: 926130
 R-near neighbors:
-59470
-41974
-39212
-9659
-9635
+57158
 Query: 89
-Nearest neighbor-1: 59820
-distanceHypercube: 5951
+Nearest neighbor-1: 59958
+distanceHypercube: 9003
 distanceTrue: 3664
-Nearest neighbor-2: 59768
-distanceHypercube: 6456
-distanceTrue: 3798
-Nearest neighbor-3: 59806
-distanceHypercube: 7245
-distanceTrue: 3838
-tHypercube: 2
-tTrue: 944
+tHypercube: 3377
+tTrue: 925873
 R-near neighbors:
-59975
-59820
-59806
-59768
-59552
-59075
+59992
+59977
+59958
+59948
 Query: 90
-Nearest neighbor-1: 59995
-distanceHypercube: 25144
+Nearest neighbor-1: 47838
+distanceHypercube: 21518
 distanceTrue: 9436
-Nearest neighbor-2: 59930
-distanceHypercube: 25995
-distanceTrue: 10427
-Nearest neighbor-3: 59994
-distanceHypercube: 26837
-distanceTrue: 10453
-tHypercube: 2
-tTrue: 941
+tHypercube: 1775
+tTrue: 927213
 R-near neighbors:
-Not Found
+47838
 Query: 91
-Nearest neighbor-1: 59117
-distanceHypercube: 13644
+Nearest neighbor-1: 55977
+distanceHypercube: 10440
 distanceTrue: 7534
-Nearest neighbor-2: 59981
-distanceHypercube: 14990
-distanceTrue: 7759
-Nearest neighbor-3: 58786
-distanceHypercube: 15317
-distanceTrue: 7788
-tHypercube: 2
-tTrue: 948
+tHypercube: 1833
+tTrue: 930016
 R-near neighbors:
-59981
-59801
-59132
+59892
+59853
+59531
+59508
 59117
-58825
-58786
+58869
+58815
+58766
+58041
+57691
+57675
+56963
+56899
+56885
+56863
+56251
+55977
 Query: 92
-Nearest neighbor-1: 59780
-distanceHypercube: 11569
+Nearest neighbor-1: 59992
+distanceHypercube: 14876
 distanceTrue: 8761
-Nearest neighbor-2: 58159
-distanceHypercube: 12965
-distanceTrue: 8861
-Nearest neighbor-3: 59753
-distanceHypercube: 13037
-distanceTrue: 9554
-tHypercube: 1
-tTrue: 943
+tHypercube: 3458
+tTrue: 925098
 R-near neighbors:
-59931
-59780
-59753
-59743
-59708
-59653
-58159
+59992
+59977
+59969
+59958
+59950
+59948
 Query: 93
-Nearest neighbor-1: 59661
-distanceHypercube: 22412
+Nearest neighbor-1: 59977
+distanceHypercube: 27344
 distanceTrue: 10136
-Nearest neighbor-2: 59351
-distanceHypercube: 25136
-distanceTrue: 10782
-Nearest neighbor-3: 59889
-distanceHypercube: 25440
-distanceTrue: 10962
-tHypercube: 2
-tTrue: 942
+tHypercube: 3324
+tTrue: 924746
 R-near neighbors:
 Not Found
 Query: 94
-Nearest neighbor-1: 59387
-distanceHypercube: 8089
+Nearest neighbor-1: 59960
+distanceHypercube: 24138
 distanceTrue: 4204
-Nearest neighbor-2: 59215
-distanceHypercube: 21086
-distanceTrue: 4810
-Nearest neighbor-3: 59015
-distanceHypercube: 21667
-distanceTrue: 4961
-tHypercube: 2
-tTrue: 944
+tHypercube: 3126
+tTrue: 925146
 R-near neighbors:
-59387
-59215
-59015
+Not Found
 Query: 95
-Nearest neighbor-1: 27919
-distanceHypercube: 18585
+Nearest neighbor-1: 59969
+distanceHypercube: 34331
 distanceTrue: 16441
-Nearest neighbor-2: 38871
-distanceHypercube: 20658
-distanceTrue: 16832
-Nearest neighbor-3: 49382
-distanceHypercube: 20729
-distanceTrue: 16907
-tHypercube: 1
-tTrue: 950
+tHypercube: 3370
+tTrue: 924823
 R-near neighbors:
-49382
-38871
-27919
+Not Found
 Query: 96
-Nearest neighbor-1: 59734
-distanceHypercube: 16194
+Nearest neighbor-1: 59994
+distanceHypercube: 18530
 distanceTrue: 4371
-Nearest neighbor-2: 59773
-distanceHypercube: 19370
-distanceTrue: 4740
-Nearest neighbor-3: 59728
-distanceHypercube: 19599
-distanceTrue: 4788
-tHypercube: 2
-tTrue: 940
+tHypercube: 3208
+tTrue: 928905
 R-near neighbors:
-59958
-59773
-59738
-59734
-59728
-59705
+59997
+59994
+59993
+59979
+59960
+59956
+59947
+59945
+59942
+59932
+59923
+59906
 Query: 97
-Nearest neighbor-1: 57208
-distanceHypercube: 23167
+Nearest neighbor-1: 58164
+distanceHypercube: 24287
 distanceTrue: 11323
-Nearest neighbor-2: 57663
-distanceHypercube: 25235
-distanceTrue: 13553
-Nearest neighbor-3: 58968
-distanceHypercube: 28526
-distanceTrue: 13590
-tHypercube: 2
-tTrue: 948
+tHypercube: 1823
+tTrue: 925171
 R-near neighbors:
 Not Found
 Query: 98
-Nearest neighbor-1: 59206
-distanceHypercube: 20071
+Nearest neighbor-1: 59789
+distanceHypercube: 27479
 distanceTrue: 9788
-Nearest neighbor-2: 50921
-distanceHypercube: 21965
-distanceTrue: 12178
-Nearest neighbor-3: 47772
-distanceHypercube: 23183
-distanceTrue: 12539
-tHypercube: 1
-tTrue: 944
+tHypercube: 2213
+tTrue: 924589
 R-near neighbors:
-59206
-50921
+Not Found
 Query: 99
-Nearest neighbor-1: 56896
-distanceHypercube: 11575
+Nearest neighbor-1: 54698
+distanceHypercube: 11674
 distanceTrue: 7738
-Nearest neighbor-2: 59443
-distanceHypercube: 13610
-distanceTrue: 9351
-Nearest neighbor-3: 57354
-distanceHypercube: 19326
-distanceTrue: 9512
-tHypercube: 2
-tTrue: 948
+tHypercube: 1780
+tTrue: 924850
 R-near neighbors:
 59443
-57354
-56946
-56896
-56886
-55930
+59385
+56060
+54698
+54584
+53868
+meanTimeSearchCube: 2634
+meanTimeSearchBF: 932144

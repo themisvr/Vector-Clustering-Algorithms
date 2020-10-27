@@ -8,6 +8,7 @@
 #include <algorithm> /* for sort() */
 #include <cassert>
 #include <cstdlib>
+#include <cmath>
 
 #include "../../hash_function/hash_function.h"
 #include "../../metric/metric.h"
@@ -64,13 +65,16 @@ class Hypercube {
         Hypercube (uint32_t projdim, uint16_t cands, uint16_t probes, uint16_t nns, float r, \
                     size_t trn, uint32_t d, double meandist, const std::vector<std::vector<T>> &samples) \
                     : projection_dimension(projdim), max_candidates(cands), max_probes(probes), \
-                      N(nns), R(r), train_samples(trn), D(d), win(40000.0)//win(MULTIPLE1 * meandist)
+                      N(nns), R(r), train_samples(trn), D(d), win(MULTIPLE1 * meandist)
         {
-            std::cout << "\nWindow is: ";
+            std::cout << "Window is: ";
             std::cout << win << std::endl;
 
             M = 1ULL << (32 / projection_dimension);
             m = (1ULL << 32) - (5);
+
+            std::cout << "M is " << M << std::endl;
+            std::cout << "m is " << m << std::endl;
 
             /* we do not use amplified hashes on this method, so we do not care about k (k = 0) */
             for (size_t i = 0; i != projection_dimension; ++i) {
@@ -78,6 +82,7 @@ class Hypercube {
                 uniform_binary_mapppings.emplace_back(std::unordered_multimap<uint32_t, bool>());
             }
 
+            hash_table.rehash(trn); // in order to keep hash table's bucket count close to 60.000
             for (size_t i = 0; i != train_samples; ++i) {
                 cube_projection_train(samples[i], i);
             }
@@ -108,7 +113,7 @@ class Hypercube {
 
                 bitstring += std::to_string(bit);
             }
-
+            
             assert(bitstring.size() == projection_dimension);
 
             /* create object {point, index}; insert the object into the hash table as a pair: { key, {point, index} } */
@@ -186,13 +191,12 @@ class Hypercube {
             /* project query to a cube vertex / hash table bucket */
             const std::string key = cube_projection_test(query);
             std::string key1 = key;
-            std::pair<const std::vector<T>*, size_t> value;
 
             while (M > 0) {
                 if (probes > 0) {
                     auto range = hash_table.equal_range(key1); 
                     for (auto i = range.first; (i != range.second) && (M > 0); ++i, --M) {
-                        value = i->second; 
+                        const std::pair<const std::vector<T>*, size_t> &value = i->second; 
                         dist = manhattan_distance_rd<T>(query, *(value.first));
                         if (dist < candidates[0].first) {
                             candidates[0] = std::make_pair(dist, value.second);
@@ -234,13 +238,12 @@ class Hypercube {
             /* project query to a cube vertex / hash table bucket */
             const std::string key = cube_projection_test(query);
             std::string key1 = key;
-            std::pair<const std::vector<T>*, size_t> value;
 
             while (M > 0) {
                 if (probes > 0) {
                     auto range = hash_table.equal_range(key1); 
                     for (auto i = range.first; (i != range.second) && (M > 0); ++i, --M) {
-                        value = i->second;
+                        const std::pair<const std::vector<T>*, size_t> &value = i->second;
                         dist = manhattan_distance_rd<T>(query, *(value.first));
                         if (dist < C * R) {     // average distance is 20 000 - 35 000
                             candidates.emplace_back(value.second);
@@ -274,13 +277,12 @@ class Hypercube {
             /* project query to a cube vertex / hash table bucket */
             const std::string key = cube_projection_test(query);
             std::string key1 = key;
-            std::pair<const std::vector<T> *, size_t> value;
 
             while (M > 0) {
                 if (probes > 0) {
                     auto range = hash_table.equal_range(key1); 
                     for (auto i = range.first; (i != range.second) && (M > 0); ++i, --M) {
-                        value = i->second;
+                        const std::pair<const std::vector<T> *, size_t> &value = i->second;
                         dist = manhattan_distance_rd<T>(query, *(value.first));
                         if (dist < C * r) {     // average distance is 20 000 - 35 000
                             candidates.emplace_back(value.second);

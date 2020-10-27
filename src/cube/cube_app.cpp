@@ -9,8 +9,6 @@
 #include "../../include/io_utils/io_utils.h"
 #include "../../include/modules/exact_nn/exact_nn.h"
 
-using high_resolution_clock = std::chrono::steady_clock;
-
 
 static void start_hypercube_simulation(Cube_args *args)
 {
@@ -34,70 +32,67 @@ static void start_hypercube_simulation(Cube_args *args)
     std::cout << "Done!" << std::endl;
     std::cout << "Hypercube Structure Creation lasted " << duration.count() << " seconds" << std::endl;
 
-    /* read test set and store each query point */
-    std::vector<std::vector<uint8_t>> test_samples;
-    std::cout << "\nReading test set from \"" << args->get_query_file_path() << "\"..." << std::endl;
-    read_file<uint8_t> (args->get_query_file_path(), test_samples);
-    std::cout << "Done!" << std::endl;
+    while (1) {
+        /* read test set and store each query point */
+        std::vector<std::vector<uint8_t>> test_samples;
+        std::cout << "\nReading test set from \"" << args->get_query_file_path() << "\"..." << std::endl;
+        read_file<uint8_t> (args->get_query_file_path(), test_samples);
+        std::cout << "Done!" << std::endl;
 
+        std::cout << "\nQuery file contains " << test_samples.size() << " queries" << std::endl;
+        size_t begin = user_prompt_query_index("Enter query begin index: ", 1, test_samples.size());
+        size_t end   = user_prompt_query_index("Enter query end index: ", 1, test_samples.size());
+        if (begin > end) {
+            std::cerr << "\nInvalid begin or end query index!" << std::endl;
+            delete args;
+            exit(EXIT_FAILURE);
+        }
+        size_t size = end - begin + 1;
 
-    /********** Start ANN / ENN / Range search **********/
-    std::vector<std::vector<std::pair<uint32_t, size_t>>> ann_results(test_samples.size(), \
+        /********** Start ANN / ENN / Range search **********/
+        std::vector<std::vector<std::pair<uint32_t, size_t>>> ann_results(size, \
                                                                 std::vector<std::pair<uint32_t, size_t>> (args->get_nearest_neighbors_num()));
 
-    std::vector<std::vector<uint32_t>>               enn_distances(test_samples.size(), \
+        std::vector<std::vector<uint32_t>>                    enn_distances(size, \
                                                                     std::vector<uint32_t> (args->get_nearest_neighbors_num()));
 
-    std::vector<std::vector<size_t>>                 range_results(test_samples.size());
-    std::vector<uint64_t>                            ann_query_times(test_samples.size());
-    std::vector<uint64_t>                            enn_query_times(test_samples.size());
+        std::vector<std::vector<size_t>>                      range_results(size);
+        std::vector<std::chrono::microseconds>                ann_query_times(size);
+        std::vector<std::chrono::microseconds>                enn_query_times(size);
 
-    for (size_t i = 0; i != test_samples.size(); ++i) {
+        for (size_t i = 0; i != size; ++i) {
 
-        struct timeval end_t, start_t;
-        uint64_t millis;
+            /* Approximate K-NN calculation */
+            start = std::chrono::high_resolution_clock::now();
+            ann_results[i] = cube.approximate_nn(test_samples[i]);
+            stop = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+            ann_query_times[i] = duration;
 
-        /* Approximate K-NN calculation */
-        gettimeofday(&start_t, NULL);
-        ann_results[i] = cube.approximate_nn(test_samples[i]);
-        gettimeofday(&end_t, NULL);
-        millis = ((end_t.tv_sec * (uint64_t)1000 + (end_t.tv_usec / 1000)) - (start_t.tv_sec * (uint64_t)1000 + (start_t.tv_usec / 1000)));
-        ann_query_times[i] = millis;
+            /* Exact NN calculation */
+            start = std::chrono::high_resolution_clock::now();
+            enn_distances[i] = exact_nn<uint8_t> (training_samples, test_samples[i], args->get_nearest_neighbors_num());
+            stop = std::chrono::high_resolution_clock::now();
+            duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+            enn_query_times[i] = duration;
 
-        /* Exact NN calculation */
-        gettimeofday(&start_t, NULL);
-        enn_distances[i] = exact_nn<uint8_t> (training_samples, test_samples[i], args->get_nearest_neighbors_num());
-        gettimeofday(&end_t, NULL);
-        millis = ((end_t.tv_sec * (uint64_t)1000 + (end_t.tv_usec / 1000)) - (start_t.tv_sec * (uint64_t)1000 + (start_t.tv_usec / 1000)));
-        enn_query_times[i] = millis;
+            /* Range Search */
+            range_results[i] = cube.range_search(test_samples[i]);
+        }
 
-        /* Range Search */
-        start = std::chrono::high_resolution_clock::now();
-        range_results[i] = cube.range_search(test_samples[i]);
-        stop = std::chrono::high_resolution_clock::now();
-    }
+        std::cout << "\nWriting formatted output to \"" << args->get_output_file_path() << "\"..."<< std::endl;
+        write_output(args->get_output_file_path(), args->get_nearest_neighbors_num(), size, begin, \
+                                ann_results, ann_query_times, enn_distances, enn_query_times, range_results, "Hypercube");
+        std::cout << "Done!" << std::endl;
 
-    std::cout << "\nWriting formatted output to \"" << args->get_output_file_path() << "\"..."<< std::endl;
-    write_output(args->get_output_file_path(), args->get_nearest_neighbors_num(), test_samples.size() / 100, \
-                            ann_results, ann_query_times, enn_distances, enn_query_times, range_results, "Hypercube");
-    std::cout << "Done!" << std::endl;
-}
-
-
-static void user_interface(Cube_args **args) {
-
-    std::string input_file, query_file, output_file, exit;
-
-    if (*args == nullptr) {
-        while (exit != "N") {
-            input_file = user_prompt_file("Enter path to input file: ");
-            query_file = user_prompt_file("Enter path to query file: ");
-            output_file = user_prompt_file("Enter path to output file: ");
-            *args = new Cube_args(input_file, query_file, output_file);
-            
-            start_hypercube_simulation(*args);
-            
-            exit = user_prompt_exit("\nDo you want to continue the simulation with another training set/test set: [Y/N]: ");
+        std::cout << "You can now open the output file and see its contents" << std::endl;
+        std::string option = user_prompt_exit("\nDo you want to continue the simulation and repeat the search process?: [Y/N]: ");
+        if (option == "N") {
+            break;
+        }
+        option = user_prompt_exit("\nDo you want to use the same query file?: [Y/N]: ");
+        if (option != "Y") {
+            args->set_query_file_path(user_prompt_file("\nEnter the path to the new query file: "));
         }
     }
 }
@@ -114,6 +109,7 @@ int main(int argc, char *argv[])
     }
     else if (argc == 1) {                       // user executed the program without command line options i.e ./cube
         user_interface(&args);
+        start_hypercube_simulation(args);
     }
     else {                                      // invalid execution
         cube_usage(argv[0]);

@@ -18,9 +18,8 @@
 #include "../modules/exact_nn/exact_nn.h"
 #include "../cluster/cluster_utils.h"
 
-#define MAXRADIUS   1.0e+130 
-#define EPSILON     3000000000
-#define CLSH 1.8
+#define EPSILON 100000
+#define CLSH    1.8
 
 
 template <typename T>
@@ -148,7 +147,6 @@ class Cluster {
                 float x = distribution(generator);
                 std::sort(partial_sums.begin(), partial_sums.end(), compare);
                 size_t r = binary_search(partial_sums, x);
-                std::cout << r << std::endl;
 
                 /* emplace train_set[r] to the centroids vector */
                 centroids.emplace_back(train_set[r]);
@@ -236,13 +234,10 @@ class Cluster {
             /* start with min(dist between centers)/2 */
             double radius = (double) (min_dist / 2);
         
-            size_t new_assigned = 0;
-            size_t total_assigned = 0;
+            size_t new_assigned   = 0;
             std::vector<size_t> range_search_nns;
         
-            while (radius < MAXRADIUS) {
-        
-                new_assigned = 0;
+            while (1) {
         
                 /* for each centroid c, range/ball queries centered at c */
                 for (ssize_t i = 0; i != n_centroids; ++i) {
@@ -280,6 +275,7 @@ class Cluster {
                              * assign the vector to its closest center
                              */
                             if (new_centroid_dist < prev_centroid_dist) {
+                                ++new_assigned;
 
                                 /* delete vector_index from the previous cluster, to which
                                  * it was assigned
@@ -299,11 +295,11 @@ class Cluster {
                         }
                     }
                 }
+
+                if (radius > 20000.0 && new_assigned == 0) break;
+
+                new_assigned = 0;
                 /* multiply radius by 2 */
-                total_assigned += new_assigned;
-                std::cout << "New Points Assigned to Clusters: " << new_assigned << std::endl;
-                std::cout << "Total Points Assigned to Clusters: " << total_assigned << std::endl;
-                std::cout << "Radius for this Iteration was: " << radius << std::endl;
                 radius *= 2;
             }
 
@@ -352,10 +348,10 @@ class Cluster {
         
             /* start with min(dist between centers)/2 */
             double radius = (double) (min_dist / 2);
-        
+            size_t new_assigned = 0;
             std::vector<size_t> range_search_nns;
         
-            while (radius < MAXRADIUS) {
+            while (1) {
         
                 /* for each centroid c, range/ball queries centered at c */
                 for (ssize_t i = 0; i != n_centroids; ++i) {
@@ -373,6 +369,7 @@ class Cluster {
                             clusters[i].emplace_back(vector_index);
                             /* mark the vector as "assigned" to cluster */
                             assigned_vectors[vector_index] = i;
+                            ++new_assigned;
                         }
 
                         /*
@@ -389,6 +386,7 @@ class Cluster {
                              * assign the vector to its closest center
                              */
                             if (new_centroid_dist < prev_centroid_dist) {
+                                ++new_assigned;
 
                                 /* delete vector_index from the previous cluster, to which
                                  * it was assigned
@@ -408,8 +406,12 @@ class Cluster {
                         }
                     }
                 }
+
+                if (radius > 20000.0 && new_assigned == 0) break;
+
                 /* multiply radius by 2 */
                 radius *= 2;
+                new_assigned = 0;
             }
 
             /* At end: for every unassigned point, compare its distances to all centroids */
@@ -463,14 +465,14 @@ class Cluster {
         {
             size_t size = train_set.size();
             uint32_t min_dist = 0;
-            uint64_t eucl_norm = 0;
+            uint64_t l1_norm = 0;
 
             for (size_t i = 0; i != size; ++i) {
                 min_dist = exact_nn<T> (centroids, train_set[i]);
-                eucl_norm += min_dist * min_dist;
+                l1_norm += min_dist;
             }
 
-            return eucl_norm;
+            return l1_norm;
         }
 
 
@@ -517,7 +519,7 @@ class Cluster {
                 // calculate k-medians objective function after centroids are updated
                 new_objective = objective_function(train_set);
 
-                std::cout << "Objective of n-1 is " << prev_objective << std::endl;
+                std::cout << "\nObjective of n-1 is " << prev_objective << std::endl;
                 std::cout << "Objective of n   is " << new_objective << std::endl;
 
                 // terminating condition
@@ -628,7 +630,7 @@ class Cluster {
                                     bool complete, std::chrono::seconds cluster_time)
         {
             std::ofstream ofile;
-            ofile.open(out, std::ios::out);
+            ofile.open(out, std::ios::out | std::ios::trunc);
 
             if (ofile) {
                 ofile << "Algorithm: ";

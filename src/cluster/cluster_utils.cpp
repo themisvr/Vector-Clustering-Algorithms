@@ -131,7 +131,7 @@ size_t binary_search(const std::vector<std::pair<float, size_t>> &partial_sums, 
 
     size_t middle = 0, begin = 0, end = partial_sums.size();
     const std::pair<float, size_t> *less_than = &partial_sums[0];
-    const std::pair<float, size_t> *greater_than = &partial_sums[0];
+    //const std::pair<float, size_t> *greater_than = &partial_sums[0];
 
     while (begin <= end) {
 
@@ -145,13 +145,13 @@ size_t binary_search(const std::vector<std::pair<float, size_t>> &partial_sums, 
 
         }
         else {
-            greater_than = &partial_sums[middle];
+            //greater_than = &partial_sums[middle];
             begin = middle + 1;
 
         }
     }
 
-    std::cout << "P(r-1) = " << greater_than->first << " < " << val << " <= P(r) = " << less_than->first << std::endl;
+    //std::cout << "P(r-1) = " << greater_than->first << " < " << val << " <= P(r) = " << less_than->first << std::endl;
 
     return less_than->second;
 }
