@@ -41,6 +41,14 @@ void cube_usage(const char *exec) {
 }
 
 
+bool file_exists(const char *filepath) {
+    struct stat buf;
+
+    return ( stat(filepath, &buf) == 0 );
+
+}
+
+
 std::string user_prompt_exit(const std::string &message) {
 
     std::string exit;
@@ -57,38 +65,27 @@ std::string user_prompt_file(const std::string &message) {
 
     std::cout << message ;
     std::cin >> file_path; 
+    if ( !file_exists(file_path.c_str()) ) {
+        std::cerr << "\nFile does not exist!" << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
     return file_path;
 }
 
 
-uint16_t user_prompt_search_arg(const std::string &message)
+size_t user_prompt_query_index(const std::string &message, long lower, long upper)
 {
-    uint16_t search_arg = 0;
+    long index = 0;
 
     std::cout << message;
-    std::cin >> search_arg;
+    std::cin >> index;
+    if (index < lower || index > upper) {
+        std::cerr << "\nQuery index is out of bounds!" << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
-    return search_arg;
-}
-
-
-float user_prompt_rad(const std::string &message)
-{
-    float radius = 0.0;
-
-    std::cout << message;
-    std::cin >> radius;
-
-    return radius;
-}
-
-
-bool file_exists(const char *filepath) {
-    struct stat buf;
-
-    return ( stat(filepath, &buf) == 0 );
-
+    return index;
 }
 
 
@@ -275,23 +272,23 @@ uint32_t bigend_to_littlend(uint32_t big_endian) {
 }
 
 
-void write_output(const std::string &out, const uint16_t nns, const size_t size, \
+void write_output(const std::string &out, const uint16_t &nns, const size_t &size, const size_t &begin, \
                             const std::vector<std::vector<std::pair<uint32_t, size_t>>> &ann_res, \
-                            const std::vector<uint64_t> &ann_query_times, \
-                            const std::vector<std::vector<uint32_t>> &enn_dists, const std::vector<uint64_t> &enn_query_times, \
+                            const std::vector<std::chrono::microseconds> &ann_query_times, \
+                            const std::vector<std::vector<uint32_t>> &enn_dists, const std::vector<std::chrono::microseconds> &enn_query_times, \
                             const std::vector<std::vector<size_t>> &range_res, const std::string &structure) {
     
     std::vector<std::pair<uint32_t, size_t>> approx_nearest;
     std::vector<uint32_t> exact_nearest;
     std::ofstream ofile;
-    ofile.open(out, std::ios::out | std::ios::app);
+    ofile.open(out, std::ios::out | std::ios::trunc);
 
     // size_t wrong_dists{};
 
     for (size_t i = 0; i != size; ++i) {
         approx_nearest = ann_res[i];
         exact_nearest  = enn_dists[i];
-        ofile << "Query: " << i << std::endl;
+        ofile << "Query: " << begin - 1 + i << std::endl;
         for (size_t j = 0; j != nns; ++j) {
             uint32_t dist = approx_nearest[j].first;
             size_t ith_vec = approx_nearest[j].second;
@@ -306,8 +303,9 @@ void write_output(const std::string &out, const uint16_t nns, const size_t size,
             }
             ofile << "distanceTrue: " << exact_nearest[j] << std::endl;
         }
-        ofile << "t" << structure << ": " << ann_query_times[i] << std::endl;
-        ofile << "tTrue: " << (double) enn_query_times[i] << std::endl;
+
+        ofile << "t" << structure << ": " << ann_query_times[i].count() << std::endl;
+        ofile << "tTrue: " << (double) enn_query_times[i].count() << std::endl;
 
         ofile << "R-near neighbors:" << std::endl;
         if (range_res[i].empty()) {

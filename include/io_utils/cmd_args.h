@@ -12,7 +12,7 @@ class Prog_args // abstract class
 {
     private:
         const std::string input_file_path;
-        const std::string query_file_path;
+        std::string query_file_path;
         const std::string output_file_path;
         uint16_t nearest_neighbors_num = 0;
         float radius = 0.0;
@@ -20,6 +20,7 @@ class Prog_args // abstract class
     public:
         Prog_args(const std::string &, const std::string &, const std::string &, uint16_t, float);
         virtual ~Prog_args() = default;
+        void set_query_file_path(const std::string &);
         void set_nearest_neighbors_num(uint16_t);
         void set_radius(float);
         std::string get_input_file_path() const;
@@ -72,6 +73,10 @@ inline Prog_args::Prog_args::Prog_args(const std::string &ipath, const std::stri
                                         nearest_neighbors_num(nn_num), radius(rad)
 { }
 
+inline void Prog_args::set_query_file_path(const std::string &qfile)
+{
+    query_file_path = qfile;
+}
 
 inline void Prog_args::set_nearest_neighbors_num(uint16_t nns)
 {

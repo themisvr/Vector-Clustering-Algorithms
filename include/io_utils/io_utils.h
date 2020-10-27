@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <chrono>
 
 #include "cmd_args.h"
 
@@ -9,9 +10,7 @@ std::string user_prompt_exit(const std::string &);
 
 std::string user_prompt_file(const std::string&);
 
-uint16_t user_prompt_search_arg(const std::string&);
-
-float user_prompt_rad(const std::string&);
+size_t user_prompt_query_index(const std::string&, long, long);
 
 uint32_t bigend_to_littlend(uint32_t);
 
@@ -25,9 +24,13 @@ void lsh_usage(const char *);
 
 void cube_usage(const char *);
 
-void write_output(const std::string &, const uint16_t, const size_t, const std::vector<std::vector<std::pair<uint32_t, size_t>>> &, \
-                            const std::vector<uint64_t> &, const std::vector<std::vector<uint32_t>> &, const std::vector<uint64_t> &, \
-                            const std::vector<std::vector<size_t>> &, const std::string &);
+void user_interface(Cube_args **);
+
+void write_output(const std::string &, const uint16_t &, const size_t &, const size_t &, \
+                        const std::vector<std::vector<std::pair<uint32_t, size_t>>> &, \
+                        const std::vector<std::chrono::microseconds> &, const std::vector<std::vector<uint32_t>> &, \
+                        const std::vector<std::chrono::microseconds> &, const std::vector<std::vector<size_t>> &, \
+                        const std::string &);
 
 
 template <typename T>

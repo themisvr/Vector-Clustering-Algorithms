@@ -19,14 +19,12 @@ int main(int argc, char *argv[])  {
     parse_cluster_args(argc, argv, &args);
     parse_cluster_configurations(args.config_file, &configs);
 
+
     /* read training set file and store the training data */
     std::vector<std::vector<uint8_t>> train_data;
     std::cout << "\nReading training set from \"" << args.input_file << "\"..." << std::endl;
     read_file<uint8_t> (args.input_file, train_data);
     std::cout << "Done!" << std::endl;
-
-    read_file<uint8_t> (args.input_file, train_data);
-
 
     /* based on the assignment method specified by the user, use the appropriate constructor for Cluster */
     if (args.method == "Classic") {
