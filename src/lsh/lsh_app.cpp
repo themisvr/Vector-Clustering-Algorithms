@@ -54,7 +54,7 @@ static void start_lsh_simulation(Lsh_args *args) {
     std::vector<uint64_t>           ann_query_times(queries.size());
     std::vector<uint64_t>           enn_query_times(queries.size());
 
-    for (size_t i = 0; i != queries.size(); ++i) {
+    for (size_t i = 0; i != queries.size() / 600; ++i) {
 
         struct timeval end_t, start_t;
         uint64_t millis;
