@@ -256,6 +256,19 @@ void user_interface(Cube_args **args) {
     }
 }
 
+void user_interface(Lsh_args **args) {
+
+    std::string input_file, query_file, output_file; 
+
+    if (*args == nullptr) {
+        input_file = user_prompt_file("Enter path to input file: ");
+        query_file = user_prompt_file("Enter path to query file: ");
+        output_file = user_prompt_file("Enter path to output file: ");
+
+        *args = new Lsh_args(input_file, query_file, output_file);
+    }
+}
+
 
 uint32_t bigend_to_littlend(uint32_t big_endian) {
     uint32_t b0, b1, b2, b3;

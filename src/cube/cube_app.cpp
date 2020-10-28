@@ -87,9 +87,8 @@ static void start_hypercube_simulation(Cube_args *args)
 
         std::cout << "You can now open the output file and see its contents" << std::endl;
         std::string option = user_prompt_exit("\nDo you want to continue the simulation and repeat the search process?: [Y/N]: ");
-        if (option == "N") {
-            break;
-        }
+        if (option == "Y") continue;
+        else break;
         option = user_prompt_exit("\nDo you want to use the same query file?: [Y/N]: ");
         if (option != "Y") {
             args->set_query_file_path(user_prompt_file("\nEnter the path to the new query file: "));

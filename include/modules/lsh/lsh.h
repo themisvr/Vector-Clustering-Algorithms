@@ -65,9 +65,7 @@ class LSH {
                 it->second.insert(vec_index);
             }
             else {
-                std::set<size_t> g_vec_ids;
-                g_vec_ids.insert(vec_index);
-                g_values[amplified_value] = g_vec_ids;
+                g_values[amplified_value].insert(vec_index);
             }
         }
 
@@ -84,8 +82,8 @@ class LSH {
             m = (1ULL << 32) - (5);
             ht_size = HT_SIZE(n_vectors);
             
-            // w = 4000;
-            w = 40000;
+            w = 4000;
+            // w = 40000;
             // w = meandist;
             std::cout <<  "\nWindow is: " << w << std::endl;
 
