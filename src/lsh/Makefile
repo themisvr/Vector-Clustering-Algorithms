@@ -3,7 +3,7 @@ HEADERDIR := ../../include
 OBJDIR := ../../obj
 
 CC := g++
-CFLAGS := -std=c++11 -g3 -Wall -Wextra -I$(HEADERDIR)
+CFLAGS := -std=c++11 -Ofast -g3 -Wall -Wextra -I$(HEADERDIR)
 
 # -Ofast
 

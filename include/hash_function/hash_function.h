@@ -16,6 +16,7 @@ template <typename T>
 class HashFunction {
 
     private:
+        /* k: number of h functions that we'll create */
         const uint16_t k;
         const uint16_t d;
         const uint32_t m;

@@ -13,7 +13,7 @@
 #include "../../metric/metric.h"
 
 
-#define HT_SIZE(N) ((N / 32))
+#define HT_SIZE(N) ((N / 16))
 #define MULTIPLE 4
 
 

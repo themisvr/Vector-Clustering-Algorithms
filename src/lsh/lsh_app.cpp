@@ -10,7 +10,7 @@
 #include "../../include/modules/exact_nn/exact_nn.h"
 
 
-#define C 1.4
+#define C 1.2
 
 
 static void start_lsh_simulation(Lsh_args *args) {
@@ -46,27 +46,19 @@ static void start_lsh_simulation(Lsh_args *args) {
         std::cout << "Done!" << std::endl;
 
         std::cout << "\nQuery file contains " << queries.size() << " queries" << std::endl;
-        size_t begin = user_prompt_query_index("Enter query begin index: ", 1, queries.size());
-        size_t end   = user_prompt_query_index("Enter query end index: ", 1, queries.size());
-        if (begin > end) {
-            std::cerr << "\nInvalid begin or end query index!" << std::endl;
-            delete args;
-            exit(EXIT_FAILURE);
-        }
-        size_t size = end - begin + 1;
 
         /********** Start ANN / ENN / Range search **********/
-        std::vector<std::vector<std::pair<uint32_t, size_t>>>  ann_results(size, \
+        std::vector<std::vector<std::pair<uint32_t, size_t>>>  ann_results(queries.size(), \
                                                                     std::vector<std::pair<uint32_t, size_t>> (args->get_nearest_neighbors_num()));
 
-        std::vector<std::vector<uint32_t>>                     enn_distances(size, \
+        std::vector<std::vector<uint32_t>>                     enn_distances(queries.size(), \
                                                                     std::vector<uint32_t> (args->get_nearest_neighbors_num()));
 
-        std::vector<std::vector<size_t>>                       range_results(size);
-        std::vector<std::chrono::microseconds>                 ann_query_times(size);
-        std::vector<std::chrono::microseconds>                 enn_query_times(size);
+        std::vector<std::vector<size_t>>                       range_results(queries.size());
+        std::vector<std::chrono::microseconds>                 ann_query_times(queries.size());
+        std::vector<std::chrono::microseconds>                 enn_query_times(queries.size());
 
-        for (size_t i = 0; i != size; ++i) {
+        for (size_t i = 0; i != queries.size(); ++i) {
 
             /* Approximate K-NN calculation */
             start = std::chrono::high_resolution_clock::now();
@@ -77,7 +69,7 @@ static void start_lsh_simulation(Lsh_args *args) {
 
             /* Exact NN calculation */
             start = std::chrono::high_resolution_clock::now();
-            enn_distances[i] = exact_nn<uint8_t> (queries, queries[i], args->get_nearest_neighbors_num());
+            enn_distances[i] = exact_nn<uint8_t> (dataset, queries[i], args->get_nearest_neighbors_num());
             stop = std::chrono::high_resolution_clock::now();
             duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
             enn_query_times[i] = duration;
@@ -87,7 +79,7 @@ static void start_lsh_simulation(Lsh_args *args) {
         }
 
         std::cout << "\nWriting formatted output to \"" << args->get_output_file_path() << "\"..."<< std::endl;
-        write_output(args->get_output_file_path(), args->get_nearest_neighbors_num(), size, begin, \
+        write_output(args->get_output_file_path(), args->get_nearest_neighbors_num(), queries.size(), 1, \
                                 ann_results, ann_query_times, enn_distances, enn_query_times, range_results, "LSH");
         std::cout << "Done!" << std::endl;
 
