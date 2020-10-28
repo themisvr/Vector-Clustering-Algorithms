@@ -27,8 +27,8 @@ class HashFunction {
 
     public:
 
-        HashFunction(   const uint16_t &k, const uint16_t &d, const uint32_t &m, const uint32_t &M, \
-                        const double &w) : k(k), d(d), m(m), M(M), w(w), s_transformations(d), a(d) {
+        HashFunction(   const uint16_t k, const uint16_t d, const uint32_t m, const uint32_t M, \
+                        const double w) : k(k), d(d), m(m), M(M), w(w), s_transformations(d), a(d) {
 
             unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
             std::default_random_engine generator(seed);
@@ -41,6 +41,7 @@ class HashFunction {
         } 
         
         ~HashFunction() = default;
+
 
         uint32_t hash_function_construction(const std::vector<T> &pixels) {
             uint32_t hash_value = 0;
@@ -77,8 +78,8 @@ class AmplifiedHashFunction {
 
     public:
 
-        AmplifiedHashFunction(  const uint16_t &k, const uint16_t &d, const uint32_t &m, \
-                                const uint32_t &M, const double &w): k(k), d(d), m(m), M(M), w(w) {
+        AmplifiedHashFunction(  const uint16_t k, const uint16_t d, const uint32_t m, \
+                                const uint32_t M, const double w): k(k), d(d), m(m), M(M), w(w) {
         
             for (size_t i = 0; i != k; ++i) {
                 h_i.push_back(HashFunction<T> (k, d, m, M, w));
@@ -89,7 +90,7 @@ class AmplifiedHashFunction {
         ~AmplifiedHashFunction() = default;
 
 
-        uint64_t amplified_function_construction(const std::vector<T> &pixels) {
+        size_t amplified_function_construction(const std::vector<T> &pixels) {
             
             std::string res = "";
             char *p_end = nullptr;
@@ -102,5 +103,6 @@ class AmplifiedHashFunction {
         }
 
 };
+
 
 #endif // HASH_FUNCTION_H

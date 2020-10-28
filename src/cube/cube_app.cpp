@@ -47,7 +47,7 @@ static void start_hypercube_simulation(Cube_args *args)
             delete args;
             exit(EXIT_FAILURE);
         }
-        size_t size = end - begin + 1;
+        size_t size = end - begin;
 
         /********** Start ANN / ENN / Range search **********/
         std::vector<std::vector<std::pair<uint32_t, size_t>>> ann_results(size, \

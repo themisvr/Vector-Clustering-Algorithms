@@ -75,7 +75,7 @@ static void start_lsh_simulation(Lsh_args *args) {
             enn_query_times[i] = duration;
 
             /* Range Search */
-            range_results[i] = lsh.approximate_range_search(C, R, queries[i]);
+           range_results[i] = lsh.approximate_range_search(C, R, queries[i]);
         }
 
         std::cout << "\nWriting formatted output to \"" << args->get_output_file_path() << "\"..."<< std::endl;
@@ -91,7 +91,6 @@ static void start_lsh_simulation(Lsh_args *args) {
         if (option != "Y") {
             args->set_query_file_path(user_prompt_file("\nEnter the path to the new query file: "));
         }
-    
     }
 }
 

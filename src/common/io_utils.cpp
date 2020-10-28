@@ -307,7 +307,8 @@ void write_output(const std::string &out, const uint16_t &nns, const size_t &siz
             uint32_t dist = approx_nearest[j].first;
             size_t ith_vec = approx_nearest[j].second;
             if (dist == std::numeric_limits<uint32_t>::max()) {
-                ++not_found;
+                // that means that we didnt find any neighbor (nearest neighbor-1)
+                if (j == 0) ++not_found;
                 ofile << "Nearest neighbor-" << j + 1 << ": " << "Not Found" << std::endl;
                 ofile << "distance" << structure << ": " << "None" << std::endl;
             }

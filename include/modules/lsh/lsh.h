@@ -45,8 +45,6 @@ class LSH {
         
         std::vector<AmplifiedHashFunction<T>> g_hash_functions;
 
-        std::map<uint64_t, std::set<size_t>> g_values;
-
 
         void initialize_k_best_vectors(std::vector<std::pair<uint32_t, size_t>> &k_best_vectors) {
             
@@ -54,18 +52,6 @@ class LSH {
 
             for (size_t i = 0; i != N; ++i) {
                 k_best_vectors.push_back(std::make_pair(best_dist, 0));
-            }
-        }
-
-
-        void map_vec_to_g_value(uint64_t amplified_value, size_t vec_index) {
-            
-            auto it = g_values.find(amplified_value);
-            if (it != g_values.end()) {
-                it->second.insert(vec_index);
-            }
-            else {
-                g_values[amplified_value].insert(vec_index);
             }
         }
 
@@ -82,9 +68,9 @@ class LSH {
             m = (1ULL << 32) - (5);
             ht_size = HT_SIZE(n_vectors);
             
-            w = 4000;
+            // w = 4000;
             // w = 40000;
-            // w = meandist;
+            w = MULTIPLE * meandist;
             std::cout <<  "\nWindow is: " << w << std::endl;
 
 
@@ -96,13 +82,13 @@ class LSH {
 
             for (size_t i = 0; i != L; ++i) {                
                 std::unordered_map<int, std::vector<size_t>> hash_table;
+                hash_table.reserve(ht_size);
 
                 for (size_t index = 0; index != n_vectors; ++index) {           
                     amplified_value = g_hash_functions[i].amplified_function_construction(dataset[index]);
-                   // map_vec_to_g_value(amplified_value, index);
                     hash_table[amplified_value % ht_size].emplace_back(index);
                 }
-                lsh_tables.emplace_back(hash_table);
+                lsh_tables.emplace_back(std::move(hash_table));
             }
         };
 
