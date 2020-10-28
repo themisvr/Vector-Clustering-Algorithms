@@ -64,20 +64,20 @@ static void start_hypercube_simulation(Cube_args *args)
 
             /* Approximate K-NN calculation */
             start = std::chrono::high_resolution_clock::now();
-            ann_results[i] = cube.approximate_nn(test_samples[i]);
+            ann_results[i] = cube.approximate_nn(test_samples[begin + i - 1], training_samples);
             stop = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
             ann_query_times[i] = duration;
 
             /* Exact NN calculation */
             start = std::chrono::high_resolution_clock::now();
-            enn_distances[i] = exact_nn<uint8_t> (training_samples, test_samples[i], args->get_nearest_neighbors_num());
+            enn_distances[i] = exact_nn<uint8_t> (training_samples, test_samples[begin + i - 1], args->get_nearest_neighbors_num());
             stop = std::chrono::high_resolution_clock::now();
             duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
             enn_query_times[i] = duration;
 
             /* Range Search */
-            range_results[i] = cube.range_search(test_samples[i]);
+            range_results[i] = cube.range_search(test_samples[begin + i - 1], training_samples);
         }
 
         std::cout << "\nWriting formatted output to \"" << args->get_output_file_path() << "\"..."<< std::endl;

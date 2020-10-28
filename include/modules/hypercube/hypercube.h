@@ -44,7 +44,7 @@ class Hypercube {
         std::vector<std::unordered_multimap<uint32_t, bool>> uniform_binary_mapppings;
 
         /* hash table representing the hypercube; each vertex is basically a bucket */
-        std::unordered_multimap<std::string, std::pair<const std::vector<T>*, size_t>> hash_table;
+        std::unordered_map<std::string, std::vector<size_t>> hash_table;
 
         /* for the hypercube method we use d' x LSH hash functions */
         std::vector<HashFunction<T>> hash_functions;
@@ -82,11 +82,10 @@ class Hypercube {
                 uniform_binary_mapppings.emplace_back(std::unordered_multimap<uint32_t, bool>());
             }
 
-            hash_table.rehash(trn); // in order to keep hash table's bucket count close to 60.000
+            hash_table.rehash(trn); // in order to keep hash table's bucket count close to the total number of points
             for (size_t i = 0; i != train_samples; ++i) {
                 cube_projection_train(samples[i], i);
             }
-
         }
 
 
@@ -116,9 +115,7 @@ class Hypercube {
             
             assert(bitstring.size() == projection_dimension);
 
-            /* create object {point, index}; insert the object into the hash table as a pair: { key, {point, index} } */
-            hash_table.insert( std::make_pair(bitstring, std::make_pair(&point, index)) );  
-
+            hash_table[bitstring].push_back(index);
         }
 
 
@@ -176,7 +173,7 @@ class Hypercube {
         }
 
 
-        std::vector<std::pair<uint32_t, size_t>> approximate_nn(const std::vector<T> &query)
+        std::vector<std::pair<uint32_t, size_t>> approximate_nn(const std::vector<T> &query, const std::vector<std::vector<T>> &train_samples)
         {
             /* vector to store query's nearest neighbors - M candidates */
             std::vector<std::pair<uint32_t, size_t>> candidates;
@@ -185,6 +182,7 @@ class Hypercube {
             uint16_t M = max_candidates;
             uint16_t probes = max_probes;
             uint8_t  bits = 1;
+            size_t   bucket_count = 0;
 
             init_k_nearest_neighbors(candidates);
 
@@ -194,12 +192,12 @@ class Hypercube {
 
             while (M > 0) {
                 if (probes > 0) {
-                    auto range = hash_table.equal_range(key1); 
-                    for (auto i = range.first; (i != range.second) && (M > 0); ++i, --M) {
-                        const std::pair<const std::vector<T>*, size_t> &value = i->second; 
-                        dist = manhattan_distance_rd<T>(query, *(value.first));
+                    bucket_count = hash_table[key1].size();
+                    const std::vector<size_t> &indexes = hash_table[key1]; 
+                    for (size_t i = 0; (i != bucket_count) && (M > 0); ++i, --M) {
+                        dist = manhattan_distance_rd<T>(query, train_samples[indexes[i]]);
                         if (dist < candidates[0].first) {
-                            candidates[0] = std::make_pair(dist, value.second);
+                            candidates[0] = std::make_pair(dist, indexes[i]);
                             std::sort(candidates.begin(), candidates.end(), [](const std::pair<uint32_t, size_t> &left, \
                                                                                 const std::pair<uint32_t, size_t> &right) \
                                                                                 { return (left.first > right.first); } );
@@ -225,7 +223,7 @@ class Hypercube {
         }
 
 
-        std::vector<size_t> range_search(const std::vector<T> &query)
+        std::vector<size_t> range_search(const std::vector<T> &query, const std::vector<std::vector<T>> &train_samples)
         {
             /* vector to store query's nearest neighbors; only store the training index this time */
             std::vector<size_t> candidates;
@@ -234,6 +232,7 @@ class Hypercube {
             uint16_t M = max_candidates;
             uint16_t probes = max_probes;
             uint8_t  bits = 1;
+            size_t   bucket_count = 0;
 
             /* project query to a cube vertex / hash table bucket */
             const std::string key = cube_projection_test(query);
@@ -241,12 +240,12 @@ class Hypercube {
 
             while (M > 0) {
                 if (probes > 0) {
-                    auto range = hash_table.equal_range(key1); 
-                    for (auto i = range.first; (i != range.second) && (M > 0); ++i, --M) {
-                        const std::pair<const std::vector<T>*, size_t> &value = i->second;
-                        dist = manhattan_distance_rd<T>(query, *(value.first));
+                    bucket_count = hash_table[key1].size();
+                    const std::vector<size_t> &indexes = hash_table[key1];
+                    for (size_t i = 0; (i != bucket_count) && (M > 0); ++i, --M) {
+                        dist = manhattan_distance_rd<T>(query, train_samples[indexes[i]]);
                         if (dist < C * R) {     // average distance is 20 000 - 35 000
-                            candidates.emplace_back(value.second);
+                            candidates.push_back(indexes[i]);
                         }
                     }
 
@@ -264,7 +263,7 @@ class Hypercube {
         }
 
 
-        std::vector<size_t> range_search(const std::vector<T> &query, double r)
+        std::vector<size_t> range_search(const std::vector<T> &query, const std::vector<std::vector<T>> &train_samples, double r)
         {
             /* vector to store query's nearest neighbors; only store the training index this time */
             std::vector<size_t> candidates;
@@ -273,6 +272,7 @@ class Hypercube {
             uint16_t M = max_candidates;
             uint16_t probes = max_probes;
             uint8_t  bits = 1;
+            size_t   bucket_count = 0;
 
             /* project query to a cube vertex / hash table bucket */
             const std::string key = cube_projection_test(query);
@@ -280,12 +280,12 @@ class Hypercube {
 
             while (M > 0) {
                 if (probes > 0) {
-                    auto range = hash_table.equal_range(key1); 
-                    for (auto i = range.first; (i != range.second) && (M > 0); ++i, --M) {
-                        const std::pair<const std::vector<T> *, size_t> &value = i->second;
-                        dist = manhattan_distance_rd<T>(query, *(value.first));
-                        if (dist < C * r) {     // average distance is 20 000 - 35 000
-                            candidates.emplace_back(value.second);
+                    bucket_count = hash_table[key1].size();
+                    const std::vector<size_t> &indexes = hash_table[key1];
+                    for (size_t i = 0; (i != bucket_count) && (M > 0); ++i, --M) {
+                        dist = manhattan_distance_rd<T>(query, train_samples[indexes[i]]);
+                        if (dist < C * r) {     // average distance is 20.000 - 35.000
+                            candidates.push_back(indexes[i]);
                         }
                     }
 

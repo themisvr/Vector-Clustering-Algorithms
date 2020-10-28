@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include <random>   /* for rand() */
-#include <chrono>
+#include <chrono> 
 #include <fstream>
 #include <cstdlib>
 #include <cstdint>
@@ -18,7 +18,7 @@
 #include "../modules/exact_nn/exact_nn.h"
 #include "../cluster/cluster_utils.h"
 
-#define EPSILON 100000
+#define EPSILON 500000
 #define CLSH    1.8
 
 
@@ -246,7 +246,7 @@ class Cluster {
                         range_search_nns = lshptr->approximate_range_search(CLSH, radius, centroids[i]);
                     }
                     else {
-                        range_search_nns = cubeptr->range_search(centroids[i], radius);
+                        range_search_nns = cubeptr->range_search(centroids[i], train_set, radius);
                     }
                     for (const auto &vector_index: range_search_nns) {
         
@@ -360,7 +360,7 @@ class Cluster {
                         range_search_nns = lshptr->approximate_range_search(CLSH, radius, centroids[i]);
                     }
                     else {
-                        range_search_nns = cubeptr->range_search(centroids[i], radius);
+                        range_search_nns = cubeptr->range_search(centroids[i], train_set, radius);
                     }
                     for (const auto &vector_index: range_search_nns) {
         
