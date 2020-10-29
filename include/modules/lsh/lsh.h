@@ -14,7 +14,7 @@
 
 
 #define HT_SIZE(N) ((N / 16))
-#define MULTIPLE 4
+#define MULTIPLE 6
 
 
 template <typename T>
@@ -102,6 +102,7 @@ class LSH {
             std::vector<std::pair<uint32_t, size_t>> res;
             uint64_t af_value{};
             uint32_t dist{};
+            uint32_t checked{};
 
             initialize_k_best_vectors(res);
 
@@ -114,11 +115,13 @@ class LSH {
                 std::vector<size_t> bucket = ith_table[af_value % ht_size];
 
                 for (auto const &index : bucket) {
+                    ++checked;
                     dist = manhattan_distance_rd<T> (dataset[index], query);
                     if (dist < min_dist) {
                         min_dist = dist;
                         best_vectors.emplace_back(std::make_pair(dist, index));
                     }
+                    if (checked > 10 * L) break;
                 }
             }
             std::sort(best_vectors.begin(), best_vectors.end(), [](const std::pair<uint32_t, size_t> &left, \

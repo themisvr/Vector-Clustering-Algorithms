@@ -285,7 +285,67 @@ uint32_t bigend_to_littlend(uint32_t big_endian) {
 }
 
 
-void write_output(const std::string &out, const uint16_t &nns, const size_t &size, const size_t &begin, \
+
+void print_statistics(const uint16_t nns, const size_t size, const std::vector<std::vector<std::pair<uint32_t, size_t>>> &ann_res, \
+                            const std::vector<std::chrono::microseconds> &ann_query_times, \
+                            const std::vector<std::vector<uint32_t>> &enn_dists, \
+                            const std::vector<std::chrono::microseconds> &enn_query_times) {
+
+    std::vector<std::pair<uint32_t, size_t>> approx_nearest;
+    std::vector<uint32_t> exact_nearest;
+    std::vector<double> approx_factor;
+
+    size_t wrong_dists{};
+    size_t not_found{};
+
+
+    for (size_t i = 0; i != size; ++i) {
+        approx_nearest = ann_res[i];
+        exact_nearest  = enn_dists[i];
+        for (size_t j = 0; j != nns; ++j) {
+            uint32_t dist = approx_nearest[j].first;
+            if (dist == std::numeric_limits<uint32_t>::max()) {
+                // that means that we didnt find any neighbor (nearest neighbor-1)
+                if (j == 0) ++not_found;
+            }
+            else {
+                if 
+                    (dist < exact_nearest[j]) wrong_dists++;
+                else
+                    approx_factor.emplace_back((double) (dist / exact_nearest[j]));
+            }
+        }
+    }
+    std::cout << "\t\tPRINTING STATISTICS" << std::endl;
+    std::cout << "\nWrong Distances (distanceLSH < distanceTrue): " << wrong_dists << std::endl;
+    std::cout << "Not Found: " << not_found << std::endl;
+
+    double mean_af{};
+    double max_af = std::numeric_limits<double>::min();
+
+    for (auto const &af: approx_factor) {
+        if (af > max_af) max_af = af;
+        mean_af += af;
+    }
+    std::cout << "\nMax-Approximation-Factor: " << (double) max_af << std::endl;
+    std::cout << "Mean-Approximation-Factor: " << mean_af / approx_factor.size() << std::endl;
+
+    size_t lsh_mean_time{};
+    for (auto const &time: ann_query_times) {
+        lsh_mean_time += time.count();
+    }
+    std::cout << "Mean-Time-Search-LSH: " << lsh_mean_time / size << std::endl;
+
+    size_t exact_mean_time{};
+    for (auto const &time: enn_query_times) {
+        exact_mean_time += time.count();
+    }
+    std::cout << "Mean-Time-Search-Exact: " << exact_mean_time / size << std::endl;
+}
+
+
+
+void write_output(const std::string &out, const uint16_t nns, const size_t size, \
                             const std::vector<std::vector<std::pair<uint32_t, size_t>>> &ann_res, \
                             const std::vector<std::chrono::microseconds> &ann_query_times, \
                             const std::vector<std::vector<uint32_t>> &enn_dists, const std::vector<std::chrono::microseconds> &enn_query_times, \
@@ -296,26 +356,21 @@ void write_output(const std::string &out, const uint16_t &nns, const size_t &siz
     std::ofstream ofile;
     ofile.open(out, std::ios::out | std::ios::trunc);
 
-    size_t wrong_dists{};
-    size_t not_found{};
-
     for (size_t i = 0; i != size; ++i) {
         approx_nearest = ann_res[i];
         exact_nearest  = enn_dists[i];
-        ofile << "Query: " << begin - 1 + i << std::endl;
+        ofile << "Query: " << i << std::endl;
         for (size_t j = 0; j != nns; ++j) {
             uint32_t dist = approx_nearest[j].first;
             size_t ith_vec = approx_nearest[j].second;
             if (dist == std::numeric_limits<uint32_t>::max()) {
                 // that means that we didnt find any neighbor (nearest neighbor-1)
-                if (j == 0) ++not_found;
                 ofile << "Nearest neighbor-" << j + 1 << ": " << "Not Found" << std::endl;
                 ofile << "distance" << structure << ": " << "None" << std::endl;
             }
             else {
                 ofile << "Nearest neighbor-" << j + 1 << ": " << ith_vec << std::endl;
                 ofile << "distance" << structure << ": " << dist << std::endl;
-                if (dist < exact_nearest[j]) wrong_dists++;
             }
             ofile << "distanceTrue: " << exact_nearest[j] << std::endl;
         }
@@ -332,21 +387,5 @@ void write_output(const std::string &out, const uint16_t &nns, const size_t &siz
             ofile << c << std::endl;
         }
     }
-    // error printing for debugging purposes
-    std::cout << "Not Found: " << not_found << std::endl;
-    std::cout << "Wrong Distances (distanceLSH < distanceTrue): " << wrong_dists << std::endl;
-
-    size_t lsh_mean_time{};
-    for (auto const &time: ann_query_times) {
-        lsh_mean_time += time.count();
-    }
-    std::cout << "meanTimeSearchLSH: " << lsh_mean_time / size << std::endl;
-
-    size_t exact_mean_time{};
-    for (auto const &time: enn_query_times) {
-        exact_mean_time += time.count();
-    }
-    std::cout << "meanTimeSearchBF: " << exact_mean_time / size << std::endl;
-
     ofile.close();
 }

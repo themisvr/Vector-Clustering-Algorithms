@@ -28,7 +28,14 @@ void user_interface(Cube_args **);
 
 void user_interface(Lsh_args **);
 
-void write_output(const std::string &, const uint16_t &, const size_t &, const size_t &, \
+void print_statistics(const uint16_t , const size_t , 
+                            const std::vector<std::vector<std::pair<uint32_t, size_t>>> &, \
+                            const std::vector<std::chrono::microseconds> &, \
+                            const std::vector<std::vector<uint32_t>> &, 
+                            const std::vector<std::chrono::microseconds> &);
+                            
+
+void write_output(const std::string &, const uint16_t , const size_t , \
                         const std::vector<std::vector<std::pair<uint32_t, size_t>>> &, \
                         const std::vector<std::chrono::microseconds> &, const std::vector<std::vector<uint32_t>> &, \
                         const std::vector<std::chrono::microseconds> &, const std::vector<std::vector<size_t>> &, \

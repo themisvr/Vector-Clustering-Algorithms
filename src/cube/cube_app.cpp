@@ -40,48 +40,44 @@ static void start_hypercube_simulation(Cube_args *args)
         std::cout << "Done!" << std::endl;
 
         std::cout << "\nQuery file contains " << test_samples.size() << " queries" << std::endl;
-        size_t begin = user_prompt_query_index("Enter query begin index: ", 1, test_samples.size());
-        size_t end   = user_prompt_query_index("Enter query end index: ", 1, test_samples.size());
-        if (begin > end) {
-            std::cerr << "\nInvalid begin or end query index!" << std::endl;
-            delete args;
-            exit(EXIT_FAILURE);
-        }
-        size_t size = end - begin;
-
+        std::cout << "\nStart Executing ANN / ENN / Range-Search" << std::endl;
+        std::cout << "..." << std::endl;
         /********** Start ANN / ENN / Range search **********/
-        std::vector<std::vector<std::pair<uint32_t, size_t>>> ann_results(size, \
+        std::vector<std::vector<std::pair<uint32_t, size_t>>> ann_results(test_samples.size(), \
                                                                 std::vector<std::pair<uint32_t, size_t>> (args->get_nearest_neighbors_num()));
 
-        std::vector<std::vector<uint32_t>>                    enn_distances(size, \
+        std::vector<std::vector<uint32_t>>                    enn_distances(test_samples.size(), \
                                                                     std::vector<uint32_t> (args->get_nearest_neighbors_num()));
 
-        std::vector<std::vector<size_t>>                      range_results(size);
-        std::vector<std::chrono::microseconds>                ann_query_times(size);
-        std::vector<std::chrono::microseconds>                enn_query_times(size);
+        std::vector<std::vector<size_t>>                      range_results(test_samples.size());
+        std::vector<std::chrono::microseconds>                ann_query_times(test_samples.size());
+        std::vector<std::chrono::microseconds>                enn_query_times(test_samples.size());
 
-        for (size_t i = 0; i != size; ++i) {
+        for (size_t i = 0; i != test_samples.size(); ++i) {
 
             /* Approximate K-NN calculation */
             start = std::chrono::high_resolution_clock::now();
-            ann_results[i] = cube.approximate_nn(test_samples[begin + i - 1], training_samples);
+            ann_results[i] = cube.approximate_nn(test_samples[i], training_samples);
             stop = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
             ann_query_times[i] = duration;
 
             /* Exact NN calculation */
             start = std::chrono::high_resolution_clock::now();
-            enn_distances[i] = exact_nn<uint8_t> (training_samples, test_samples[begin + i - 1], args->get_nearest_neighbors_num());
+            enn_distances[i] = exact_nn<uint8_t> (training_samples, test_samples[i], args->get_nearest_neighbors_num());
             stop = std::chrono::high_resolution_clock::now();
             duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
             enn_query_times[i] = duration;
 
             /* Range Search */
-            range_results[i] = cube.range_search(test_samples[begin + i - 1], training_samples);
+            range_results[i] = cube.range_search(test_samples[i], training_samples);
         }
 
+        print_statistics(args->get_nearest_neighbors_num(), test_samples.size(), ann_results, ann_query_times, \
+                            enn_distances, enn_query_times);
+
         std::cout << "\nWriting formatted output to \"" << args->get_output_file_path() << "\"..."<< std::endl;
-        write_output(args->get_output_file_path(), args->get_nearest_neighbors_num(), size, begin, \
+        write_output(args->get_output_file_path(), args->get_nearest_neighbors_num(), test_samples.size(),
                                 ann_results, ann_query_times, enn_distances, enn_query_times, range_results, "Hypercube");
         std::cout << "Done!" << std::endl;
 

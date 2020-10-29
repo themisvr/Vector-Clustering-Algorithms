@@ -46,6 +46,8 @@ static void start_lsh_simulation(Lsh_args *args) {
         std::cout << "Done!" << std::endl;
 
         std::cout << "\nQuery file contains " << queries.size() << " queries" << std::endl;
+        std::cout << "\nStart Executing ANN / ENN / Range-Search" << std::endl;
+        std::cout << "..." << std::endl;
 
         /********** Start ANN / ENN / Range search **********/
         std::vector<std::vector<std::pair<uint32_t, size_t>>>  ann_results(queries.size(), \
@@ -78,8 +80,11 @@ static void start_lsh_simulation(Lsh_args *args) {
            range_results[i] = lsh.approximate_range_search(C, R, queries[i]);
         }
 
+        print_statistics(args->get_nearest_neighbors_num(), queries.size(), ann_results, ann_query_times, \
+                            enn_distances, enn_query_times);
+
         std::cout << "\nWriting formatted output to \"" << args->get_output_file_path() << "\"..."<< std::endl;
-        write_output(args->get_output_file_path(), args->get_nearest_neighbors_num(), queries.size(), 1, \
+        write_output(args->get_output_file_path(), args->get_nearest_neighbors_num(), queries.size(), \
                                 ann_results, ann_query_times, enn_distances, enn_query_times, range_results, "LSH");
         std::cout << "Done!" << std::endl;
 
