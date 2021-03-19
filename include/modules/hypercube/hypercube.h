@@ -223,7 +223,7 @@ class Hypercube {
         }
 
 
-        std::vector<size_t> range_search(const std::vector<T> &query, const std::vector<std::vector<T>> &train_samples)
+        std::vector<size_t> range_search(const std::vector<T> &query, const std::vector<std::vector<T>> &train_samples, float r = 0.0)
         {
             /* vector to store query's nearest neighbors; only store the training index this time */
             std::vector<size_t> candidates;
@@ -233,6 +233,9 @@ class Hypercube {
             uint16_t probes = max_probes;
             uint8_t  bits = 1;
             size_t   bucket_count = 0;
+
+            if (r == 0.0) 
+              r = R;
 
             /* project query to a cube vertex / hash table bucket */
             const std::string key = cube_projection_test(query);
@@ -244,47 +247,7 @@ class Hypercube {
                     const std::vector<size_t> &indexes = hash_table[key1];
                     for (size_t i = 0; (i != bucket_count) && (M > 0); ++i, --M) {
                         dist = manhattan_distance_rd<T>(query, train_samples[indexes[i]]);
-                        if (dist < C * R) {     // average distance is 20 000 - 35 000
-                            candidates.push_back(indexes[i]);
-                        }
-                    }
-
-                    /* generate a "nearby" vertex using hamming distance (hamming distance = 1, then hamming distance = 2, etc) */
-                    key1 = gen_nearby_vertex(key, cnt, bits);
-                    /* can't generate hamming distance = x > cube dimension */
-                    if (bits > projection_dimension) break;
-                    --probes;
-                }
-                else
-                    break;
-            }
-
-            return candidates;
-        }
-
-
-        std::vector<size_t> range_search(const std::vector<T> &query, const std::vector<std::vector<T>> &train_samples, double r)
-        {
-            /* vector to store query's nearest neighbors; only store the training index this time */
-            std::vector<size_t> candidates;
-            uint32_t dist = 0;
-            uint32_t cnt = projection_dimension;
-            uint16_t M = max_candidates;
-            uint16_t probes = max_probes;
-            uint8_t  bits = 1;
-            size_t   bucket_count = 0;
-
-            /* project query to a cube vertex / hash table bucket */
-            const std::string key = cube_projection_test(query);
-            std::string key1 = key;
-
-            while (M > 0) {
-                if (probes > 0) {
-                    bucket_count = hash_table[key1].size();
-                    const std::vector<size_t> &indexes = hash_table[key1];
-                    for (size_t i = 0; (i != bucket_count) && (M > 0); ++i, --M) {
-                        dist = manhattan_distance_rd<T>(query, train_samples[indexes[i]]);
-                        if (dist < C * r) {     // average distance is 20.000 - 35.000
+                        if (dist < C * r) {     // average distance is 20 000 - 35 000
                             candidates.push_back(indexes[i]);
                         }
                     }

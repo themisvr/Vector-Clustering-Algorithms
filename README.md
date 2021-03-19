@@ -6,20 +6,23 @@ problem: **LSH** and **Hypercube Randomized Projection**
 2. implemented the improved version of the well-known clustering algorithm k-Means, which is 
 called **k-Medians++**  
 
-The dataset used in the 2 tasks above was [MNIST](http://yann.lecun.com/exdb/mnist/)
+The dataset used in the 2 tasks above was [MNIST](http://yann.lecun.com/exdb/mnist/). Each 
+handwritten digit image has a resolution of 28x28 pixels. Consequently, we store each image 
+as a "flattened" vector of size 784 (28 x 28 = 784). To calulate the distance between 2 points 
+in our datasets we used the manhattan distance
 
 # Nearest Neighbour Search  
-Both methods mentioned above work in a similar manner. The following sequence of steps happens 
-before the actual search process takes place:  
+Both methods mentioned above (LSH and Hypercube) work in a similar manner. The following 
+sequence of steps happens before the actual search process takes place:  
 1. program reads in the input dataset (or training set), which in our case consists of 60.000 
 images of handwritten digits (0 - 9). 
 2. then, the program builds the actual data structures that will be used in the search process.
 All input dataset points are stored in these data structures
 3. next, the program reads in the query set (or test set)
 4. search starts: for each point in the query set find:
-  1. its _N_ nearest neighbours approximately (Approximate k-NN)
-  2. its _N_ nearest neighbours using brute-force search (Exact k-NN)
-  3. its nearest neighbours approximately that lie inside a circle of radius _R_
+    1. its _N_ nearest neighbours approximately (Approximate k-NN)
+    2. its _N_ nearest neighbours using brute-force search (Exact k-NN)
+    3. its nearest neighbours approximately that lie inside a circle of radius _R_
 
 Where these 2 methods differ, is how each one builds its appropriate data structures and chooses to store (hashing) the input dataset.  
 In general, The whole purpose of these 2 methods is to deliver an efficient -but approximate- 
@@ -28,6 +31,14 @@ high accuracy results
 
 
 # Clustering
+Using the same dataset file as input, the goal of this program is to "group" as accurately as 
+possible the input datapoints into clusters. Ideally, the clusters produced by the program 
+should only contain images of the same handwritten digit (default numbers of clusters is 10) .  
+The (iterative) algorithm selects its initial centroids using an improved initialization 
+technique called [initialization++](https://en.wikipedia.org/wiki/K-means%2B%2B#Improved_initialization_algorithm), assigns points to their closest centroid using one of Lloyd's or LSH or 
+Hypercube assignment methods and uses the median update rule to update the centroids.  
+The algorithm stops, when the observed change in cluster assignments is relatively small. For 
+this purpose, the k-medians objective function (l1 norm) is calculated after each iteration.
 
 
 # Execution
@@ -68,7 +79,28 @@ image_number_A
 image_number_B
 . . .
 image_number_Z
-```
+```  
 
-# Vector-Clustering-Algorithms
-In this application we are called to implement clustering algorithms for vectors using Locality Sensitive Hashing. Also, the goal is to reduce the dimensionality with random projection on Hypercube.
+Finally, for **clustering**, run the following commands:  
+```
+$ cd src/cluster
+$ make
+$ ./cluster -i ../../datasets/train-images-idx3-ubyte -c ../../include/cluster/cluster.conf
+            -o <output_file> --complete <optional> -m <method: Classic or LSH or Hypercube>
+```  
+
+The formatted output will be written to the output file specified by the user.
+This is how it looks like:  
+```
+Algorithm: Lloyds OR Range Search LSH OR Range Search Hypercube
+CLUSTER-1 {size: <int>, centroid: array with the centroid's components}
+...
+CLUSTER-Κ {size: <int>, centroid: array with the centroid's components}
+clustering_time: <double> //in seconds
+Silhouette: [s1,...,si,...,sΚ, stotal]
+// si=average s(p) of points in cluster i, stotal=average s(p) of points in dataset
+// Optionally with command line parameter –complete 
+CLUSTER-1 {centroid, image_numberA, ..., image_numberX}
+...
+CLUSTER-Κ {centroid, image_numberR, ..., image_numberZ}
+```
